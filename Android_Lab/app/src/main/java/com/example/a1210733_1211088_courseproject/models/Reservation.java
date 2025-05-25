@@ -6,22 +6,22 @@ public class Reservation {
     private long reservationId;
     private long userId;
     private long propertyId;
-    private LocalDateTime reservedDatetime;
+    private LocalDateTime reservationDate;
     private String status; // "pending","confirmed","cancelled"
 
     public Reservation(long reservationId, long userId, long propertyId,
-                       LocalDateTime reservedDatetime, String status) {
+                       LocalDateTime reservationDate, String status) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.propertyId = propertyId;
-        this.reservedDatetime = reservedDatetime;
+        this.reservationDate = reservationDate;
         this.status = status;
     }
 
     // For insert (ID auto-gen)
     public Reservation(long userId, long propertyId,
-                       LocalDateTime reservedDatetime, String status) {
-        this(0, userId, propertyId, reservedDatetime, status);
+                       LocalDateTime reservationDate, String status) {
+        this(0, userId, propertyId, reservationDate, status);
     }
 
     public long getReservationId() {
@@ -48,12 +48,12 @@ public class Reservation {
         this.propertyId = propertyId;
     }
 
-    public LocalDateTime getReservedDatetime() {
-        return reservedDatetime;
+    public LocalDateTime getReservationDate() {
+        return reservationDate;
     }
 
-    public void setReservedDatetime(LocalDateTime reservedDatetime) {
-        this.reservedDatetime = reservedDatetime;
+    public void setReservationDate(LocalDateTime reservationDate) {
+        this.reservationDate = reservationDate;
     }
 
     public String getStatus() {
@@ -70,7 +70,7 @@ public class Reservation {
                 "reservationId=" + reservationId +
                 ", userId=" + userId +
                 ", propertyId=" + propertyId +
-                ", reservedDatetime=" + reservedDatetime +
+                ", reservationDate=" + reservationDate +
                 ", status='" + status + '\'' +
                 '}';
     }
