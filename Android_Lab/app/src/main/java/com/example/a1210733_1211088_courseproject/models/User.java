@@ -35,92 +35,90 @@ public class User {
         this(0, email, password, firstName, lastName, gender, phone, country, city, role, profilePhoto);
     }
 
-    // Getters
+    // Getters and Setters
+
     public long getUserId() {
         return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public String getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    // Setters
-
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getCity() {
+        return city;
     }
 
     public void setCity(String city) {
         this.city = city;
     }
 
+    public String getRole() {
+        return role;
+    }
+
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getProfilePhoto() {
+        return profilePhoto;
     }
 
     public void setProfilePhoto(String profilePhoto) {
