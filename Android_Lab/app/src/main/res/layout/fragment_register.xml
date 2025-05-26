@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/reg_email"
+            style="@style/InputFieldStyle"
+            android:hint="Email" />
+
+        <EditText
+            android:id="@+id/reg_fname"
+            style="@style/InputFieldStyle"
+            android:hint="First Name" />
+
+        <EditText
+            android:id="@+id/reg_lname"
+            style="@style/InputFieldStyle"
+            android:hint="Last Name" />
+
+        <EditText
+            android:id="@+id/reg_password"
+            style="@style/InputFieldStyle"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/reg_confirm"
+            style="@style/InputFieldStyle"
+            android:hint="Confirm Password"
+            android:inputType="textPassword" />
+
+        <Spinner
+            android:id="@+id/reg_gender"
+            style="@style/SpinnerStyle"
+            android:minHeight="48dp" />
+
+        <Spinner
+            android:id="@+id/reg_country"
+            style="@style/SpinnerStyle"
+            android:minHeight="48dp" />
+
+        <Spinner
+            android:id="@+id/reg_city"
+            style="@style/SpinnerStyle"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/reg_phone"
+            style="@style/InputFieldStyle"
+            android:hint="Phone Number"
+            android:inputType="phone" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
