@@ -77,7 +77,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         " FOREIGN KEY(property_id) REFERENCES " + TABLE_PROPERTY + "(property_id) ON DELETE CASCADE" +
                         ");"
         );
-
     }
 
     @Override
