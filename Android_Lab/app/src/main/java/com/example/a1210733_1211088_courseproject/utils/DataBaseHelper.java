@@ -1,4 +1,4 @@
-package com.example.a1210733_1211088_courseproject;
+package com.example.a1210733_1211088_courseproject.utils;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -49,7 +49,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         " price           REAL NOT NULL," +
                         " country         TEXT NOT NULL," +
                         " city            TEXT NOT NULL," +
-                        " image_url       TEXT" +  // URL to the property image
+                        " image_url       TEXT," +  // URL to the property image
+                        " is_special      INTEGER DEFAULT 0," + // Boolean as INTEGER (0/1)
+                        " discount        REAL DEFAULT 0.0" + // Discount percentage
                         ");"
         );
 
