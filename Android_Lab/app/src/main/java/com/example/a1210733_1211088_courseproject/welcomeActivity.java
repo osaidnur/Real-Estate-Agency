@@ -1,4 +1,4 @@
-package edu.birzeit.alproject;
+package com.example.a1210733_1211088_courseproject;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.a1210733_1211088_courseproject.R;
 
 public class welcomeActivity extends AppCompatActivity {
 

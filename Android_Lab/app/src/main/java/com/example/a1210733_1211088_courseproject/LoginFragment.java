@@ -1,4 +1,4 @@
-package edu.birzeit.alproject;
+package com.example.a1210733_1211088_courseproject;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.a1210733_1211088_courseproject.R;
 
 /**
  * A simple {@link Fragment} subclass.
