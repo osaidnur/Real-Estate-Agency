@@ -12,14 +12,14 @@ public class Property {
     private String country ;
     private String city ;
     private String imageUrl; // URL to the property image
+    private boolean isSpecial; // Flag for special properties
+    private double discount; // Discount percentage
 
     // Full constructor
-
-
     public Property(long propertyId, String type, String title,
                     String description, int bedrooms, int bathrooms,
                     float area, double price, String country, String city,
-                    String imageUrl) {
+                    String imageUrl, boolean isSpecial, double discount) {
         this.propertyId = propertyId;
         this.type = type;
         this.title = title;
@@ -31,6 +31,8 @@ public class Property {
         this.country = country;
         this.city = city;
         this.imageUrl = imageUrl;
+        this.isSpecial = isSpecial;
+        this.discount = discount;
     }
 
     public long getPropertyId() {
@@ -121,6 +123,30 @@ public class Property {
         this.imageUrl = imageUrl;
     }
 
+    public boolean isSpecial() {
+        return isSpecial;
+    }
+
+    public void setSpecial(boolean special) {
+        isSpecial = special;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    // Calculate the discounted price if applicable
+    public double getDiscountedPrice() {
+        if (isSpecial && discount > 0) {
+            return price * (1 - (discount / 100.0));
+        }
+        return price;
+    }
+
     @Override
     public String toString() {
         return "Property{" +
@@ -135,6 +161,8 @@ public class Property {
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", isSpecial=" + isSpecial +
+                ", discount=" + discount +
                 '}';
     }
 }
