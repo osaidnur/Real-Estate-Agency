@@ -1,4 +1,4 @@
-package com.example.a1210733_1211088_courseproject;
+package com.example.a1210733_1211088_courseproject.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
