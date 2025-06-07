@@ -53,9 +53,7 @@ public class UserQueries {
 
     public static final String DELETE_USER =
             "DELETE FROM " + TABLE_NAME +
-            " WHERE " + COLUMN_USER_ID + " = ?";
-
-    // Insert default admin account query
+            " WHERE " + COLUMN_USER_ID + " = ?";    // Insert default admin account query
     public static final String INSERT_ADMIN_ACCOUNT =
             "INSERT INTO " + TABLE_NAME + " (" +
             COLUMN_EMAIL + ", " +
@@ -64,4 +62,19 @@ public class UserQueries {
             COLUMN_LAST_NAME + ", " +
             COLUMN_ROLE +
             ") VALUES ('admin@admin.com', 'Admin123!', 'Admin', 'User', 'admin');";
+
+    // Insert user query (for new user registration)
+    public static final String INSERT_USER =
+            "INSERT INTO " + TABLE_NAME + " (" +
+            COLUMN_EMAIL + ", " +
+            COLUMN_PASSWORD + ", " +
+            COLUMN_FIRST_NAME + ", " +
+            COLUMN_LAST_NAME + ", " +
+            COLUMN_GENDER + ", " +
+            COLUMN_PHONE + ", " +
+            COLUMN_COUNTRY + ", " +
+            COLUMN_CITY + ", " +
+            COLUMN_ROLE + ", " +
+            COLUMN_PROFILE_PHOTO +
+            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 }
