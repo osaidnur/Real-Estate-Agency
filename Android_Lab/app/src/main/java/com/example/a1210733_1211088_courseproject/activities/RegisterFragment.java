@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,12 +15,13 @@ import androidx.fragment.app.Fragment;
 
 import com.example.a1210733_1211088_courseproject.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Registration fragment that handles user registration
  */
-public class RegisterFragment extends Fragment {
-
-    // UI elements
+public class RegisterFragment extends Fragment {    // UI elements
     private EditText emailEditText;
     private EditText firstNameEditText;
     private EditText lastNameEditText;
@@ -33,6 +35,10 @@ public class RegisterFragment extends Fragment {
     
     // Callback interface
     private AuthCallbackInterface authCallback;
+    
+    // Country and city data
+    private Map<String, String[]> countryCityMap;
+    private Map<String, String> countryCodeMap;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,9 +89,7 @@ public class RegisterFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-    }
-
-    @Override
+    }    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -93,6 +97,9 @@ public class RegisterFragment extends Fragment {
         
         // Initialize views
         initializeViews(view);
+        
+        // Initialize country and city data
+        initializeCountryCityData();
         
         // Setup spinners
         setupSpinners();
@@ -116,27 +123,84 @@ public class RegisterFragment extends Fragment {
         registerButton = view.findViewById(R.id.btn_register);
     }
 
+    private void initializeCountryCityData() {
+        // Initialize country-city mapping
+        countryCityMap = new HashMap<>();
+        countryCityMap.put("Palestine", new String[]{"Select City", "Gaza", "Ramallah", "Hebron"});
+        countryCityMap.put("Jordan", new String[]{"Select City", "Amman", "Irbid", "Aqaba"});
+        countryCityMap.put("Syria", new String[]{"Select City", "Damascus", "Halab", "Homs"});
+        
+        // Initialize country code mapping
+        countryCodeMap = new HashMap<>();
+        countryCodeMap.put("Palestine", "+970");
+        countryCodeMap.put("Jordan", "+962");
+        countryCodeMap.put("Syria", "+963");
+    }
     private void setupSpinners() {
         // Gender spinner
-        String[] genders = {"Select Gender", "Male", "Female", "Other"};
+        String[] genders = {"Select Gender", "Male", "Female"};
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), 
                 android.R.layout.simple_spinner_item, genders);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderSpinner.setAdapter(genderAdapter);
 
-        // Country spinner
-        String[] countries = {"Select Country", "Jordan", "Palestine", "Syria", "Lebanon", "Egypt", "Other"};
+        // Country spinner - only Palestine, Jordan, Syria
+        String[] countries = {"Select Country", "Palestine", "Jordan", "Syria"};
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(getContext(), 
                 android.R.layout.simple_spinner_item, countries);
         countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countrySpinner.setAdapter(countryAdapter);
 
-        // City spinner (you can populate this based on country selection)
-        String[] cities = {"Select City", "Amman", "Irbid", "Zarqa", "Aqaba", "Salt", "Other"};
+        // Set up country selection listener to update cities
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCountry = parent.getItemAtPosition(position).toString();
+                updateCitySpinner(selectedCountry);
+                updatePhoneCountryCode(selectedCountry);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Default cities when no country is selected
+                updateCitySpinner("Select Country");
+            }
+        });        // Initialize city spinner with default values
+        updateCitySpinner("Select Country");
+    }
+
+    private void updateCitySpinner(String selectedCountry) {
+        String[] cities;
+        
+        if (countryCityMap.containsKey(selectedCountry)) {
+            cities = countryCityMap.get(selectedCountry);
+        } else {
+            // Default cities when no country is selected
+            cities = new String[]{"Select City"};
+        }
+        
         ArrayAdapter<String> cityAdapter = new ArrayAdapter<>(getContext(), 
                 android.R.layout.simple_spinner_item, cities);
         cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         citySpinner.setAdapter(cityAdapter);
+    }
+
+    private void updatePhoneCountryCode(String selectedCountry) {
+        if (countryCodeMap.containsKey(selectedCountry)) {
+            String countryCode = countryCodeMap.get(selectedCountry);
+            String currentPhone = phoneEditText.getText().toString().trim();
+            
+            // Remove existing country code if present
+            for (String code : countryCodeMap.values()) {
+                if (currentPhone.startsWith(code)) {
+                    currentPhone = currentPhone.substring(code.length()).trim();
+                    break;
+                }
+            }
+            
+            // Add new country code
+            phoneEditText.setText(countryCode + " " + currentPhone);
+        }
     }
 
     private void setupRegisterButton() {
