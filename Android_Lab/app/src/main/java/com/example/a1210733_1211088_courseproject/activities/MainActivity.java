@@ -175,10 +175,12 @@ public class MainActivity extends AppCompatActivity {
                     @SuppressLint("Range") String firstName = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_FIRST_NAME));
                     @SuppressLint("Range") String lastName = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_LAST_NAME));
                     @SuppressLint("Range") String role = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_ROLE));
+                    @SuppressLint("Range") String password = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_PASSWORD));
 
                     System.out.println("--------------------------------------------------");
                     System.out.println("User ID: " + userId);
                     System.out.println("Email: " + email);
+                    System.out.println("Password:"+ password);
                     System.out.println("Name: " + firstName + " " + lastName);
                     System.out.println("Role: " + role);
                     System.out.println("--------------------------------------------------");
