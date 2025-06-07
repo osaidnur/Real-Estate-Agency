@@ -11,14 +11,13 @@ import com.example.a1210733_1211088_courseproject.database.sql.FavoriteQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.ReservationQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
+import com.example.a1210733_1211088_courseproject.utils.PasswordUtils;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     public DataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
-    }
-
-    @Override
+    }    @Override
     public void onCreate(SQLiteDatabase db) {
         // Create tables using SQL queries from dedicated query files
         db.execSQL(UserQueries.CREATE_TABLE);
@@ -66,11 +65,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * Inserts a default admin account with the provided database instance
      * @param db The SQLiteDatabase instance to use
      * @return true if successful, false otherwise
-     */
-    private boolean insertDefaultAdmin(SQLiteDatabase db) {
+     */    private boolean insertDefaultAdmin(SQLiteDatabase db) {
+        // Check if admin user already exists
         ContentValues values = new ContentValues();
         values.put(UserQueries.COLUMN_EMAIL, "admin@admin.com");
-        values.put(UserQueries.COLUMN_PASSWORD, "Admin123!");
+        
+        // Hash the admin password
+        String plainPassword = "Admin123!";
+        String hashedPassword = PasswordUtils.hashPasswordSimple(plainPassword);
+        values.put(UserQueries.COLUMN_PASSWORD, hashedPassword);
+        
         values.put(UserQueries.COLUMN_FIRST_NAME, "Admin");
         values.put(UserQueries.COLUMN_LAST_NAME, "User"); // Adding required last_name field
         values.put(UserQueries.COLUMN_ROLE, "admin");
