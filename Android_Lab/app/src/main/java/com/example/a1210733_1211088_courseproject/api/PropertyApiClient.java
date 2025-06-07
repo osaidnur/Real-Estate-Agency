@@ -17,13 +17,12 @@ public class PropertyApiClient {
     private static final String API_URL = "https://mocki.io/v1/4d533823-8133-4631-8112-00e69a143881";
     private Context context;
     private DataBaseHelper dbHelper;
+    private boolean importSuccess = false;
 
     public PropertyApiClient(Context context) {
         this.context = context;
         this.dbHelper = new DataBaseHelper(context, "RealEstate", null, 1);
-    }
-
-    /**
+    }    /**
      * Fetch properties from the API and store them in the database
      */
     public void fetchAndStoreProperties() {
@@ -46,16 +45,23 @@ public class PropertyApiClient {
                               " | Price: $" + property.getPrice() +
                               " | City: " + property.getCity() + "| Country: " + property.getCountry());
                     }
-                    Log.d(TAG, "===== TOTAL: " + properties.size() + " PROPERTIES =====");
+                    Log.d(TAG, "===== TOTAL: " + properties.size() + " PROPERTIES =====");                    // Store the properties in the database
 
-                    // Store the properties in the database
-                    storePropertiesInDatabase(properties);
-
-                    // Notify the user
-                    Toast.makeText(context, properties.size() + " properties imported successfully!",
-                            Toast.LENGTH_SHORT).show();
+                    boolean success = storePropertiesInDatabase(properties);
+                      if (success) {
+                        importSuccess = true;
+                        // Notify the user
+                        Toast.makeText(context, properties.size() + " properties imported successfully!",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        importSuccess = false;
+                        Log.e(TAG, "Failed to store properties in database");
+                        Toast.makeText(context, "Failed to store properties in database",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     // Handle error with more detailed logging
+                    importSuccess = false;
                     Log.e(TAG, "Failed to fetch data from API - result was null");
                     Toast.makeText(context, "Failed to import properties from API",
                             Toast.LENGTH_SHORT).show();
@@ -69,10 +75,19 @@ public class PropertyApiClient {
     }
 
     /**
+     * Check if the last import operation was successful
+     * @return true if successful, false otherwise
+     */
+    public boolean isImportSuccessful() {
+        return importSuccess;
+    }
+
+    /**
      * Store a list of properties in the database
      * @param properties the list of properties to store
+     * @return true if successful, false otherwise
      */
-    private void storePropertiesInDatabase(List<Property> properties) {
+    private boolean storePropertiesInDatabase(List<Property> properties) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
@@ -98,19 +113,25 @@ public class PropertyApiClient {
                 values.put(PropertyQueries.COLUMN_DISCOUNT, property.getDiscount());
 
                 // Log the property being inserted
-                //Log.d(TAG, "Inserting property: " + property.getTitle() + " with ID: " + property.getPropertyId());
-
-
-                // Insert the property into the database
-                db.insert(PropertyQueries.TABLE_NAME, null, values);
+                //Log.d(TAG, "Inserting property: " + property.getTitle() + " with ID: " + property.getPropertyId());                // Insert or replace the property in the database
+                long result = db.insertWithOnConflict(PropertyQueries.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                if (result == -1) {
+                    Log.e(TAG, "Failed to insert property: " + property.getTitle());
+                    return false;
+                }
             }
 
             // Mark transaction as successful
             db.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Error storing properties in database", e);
+            return false;
         } finally {
             // End the transaction
             db.endTransaction();
         }
     }
 }
+
 
