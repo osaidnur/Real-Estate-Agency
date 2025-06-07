@@ -15,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.a1210733_1211088_courseproject.R;
 import com.example.a1210733_1211088_courseproject.auth.AuthPagerAdapter;
 import com.example.a1210733_1211088_courseproject.auth.AuthenticationManager;
+import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.models.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -25,7 +26,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 interface AuthCallbackInterface {
     void onLoginRequested(String email, String password);
     void onRegisterRequested(String email, String firstName, String lastName, 
-                           String password, String confirmPassword, String gender, String country);
+                           String password, String confirmPassword, String gender, String country, String city, String phone);
 }
 
 public class authActivity extends AppCompatActivity implements AuthCallbackInterface {
@@ -34,15 +35,18 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
     private ViewPager2 viewPager;
     private AuthPagerAdapter authPagerAdapter;
     private AuthenticationManager authManager;
+    private DataBaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_auth);
-        
-        // Initialize authentication manager
+          // Initialize authentication manager
         authManager = new AuthenticationManager(this);
+        
+        // Initialize database helper
+        dbHelper = new DataBaseHelper(this, "RealEstate", null, 1);
         
         // Initialize views
         initializeViews();
@@ -119,10 +123,9 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
     
     /**
      * Callback method for fragments to trigger registration
-     */
-    @Override
+     */    @Override
     public void onRegisterRequested(String email, String firstName, String lastName, 
-                                  String password, String confirmPassword, String gender, String country) {
+                                  String password, String confirmPassword, String gender, String country, String city, String phone) {
         // Basic validation
         if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
@@ -138,17 +141,43 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        if (!password.equals(confirmPassword)) {
+          if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
         
-        // TODO: Implement user registration in database
-        Toast.makeText(this, "Registration functionality coming soon!", Toast.LENGTH_LONG).show();
+        // Check if user already exists
+        if (dbHelper.isUserExists(email)) {
+            Toast.makeText(this, "User with this email already exists", Toast.LENGTH_SHORT).show();
+            return;
+        }
+          // Create new user object (default role is customer)
+        User newUser = new User(email, password, firstName, lastName, gender, 
+                               phone, country, city, "customer", null);
+          // Insert user into database
+        long userId = dbHelper.insertUser(newUser);
         
-        // For now, switch to login tab after showing the message
-        viewPager.setCurrentItem(0, true);
+        if (userId != -1) {
+            // Registration successful
+            Toast.makeText(this, "Registration successful! Welcome " + firstName + "!", 
+                          Toast.LENGTH_LONG).show();
+            
+            // Get the newly created user for auto-login
+            User registeredUser = dbHelper.getUserById(userId);
+            
+            if (registeredUser != null) {
+                // Automatically navigate to the appropriate activity based on role
+                navigateBasedOnRole(registeredUser);
+            } else {
+                // Fallback: switch to login tab if we can't retrieve the user
+                Toast.makeText(this, "Registration successful! Please login with your credentials.", 
+                              Toast.LENGTH_SHORT).show();
+                viewPager.setCurrentItem(0, true);
+            }
+        } else {
+            // Registration failed
+            Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
+        }
     }
     
     private void navigateBasedOnRole(User user) {
