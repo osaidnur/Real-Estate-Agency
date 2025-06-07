@@ -1,6 +1,7 @@
 package com.example.a1210733_1211088_courseproject;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -69,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
                         getAllPropertiesAndPrint();
                         // Optionally, get and print all users
                         getUsersAndPrint();
+
+                        if (propertyApiClient.isImportSuccessful()) {
+                            // Navigate to AuthActivity only if successful
+                            Intent intent = new Intent(MainActivity.this, authActivity.class);
+                            startActivity(intent);
+                            finish(); // Optional: close current activity
+                        }
                     }
                 }, 2000); // 2 seconds delay
             }
@@ -195,5 +203,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
+
+
+
+
+
+
 
 
