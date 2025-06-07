@@ -26,7 +26,7 @@ public class PropertyQueries {
     // Create table query
     public static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
-            COLUMN_PROPERTY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+            COLUMN_PROPERTY_ID + " INTEGER PRIMARY KEY," +
             COLUMN_TYPE + " TEXT NOT NULL," +
             COLUMN_TITLE + " TEXT NOT NULL," +
             COLUMN_DESCRIPTION + " TEXT," +
@@ -43,15 +43,6 @@ public class PropertyQueries {
 
     // Drop table query
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
-
-    // Alter table queries for migrations
-    public static final String ADD_IS_SPECIAL_COLUMN =
-            "ALTER TABLE " + TABLE_NAME +
-            " ADD COLUMN " + COLUMN_IS_SPECIAL + " INTEGER DEFAULT 0";
-
-    public static final String ADD_DISCOUNT_COLUMN =
-            "ALTER TABLE " + TABLE_NAME +
-            " ADD COLUMN " + COLUMN_DISCOUNT + " REAL DEFAULT 0.0";
 
     // Common queries
     public static final String GET_ALL_PROPERTIES = "SELECT * FROM " + TABLE_NAME;

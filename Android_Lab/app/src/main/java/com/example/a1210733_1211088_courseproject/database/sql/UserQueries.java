@@ -54,4 +54,14 @@ public class UserQueries {
     public static final String DELETE_USER =
             "DELETE FROM " + TABLE_NAME +
             " WHERE " + COLUMN_USER_ID + " = ?";
+
+    // Insert default admin account query
+    public static final String INSERT_ADMIN_ACCOUNT =
+            "INSERT INTO " + TABLE_NAME + " (" +
+            COLUMN_EMAIL + ", " +
+            COLUMN_PASSWORD + ", " +
+            COLUMN_FIRST_NAME + ", " +
+            COLUMN_LAST_NAME + ", " +
+            COLUMN_ROLE +
+            ") VALUES ('admin@admin.com', 'Admin123!', 'Admin', 'User', 'admin');";
 }
