@@ -44,7 +44,7 @@ public class PropertyApiClient {
                         Log.d(TAG, property.getPropertyId() + ": " + property.getTitle() +
                               " | Type: " + property.getType() +
                               " | Price: $" + property.getPrice() +
-                              " | Location: " + property.getCity() + ", " + property.getCountry());
+                              " | City: " + property.getCity() + "| Country: " + property.getCountry());
                     }
                     Log.d(TAG, "===== TOTAL: " + properties.size() + " PROPERTIES =====");
 
@@ -83,7 +83,7 @@ public class PropertyApiClient {
                 ContentValues values = new ContentValues();
                 // Don't set ID as it's auto-increment in the database
                 // If you want to preserve IDs from API, uncomment the line below
-                // values.put(PropertyQueries.COLUMN_PROPERTY_ID, property.getPropertyId());
+                values.put(PropertyQueries.COLUMN_PROPERTY_ID, property.getPropertyId());
                 values.put(PropertyQueries.COLUMN_TYPE, property.getType());
                 values.put(PropertyQueries.COLUMN_TITLE, property.getTitle());
                 values.put(PropertyQueries.COLUMN_DESCRIPTION, property.getDescription());
@@ -97,6 +97,10 @@ public class PropertyApiClient {
                 values.put(PropertyQueries.COLUMN_IS_SPECIAL, property.isSpecial() ? 1 : 0);
                 values.put(PropertyQueries.COLUMN_DISCOUNT, property.getDiscount());
 
+                // Log the property being inserted
+                //Log.d(TAG, "Inserting property: " + property.getTitle() + " with ID: " + property.getPropertyId());
+
+
                 // Insert the property into the database
                 db.insert(PropertyQueries.TABLE_NAME, null, values);
             }
@@ -109,3 +113,4 @@ public class PropertyApiClient {
         }
     }
 }
+
