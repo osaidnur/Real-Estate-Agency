@@ -1,9 +1,8 @@
-package com.example.a1210733_1211088_courseproject;
+package com.example.a1210733_1211088_courseproject.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,14 +15,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.a1210733_1211088_courseproject.R;
 import com.example.a1210733_1211088_courseproject.api.PropertyApiClient;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
-import com.example.a1210733_1211088_courseproject.models.Property;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
