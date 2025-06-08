@@ -17,6 +17,7 @@ import com.example.a1210733_1211088_courseproject.auth.AuthPagerAdapter;
 import com.example.a1210733_1211088_courseproject.auth.AuthenticationManager;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.models.User;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -24,18 +25,18 @@ import com.google.android.material.tabs.TabLayoutMediator;
  * Interface for communication between fragments and activity
  */
 interface AuthCallbackInterface {
-    void onLoginRequested(String email, String password);
+    void onLoginRequested(String email, String password, boolean rememberMe);
     void onRegisterRequested(String email, String firstName, String lastName, 
                            String password, String confirmPassword, String gender, String country, String city, String phone);
 }
 
 public class authActivity extends AppCompatActivity implements AuthCallbackInterface {
-    
-    private TabLayout tabLayout;
+      private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private AuthPagerAdapter authPagerAdapter;
     private AuthenticationManager authManager;
     private DataBaseHelper dbHelper;
+    private SharedPrefManager sharedPrefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +45,14 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
         setContentView(R.layout.activity_auth);
           // Initialize authentication manager
         authManager = new AuthenticationManager(this);
-        
-        // Initialize database helper
+          // Initialize database helper
         dbHelper = new DataBaseHelper(this, "RealEstate", null, 1);
+        
+        // Initialize shared preferences manager
+        sharedPrefManager = SharedPrefManager.getInstance(this);
+        
+        // Check for auto-login
+        checkAutoLogin();
         
         // Initialize views
         initializeViews();
@@ -78,12 +84,11 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             (tab, position) -> tab.setText(authPagerAdapter.getTabTitle(position))
         ).attach();
     }
-    
-    /**
+      /**
      * Callback method for fragments to trigger authentication
      */
     @Override
-    public void onLoginRequested(String email, String password) {
+    public void onLoginRequested(String email, String password, boolean rememberMe) {
         // Validate input
         if (email.isEmpty()) {
             Toast.makeText(this, "Email is required", Toast.LENGTH_SHORT).show();
@@ -107,11 +112,22 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
         
         // Attempt authentication
         User authenticatedUser = authManager.authenticateUser(email, password);
-        
-        if (authenticatedUser != null) {
+          if (authenticatedUser != null) {
             // Authentication successful
             Toast.makeText(this, "Login successful! Welcome " + authenticatedUser.getFirstName(), 
                           Toast.LENGTH_SHORT).show();
+            
+            // Handle remember me functionality
+              if (rememberMe) {
+                  // Save credentials
+                  sharedPrefManager.writeString(SharedPrefManager.KEY_REMEMBER_EMAIL, email);
+                  sharedPrefManager.writeString(SharedPrefManager.KEY_REMEMBER_PASSWORD, password);
+                  sharedPrefManager.writeBoolean(SharedPrefManager.KEY_REMEMBER_ME, true);
+              } else {
+                  // Clear saved credentials
+                  sharedPrefManager.clearRememberMe();
+              }
+
             
             // Navigate based on user role
             navigateBasedOnRole(authenticatedUser);
@@ -197,9 +213,53 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra("user_id", user.getUserId());
             startActivity(intent);
-            finish();
-        } else {
+            finish();        } else {
             Toast.makeText(this, "Unknown user role", Toast.LENGTH_SHORT).show();
         }
     }
+    
+    /**
+     * Check if user credentials are saved and auto-login if remember me was checked
+     */
+    private void checkAutoLogin() {
+        boolean rememberMe = sharedPrefManager.readBoolean(SharedPrefManager.KEY_REMEMBER_ME, false);
+        
+        if (rememberMe) {
+            String savedEmail = sharedPrefManager.readString(SharedPrefManager.KEY_REMEMBER_EMAIL, "");
+            String savedPassword = sharedPrefManager.readString(SharedPrefManager.KEY_REMEMBER_PASSWORD, "");
+            
+            if (!savedEmail.isEmpty() && !savedPassword.isEmpty()) {
+                // Attempt auto-login
+                User authenticatedUser = authManager.authenticateUser(savedEmail, savedPassword);
+                
+                if (authenticatedUser != null) {
+                    // Auto-login successful
+                    Toast.makeText(this, "Welcome back, " + authenticatedUser.getFirstName() + "!", 
+                                  Toast.LENGTH_SHORT).show();
+                    
+                    // Navigate based on user role
+                    navigateBasedOnRole(authenticatedUser);
+                } else {
+                    // Auto-login failed, clear saved credentials
+                    sharedPrefManager.clearRememberMe();
+                    Toast.makeText(this, "Auto-login failed. Please login again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+    
+    /**
+     *   remember me functionality - save or clear credentials
+     */
+//    private void handleRememberMe(String email, String password, boolean rememberMe) {
+//        if (rememberMe) {
+//            // Save credentials
+//            sharedPrefManager.writeString(SharedPrefManager.KEY_REMEMBER_EMAIL, email);
+//            sharedPrefManager.writeString(SharedPrefManager.KEY_REMEMBER_PASSWORD, password);
+//            sharedPrefManager.writeBoolean(SharedPrefManager.KEY_REMEMBER_ME, true);
+//        } else {
+//            // Clear saved credentials
+//            sharedPrefManager.clearRememberMe();
+//        }
+//    }
 }

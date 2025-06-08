@@ -9,7 +9,13 @@ public class SharedPrefManager {
     private static SharedPrefManager ourInstance = null;
     private static SharedPreferences sharedPreferences = null;
     private SharedPreferences.Editor editor = null;
-    static SharedPrefManager getInstance(Context context) {
+    
+    // Keys for remember me functionality
+    public static final String KEY_REMEMBER_EMAIL = "remember_email";
+    public static final String KEY_REMEMBER_PASSWORD = "remember_password";
+    public static final String KEY_REMEMBER_ME = "remember_me";
+    
+    public static SharedPrefManager getInstance(Context context) {
         if (ourInstance != null) {
             return ourInstance;
         }
@@ -28,5 +34,25 @@ public class SharedPrefManager {
     public String readString(String key, String defaultValue) {
         return sharedPreferences.getString(key, defaultValue);
     }
-
+    
+    public boolean writeBoolean(String key, boolean value) {
+        editor.putBoolean(key, value);
+        return editor.commit();
+    }
+    
+    public boolean readBoolean(String key, boolean defaultValue) {
+        return sharedPreferences.getBoolean(key, defaultValue);
+    }
+    
+    public boolean clearRememberMe() {
+        editor.remove(KEY_REMEMBER_EMAIL);
+        editor.remove(KEY_REMEMBER_PASSWORD);
+        editor.remove(KEY_REMEMBER_ME);
+        return editor.commit();
+    }
+    
+    public boolean clearAll() {
+        editor.clear();
+        return editor.commit();
+    }
 }
