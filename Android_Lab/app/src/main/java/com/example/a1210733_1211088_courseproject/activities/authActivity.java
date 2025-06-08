@@ -109,7 +109,11 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
             return;
         }
-        
+
+        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
+            Toast.makeText(this, "Password must include at least one letter, one number, and one special character", Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Attempt authentication
         User authenticatedUser = authManager.authenticateUser(email, password);
           if (authenticatedUser != null) {
@@ -161,6 +165,11 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
+
+          if(firstName.length() < 2 || lastName.length() < 2) {
+            Toast.makeText(this, "First and last names must be at least 2 characters long", Toast.LENGTH_SHORT).show();
+            return;
+          }
         
         // Check if user already exists
         if (dbHelper.isUserExists(email)) {
