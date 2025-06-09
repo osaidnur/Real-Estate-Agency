@@ -22,6 +22,7 @@ import com.example.a1210733_1211088_courseproject.R;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 public class AdminActivity extends AppCompatActivity {
     
@@ -30,8 +31,8 @@ public class AdminActivity extends AppCompatActivity {
     private TextView tvWelcomeAdmin, tvPropertiesCount, tvUsersCount;
     private Button btnManageProperties, btnManageUsers, btnViewReports, btnLogout;
     private RecyclerView rvRecentActivities;
-    
-    private DataBaseHelper dbHelper;
+      private DataBaseHelper dbHelper;
+    private SharedPrefManager sharedPrefManager;
     private long userId;
     private String adminName;
 
@@ -39,61 +40,53 @@ public class AdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_admin);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
+        setContentView(R.layout.activity_admin);        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
         
-//        // Initialize database helper
-//        dbHelper = new DataBaseHelper(this, "RealEstate", null, 1);
-//
-//        // Get user info from intent
-//        userId = getIntent().getLongExtra("user_id", -1);
-//        adminName = getIntent().getStringExtra("admin_name");
-//
-//        // Validate admin access
-//        if (userId == -1) {
-//            Toast.makeText(this, "Invalid session. Please login again.", Toast.LENGTH_LONG).show();
-//            logout();
-//            return;
-//        }
-//
-//        if (adminName == null || adminName.isEmpty()) {
-//            adminName = "Admin";
-//        }
-//
-//        // Initialize views
-//        initializeViews();
-//
-//        // Set up window insets
-//        View rootView = findViewById(android.R.id.content);
-//        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
-//
-//        // Set up click listeners
-//        setupClickListeners();
-//
-//        // Load dashboard data
-//        loadDashboardData();
-//
-//        Log.d(TAG, "AdminActivity started for user ID: " + userId + ", name: " + adminName);
+        // Initialize database helper
+        dbHelper = new DataBaseHelper(this, "RealEstate", null, 1);
+        
+        // Initialize shared preferences manager
+        sharedPrefManager = SharedPrefManager.getInstance(this);
+
+        // Get user info from intent
+        userId = getIntent().getLongExtra("user_id", -1);
+        adminName = getIntent().getStringExtra("admin_name");
+
+        // Validate admin access
+        if (userId == -1) {
+            Toast.makeText(this, "Invalid session. Please login again.", Toast.LENGTH_LONG).show();
+            logout();
+            return;
+        }
+
+        if (adminName == null || adminName.isEmpty()) {
+            adminName = "Admin";
+        }
+
+        // Initialize views
+        initializeViews();
+
+        // Set up click listeners
+        setupClickListeners();
+
+        // Load dashboard data
+        loadDashboardData();
+
+        Log.d(TAG, "AdminActivity started for user ID: " + userId + ", name: " + adminName);
     }
-    
-    private void initializeViews() {
-//        tvWelcomeAdmin = findViewById(R.id.tv_welcome_admin);
-//        tvPropertiesCount = findViewById(R.id.tv_properties_count);
-//        tvUsersCount = findViewById(R.id.tv_users_count);
-//        btnManageProperties = findViewById(R.id.btn_manage_properties);
-//        btnManageUsers = findViewById(R.id.btn_manage_users);
-//        btnViewReports = findViewById(R.id.btn_view_reports);
-//        btnLogout = findViewById(R.id.btn_logout);
-//        rvRecentActivities = findViewById(R.id.rv_recent_activities);
+      private void initializeViews() {
+        tvWelcomeAdmin = findViewById(R.id.tv_welcome_admin);
+        tvPropertiesCount = findViewById(R.id.tv_properties_count);
+        tvUsersCount = findViewById(R.id.tv_users_count);
+        btnManageProperties = findViewById(R.id.btn_manage_properties);
+        btnManageUsers = findViewById(R.id.btn_manage_users);
+        btnViewReports = findViewById(R.id.btn_view_reports);
+        btnLogout = findViewById(R.id.btn_logout);
+        rvRecentActivities = findViewById(R.id.rv_recent_activities);
         
         // Set welcome message
         tvWelcomeAdmin.setText("Welcome, " + adminName);
@@ -272,9 +265,13 @@ public class AdminActivity extends AppCompatActivity {
             Log.e(TAG, "Error generating reports", e);
         }
     }
-    
-    private void logout() {
+      private void logout() {
         Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show();
+        
+        // Clear user session data including current user ID
+        if (sharedPrefManager != null) {
+            sharedPrefManager.logout();
+        }
         
         // Navigate back to authentication
         Intent intent = new Intent(this, authActivity.class);

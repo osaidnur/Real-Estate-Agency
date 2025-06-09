@@ -9,11 +9,13 @@ public class SharedPrefManager {
     private static SharedPrefManager ourInstance = null;
     private static SharedPreferences sharedPreferences = null;
     private SharedPreferences.Editor editor = null;
-    
-    // Keys for remember me functionality
+      // Keys for remember me functionality
     public static final String KEY_REMEMBER_EMAIL = "remember_email";
     public static final String KEY_REMEMBER_PASSWORD = "remember_password";
     public static final String KEY_REMEMBER_ME = "remember_me";
+    
+    // Key for current user ID
+    public static final String KEY_CURRENT_USER_ID = "current_user_id";
     
     public static SharedPrefManager getInstance(Context context) {
         if (ourInstance != null) {
@@ -39,12 +41,33 @@ public class SharedPrefManager {
         editor.putBoolean(key, value);
         return editor.commit();
     }
-    
-    public boolean readBoolean(String key, boolean defaultValue) {
+      public boolean readBoolean(String key, boolean defaultValue) {
         return sharedPreferences.getBoolean(key, defaultValue);
     }
     
-    public boolean clearRememberMe() {
+    public boolean writeLong(String key, long value) {
+        editor.putLong(key, value);
+        return editor.commit();
+    }
+    
+    public long readLong(String key, long defaultValue) {
+        return sharedPreferences.getLong(key, defaultValue);
+    }
+    
+    // Methods for current user ID
+    public boolean setCurrentUserId(long userId) {
+        return writeLong(KEY_CURRENT_USER_ID, userId);
+    }
+    
+    public long getCurrentUserId() {
+        return readLong(KEY_CURRENT_USER_ID, -1); // -1 indicates no user logged in
+    }
+    
+    public boolean clearCurrentUserId() {
+        editor.remove(KEY_CURRENT_USER_ID);
+        return editor.commit();
+    }
+      public boolean clearRememberMe() {
         editor.remove(KEY_REMEMBER_EMAIL);
         editor.remove(KEY_REMEMBER_PASSWORD);
         editor.remove(KEY_REMEMBER_ME);
@@ -53,6 +76,15 @@ public class SharedPrefManager {
     
     public boolean clearAll() {
         editor.clear();
+        return editor.commit();
+    }
+    
+    // Method to clear all user session data (including current user ID)
+    public boolean logout() {
+        editor.remove(KEY_CURRENT_USER_ID);
+        editor.remove(KEY_REMEMBER_EMAIL);
+        editor.remove(KEY_REMEMBER_PASSWORD);
+        editor.remove(KEY_REMEMBER_ME);
         return editor.commit();
     }
 }

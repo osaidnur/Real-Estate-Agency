@@ -115,11 +115,13 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             return;
         }
         // Attempt authentication
-        User authenticatedUser = authManager.authenticateUser(email, password);
-          if (authenticatedUser != null) {
+        User authenticatedUser = authManager.authenticateUser(email, password);        if (authenticatedUser != null) {
             // Authentication successful
             Toast.makeText(this, "Login successful! Welcome " + authenticatedUser.getFirstName(), 
                           Toast.LENGTH_SHORT).show();
+            
+            // Store current user ID
+            sharedPrefManager.setCurrentUserId(authenticatedUser.getUserId());
             
             // Handle remember me functionality
               if (rememberMe) {
@@ -186,11 +188,13 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             // Registration successful
             Toast.makeText(this, "Registration successful! Welcome " + firstName + "!", 
                           Toast.LENGTH_LONG).show();
-            
-            // Get the newly created user for auto-login
+              // Get the newly created user for auto-login
             User registeredUser = dbHelper.getUserById(userId);
             
             if (registeredUser != null) {
+                // Store current user ID
+                sharedPrefManager.setCurrentUserId(registeredUser.getUserId());
+                
                 // Automatically navigate to the appropriate activity based on role
                 navigateBasedOnRole(registeredUser);
             } else {
@@ -240,17 +244,18 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             if (!savedEmail.isEmpty() && !savedPassword.isEmpty()) {
                 // Attempt auto-login
                 User authenticatedUser = authManager.authenticateUser(savedEmail, savedPassword);
-                
-                if (authenticatedUser != null) {
+                  if (authenticatedUser != null) {
                     // Auto-login successful
                     Toast.makeText(this, "Welcome back, " + authenticatedUser.getFirstName() + "!", 
                                   Toast.LENGTH_SHORT).show();
                     
+                    // Store current user ID
+                    sharedPrefManager.setCurrentUserId(authenticatedUser.getUserId());
+                    
                     // Navigate based on user role
-                    navigateBasedOnRole(authenticatedUser);
-                } else {
-                    // Auto-login failed, clear saved credentials
-                    sharedPrefManager.clearRememberMe();
+                    navigateBasedOnRole(authenticatedUser);                } else {
+                    // Auto-login failed, clear saved credentials and user ID
+                    sharedPrefManager.logout();
                     Toast.makeText(this, "Auto-login failed. Please login again.", Toast.LENGTH_SHORT).show();
                 }
             }
