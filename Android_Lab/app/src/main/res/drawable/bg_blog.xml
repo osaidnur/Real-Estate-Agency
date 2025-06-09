@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <bitmap
+            android:src="@drawable/blog"
+            android:gravity="fill"
+            android:tileMode="disabled" />
+    </item>
+    <item>
+        <color android:color="#3D1E3A5F" /> <!-- Very transparent navy blue overlay (24% opacity) -->
+    </item>
+</layer-list>

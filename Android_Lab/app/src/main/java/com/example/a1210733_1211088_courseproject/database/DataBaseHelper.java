@@ -12,13 +12,21 @@ import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.ReservationQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
 import com.example.a1210733_1211088_courseproject.models.User;
+import com.example.a1210733_1211088_courseproject.models.Property;
+import com.example.a1210733_1211088_courseproject.models.Reservation;
 import com.example.a1210733_1211088_courseproject.utils.PasswordUtils;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     public DataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
-    }    @Override
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         // Create tables using SQL queries from dedicated query files
         db.execSQL(UserQueries.CREATE_TABLE);
@@ -66,7 +74,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * Inserts a default admin account with the provided database instance
      * @param db The SQLiteDatabase instance to use
      * @return true if successful, false otherwise
-     */    private boolean insertDefaultAdmin(SQLiteDatabase db) {
+     */
+    private boolean insertDefaultAdmin(SQLiteDatabase db) {
         // Check if admin user already exists
         ContentValues values = new ContentValues();
         values.put(UserQueries.COLUMN_EMAIL, "admin@admin.com");
@@ -78,7 +87,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         
         values.put(UserQueries.COLUMN_FIRST_NAME, "Admin");
         values.put(UserQueries.COLUMN_LAST_NAME, "User"); // Adding required last_name field
-        values.put(UserQueries.COLUMN_ROLE, "admin");        try {
+        values.put(UserQueries.COLUMN_ROLE, "admin");
+        try {
             long result = db.insert(UserQueries.TABLE_NAME, null, values);
             if (result == -1) {
                 Log.e("DatabaseHelper", "Failed to insert the default admin account");
@@ -132,7 +142,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             Log.e("DatabaseHelper", "Error inserting user: " + e.getMessage());
             return -1;
         }
-    }    /**
+    }
+
+    /**
      * Checks if a user with the given email already exists
      * @param email The email to check
      * @return true if user exists, false otherwise
@@ -191,4 +203,209 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    /**
+     * Adds a property to a user's favorites
+     * @param userId The ID of the user
+     * @param propertyId The ID of the property to add to favorites
+     * @return true if successful, false otherwise
+     */
+    public boolean addToFavorites(long userId, long propertyId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FavoriteQueries.COLUMN_USER_ID, userId);
+        values.put(FavoriteQueries.COLUMN_PROPERTY_ID, propertyId);
+
+        try {
+            long result = db.insert(FavoriteQueries.TABLE_NAME, null, values);
+            return result != -1;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error adding to favorites: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Removes a property from a user's favorites
+     * @param userId The ID of the user
+     * @param propertyId The ID of the property to remove from favorites
+     * @return true if successful, false otherwise
+     */
+    public boolean removeFromFavorites(long userId, long propertyId) {
+        SQLiteDatabase db = getWritableDatabase();
+        String selection = FavoriteQueries.COLUMN_USER_ID + " = ? AND " +
+                          FavoriteQueries.COLUMN_PROPERTY_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(userId), String.valueOf(propertyId) };
+
+        try {
+            int deletedRows = db.delete(FavoriteQueries.TABLE_NAME, selection, selectionArgs);
+            return deletedRows > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error removing from favorites: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Retrieves a property by its ID
+     * @param propertyId The property ID to search for
+     * @return Property object if found, null otherwise
+     */
+    public Property getPropertyById(long propertyId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery(PropertyQueries.GET_PROPERTY_BY_ID, new String[]{String.valueOf(propertyId)});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                String type = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_TYPE));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_TITLE));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DESCRIPTION));
+                int bedrooms = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_BEDROOMS));
+                int bathrooms = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_BATHROOMS));
+                float area = cursor.getFloat(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_AREA));
+                double price = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_PRICE));
+                String country = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_COUNTRY));
+                String city = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_CITY));
+                String imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_IMAGE_URL));
+                boolean isSpecial = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_IS_SPECIAL)) == 1;
+                double discount = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DISCOUNT));
+                
+                return new Property(propertyId, type, title, description, bedrooms, bathrooms,
+                                  area, price, country, city, imageUrl, isSpecial, discount);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving property by ID: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves all reservations for a specific user
+     * @param userId The user ID to get reservations for
+     * @return List of Reservation objects for the user
+     */
+    public List<Reservation> getUserReservations(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        List<Reservation> reservations = new ArrayList<>();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery(ReservationQueries.GET_USER_RESERVATIONS, new String[]{String.valueOf(userId)});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long reservationId = cursor.getLong(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_RESERVATION_ID));
+                    long propertyId = cursor.getLong(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_PROPERTY_ID));
+                    String dateString = cursor.getString(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_RESERVATION_DATE));
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_STATUS));
+                    
+                    // Parse the date - assuming it's stored as ISO string
+                    LocalDateTime reservationDate = LocalDateTime.parse(dateString);
+                    
+                    reservations.add(new Reservation(reservationId, userId, propertyId, reservationDate, status));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving user reservations: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return reservations;
+    }
+
+    /**
+     * Retrieves all favorite properties for a specific user
+     * @param userId The user ID to get favorite properties for
+     * @return List of Property objects that are favorites for the user
+     */
+    public List<Property> getUserFavoriteProperties(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        List<Property> favoriteProperties = new ArrayList<>();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery(FavoriteQueries.GET_USER_FAVORITE_PROPERTIES, new String[]{String.valueOf(userId)});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long propertyId = cursor.getLong(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_PROPERTY_ID));
+                    String type = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_TYPE));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_TITLE));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DESCRIPTION));
+                    int bedrooms = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_BEDROOMS));
+                    int bathrooms = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_BATHROOMS));
+                    float area = cursor.getFloat(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_AREA));
+                    double price = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_PRICE));
+                    String country = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_COUNTRY));
+                    String city = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_CITY));
+                    String imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_IMAGE_URL));
+                    boolean isSpecial = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_IS_SPECIAL)) == 1;
+                    double discount = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DISCOUNT));
+                    
+                    favoriteProperties.add(new Property(propertyId, type, title, description, bedrooms, bathrooms,
+                                                      area, price, country, city, imageUrl, isSpecial, discount));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving user favorite properties: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return favoriteProperties;
+    }
+
+    /**
+     * Retrieves all properties that have special offers (featured properties)
+     * @return List of Property objects that are marked as special
+     */
+    public List<Property> getFeaturedProperties() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<Property> featuredProperties = new ArrayList<>();
+        Cursor cursor = null;
+        
+        try {
+            // Query for properties where isSpecial = 1
+            String query = "SELECT * FROM " + PropertyQueries.TABLE_NAME + 
+                          " WHERE " + PropertyQueries.COLUMN_IS_SPECIAL + " = 1" +
+                          " ORDER BY " + PropertyQueries.COLUMN_DISCOUNT + " DESC";
+            cursor = db.rawQuery(query, null);
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long propertyId = cursor.getLong(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_PROPERTY_ID));
+                    String type = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_TYPE));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_TITLE));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DESCRIPTION));
+                    int bedrooms = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_BEDROOMS));
+                    int bathrooms = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_BATHROOMS));
+                    float area = cursor.getFloat(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_AREA));
+                    double price = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_PRICE));
+                    String country = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_COUNTRY));
+                    String city = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_CITY));
+                    String imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_IMAGE_URL));
+                    boolean isSpecial = cursor.getInt(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_IS_SPECIAL)) == 1;
+                    double discount = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DISCOUNT));
+                    
+                    featuredProperties.add(new Property(propertyId, type, title, description, bedrooms, bathrooms,
+                                                       area, price, country, city, imageUrl, isSpecial, discount));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving featured properties: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return featuredProperties;
+    }
 }

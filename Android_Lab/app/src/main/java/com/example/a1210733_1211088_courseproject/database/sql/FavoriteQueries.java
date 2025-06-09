@@ -36,10 +36,13 @@ public class FavoriteQueries {
 
     public static final String GET_PROPERTY_FAVORITES =
             "SELECT * FROM " + TABLE_NAME +
-            " WHERE " + COLUMN_PROPERTY_ID + " = ?";
-
-    public static final String CHECK_IS_FAVORITE =
+            " WHERE " + COLUMN_PROPERTY_ID + " = ?";    public static final String CHECK_IS_FAVORITE =
             "SELECT COUNT(*) FROM " + TABLE_NAME +
+            " WHERE " + COLUMN_USER_ID + " = ? AND " +
+            COLUMN_PROPERTY_ID + " = ?";
+
+    public static final String GET_FAVORITE_BY_USER_AND_PROPERTY =
+            "SELECT * FROM " + TABLE_NAME +
             " WHERE " + COLUMN_USER_ID + " = ? AND " +
             COLUMN_PROPERTY_ID + " = ?";
 
