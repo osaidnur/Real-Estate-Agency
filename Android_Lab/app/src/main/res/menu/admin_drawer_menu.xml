@@ -21,11 +21,7 @@
     <item android:id="@+id/admin_nav_view_reservations" 
           android:title="View Reservations" 
           android:icon="@drawable/ic_reservation"/>
-    
-    <item android:id="@+id/admin_nav_view_reports" 
-          android:title="View Reports" 
-          android:icon="@drawable/ic_list"/>
-    
+
     <item android:id="@+id/admin_nav_logout" 
           android:title="Logout" 
           android:icon="@drawable/ic_logout"/>
