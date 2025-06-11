@@ -17,9 +17,11 @@
             android:exported="false" />
         <activity
             android:name=".activities.authActivity"
+            android:exported="false" />        <activity
+            android:name=".activities.AdminActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.AdminActivity"
+            android:name=".activities.AddAdminActivity"
             android:exported="false" />
 
         <activity
