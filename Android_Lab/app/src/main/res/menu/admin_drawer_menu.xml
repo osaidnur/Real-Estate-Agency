@@ -14,10 +14,13 @@
       <item android:id="@+id/admin_nav_view_properties" 
           android:title="View Properties" 
           android:icon="@drawable/ic_home"/>
-    
-    <item android:id="@+id/admin_nav_view_special_offers" 
+      <item android:id="@+id/admin_nav_view_special_offers" 
           android:title="View Special Offers" 
           android:icon="@drawable/ic_star"/>
+    
+    <item android:id="@+id/admin_nav_view_reservations" 
+          android:title="View Reservations" 
+          android:icon="@drawable/ic_reservation"/>
     
     <item android:id="@+id/admin_nav_view_reports" 
           android:title="View Reports" 

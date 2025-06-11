@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/admin_background">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All Reservations"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/admin_primary"
+        android:padding="16dp"
+        android:background="@color/admin_surface"
+        android:elevation="2dp" />
+
+    <!-- Content Container -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <!-- Reservations RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/admin_reservations_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp" />
+
+        <!-- Empty State -->
+        <TextView
+            android:id="@+id/admin_reservations_empty_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No reservations found.\nReservations from customers will appear here."
+            android:textSize="16sp"
+            android:textColor="@color/admin_text_secondary"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>

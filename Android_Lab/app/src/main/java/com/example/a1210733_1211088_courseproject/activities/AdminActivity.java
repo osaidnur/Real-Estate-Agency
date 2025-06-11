@@ -28,6 +28,7 @@ import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
 import com.example.a1210733_1211088_courseproject.fragments.AdminCustomersFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminDashboardFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminPropertiesFragment;
+import com.example.a1210733_1211088_courseproject.fragments.AdminReservationsFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminSpecialOffersFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminsFragment;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
@@ -140,11 +141,12 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
             // Pass current admin's user ID to prevent self-deletion
             Bundle args = new Bundle();
             args.putLong("current_admin_id", userId);
-            selectedFragment.setArguments(args);
-        } else if (id == R.id.admin_nav_view_properties) {
+            selectedFragment.setArguments(args);        } else if (id == R.id.admin_nav_view_properties) {
             selectedFragment = new AdminPropertiesFragment();
         } else if (id == R.id.admin_nav_view_special_offers) {
             selectedFragment = new AdminSpecialOffersFragment();
+        } else if (id == R.id.admin_nav_view_reservations) {
+            selectedFragment = new AdminReservationsFragment();
         } else if (id == R.id.admin_nav_view_reports) {
             viewReports();
         } else if (id == R.id.admin_nav_logout) {
