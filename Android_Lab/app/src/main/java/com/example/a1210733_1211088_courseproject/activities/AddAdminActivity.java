@@ -228,6 +228,17 @@ public class AddAdminActivity extends AppCompatActivity {
             return false;
         }
 
+        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
+            passwordEditText.setError("Password must include at least one letter, one number, and one special character");
+            passwordEditText.requestFocus();
+            return false;
+        }
+        if(firstName.length() < 2 || lastName.length() < 2) {
+            firstNameEditText.setError("First and last names must be at least 2 characters long");
+            firstNameEditText.requestFocus();
+            return false;
+        }
+
         if (gender.equals("Select Gender")) {
             Toast.makeText(this, "Please select a gender", Toast.LENGTH_SHORT).show();
             return false;
@@ -240,6 +251,19 @@ public class AddAdminActivity extends AppCompatActivity {
 
         if (city.equals("Select City")) {
             Toast.makeText(this, "Please select a city", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if(phone.isEmpty()){
+            phoneEditText.setError("Phone number cannot be empty");
+            phoneEditText.requestFocus();
+            return false;
+        }
+
+        // Validate phone number format (optional)
+        if (!phone.matches("^\\+\\d{1,3}\\s?\\d{6,15}$")) {
+            phoneEditText.setError("Invalid phone number format");
+            phoneEditText.requestFocus();
             return false;
         }
 
