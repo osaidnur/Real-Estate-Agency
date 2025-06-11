@@ -115,7 +115,7 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
 
             boolean matchesPrice = property.getPrice() <= maxPrice;
 
-            boolean matchesType = type.equals("All Types") || property.getType().equals(type);
+            boolean matchesType = type.equals("All") || property.getType().equals(type);
 
             if (matchesLocation && matchesPrice && matchesType) {
                 filteredList.add(property);
