@@ -1,8 +1,11 @@
 package com.example.a1210733_1211088_courseproject.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -14,8 +17,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.a1210733_1211088_courseproject.R;
@@ -29,6 +35,7 @@ import java.util.regex.Pattern;
 public class ProfileFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PERMISSION_REQUEST_READ_STORAGE = 2;
 
     private ImageView profilePic;
     private EditText firstNameEdit, lastNameEdit, phoneEdit;
@@ -40,6 +47,12 @@ public class ProfileFragment extends Fragment {
     private SharedPrefManager sharedPrefManager;
     private User currentUser;
 
+    // Activity result launcher for permission requests
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+
+    // Activity result launcher for image picker
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -48,7 +61,48 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_profile, container, false);
-    }    @Override
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize permission result launcher
+        requestPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        // Permission granted, open image picker
+                        openImagePickerSafely();
+                    } else {
+                        // Permission denied
+                        Toast.makeText(getContext(), "Permission denied. Cannot select profile image.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        // Initialize image picker result launcher
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        profileImageUri = result.getData().getData();
+                        profilePic.setImageURI(profileImageUri);
+
+                        // Save the profile photo URI to SharedPreferences for immediate access
+                        if (currentUser != null && profileImageUri != null) {
+                            String uriString = profileImageUri.toString();
+                            sharedPrefManager.writeString("profile_photo_" + currentUser.getUserId(), uriString);
+                            Toast.makeText(getContext(), "Photo selected. Save profile to update permanently.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -72,9 +126,35 @@ public class ProfileFragment extends Fragment {
         loadUserProfile();
 
         // Set up button click listeners
-        changePhotoBtn.setOnClickListener(v -> openImageChooser());
+        changePhotoBtn.setOnClickListener(v -> checkPermissionAndOpenImagePicker());
         saveProfileBtn.setOnClickListener(v -> saveProfileChanges());
         updatePasswordBtn.setOnClickListener(v -> updatePassword());
+    }
+
+    private void checkPermissionAndOpenImagePicker() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // For Android 13+, check READ_MEDIA_IMAGES permission
+            if (ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+            } else {
+                openImagePickerSafely();
+            }
+        } else {
+            // For Android 12 and below, check READ_EXTERNAL_STORAGE permission
+            if (ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+            } else {
+                openImagePickerSafely();
+            }
+        }
+    }
+
+    private void openImagePickerSafely() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        imagePickerLauncher.launch(intent);
     }
 
     private void openImageChooser() {
@@ -82,7 +162,9 @@ public class ProfileFragment extends Fragment {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), PICK_IMAGE_REQUEST);
-    }    @Override
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -90,7 +172,7 @@ public class ProfileFragment extends Fragment {
                 && data != null && data.getData() != null) {
             profileImageUri = data.getData();
             profilePic.setImageURI(profileImageUri);
-            
+
             // Save the profile photo URI to SharedPreferences for immediate access
             if (currentUser != null) {
                 String uriString = profileImageUri.toString();
@@ -102,30 +184,30 @@ public class ProfileFragment extends Fragment {
 
     private void loadUserProfile() {
         long currentUserId = sharedPrefManager.getCurrentUserId();
-        
+
         if (currentUserId == -1) {
             Toast.makeText(getContext(), "No user logged in", Toast.LENGTH_SHORT).show();
             return;
         }
-        
+
         // Load user data from database
         currentUser = dbHelper.getUserById(currentUserId);
-        
+
         if (currentUser != null) {
             firstNameEdit.setText(currentUser.getFirstName());
             lastNameEdit.setText(currentUser.getLastName());
             phoneEdit.setText(currentUser.getPhone());
-            
+
             // Load profile photo
             loadProfilePhoto();
         } else {
             Toast.makeText(getContext(), "Failed to load user profile", Toast.LENGTH_SHORT).show();
         }
     }
-    
+
     private void loadProfilePhoto() {
         if (currentUser == null) return;
-        
+
         // First try to load from database
         String photoPath = currentUser.getProfilePhoto();
         if (photoPath != null && !photoPath.isEmpty()) {
@@ -138,7 +220,7 @@ public class ProfileFragment extends Fragment {
                 // Photo URI might be invalid, try SharedPreferences
             }
         }
-        
+
         // Try to load from SharedPreferences (temporary storage)
         String tempPhotoPath = sharedPrefManager.readString("profile_photo_" + currentUser.getUserId(), "");
         if (!tempPhotoPath.isEmpty()) {
@@ -150,12 +232,14 @@ public class ProfileFragment extends Fragment {
                 // Keep default image
             }
         }
-    }    private void saveProfileChanges() {
+    }
+
+    private void saveProfileChanges() {
         if (currentUser == null) {
             Toast.makeText(getContext(), "No user data available", Toast.LENGTH_SHORT).show();
             return;
         }
-        
+
         String firstName = firstNameEdit.getText().toString().trim();
         String lastName = lastNameEdit.getText().toString().trim();
         String phone = phoneEdit.getText().toString().trim();
@@ -168,26 +252,26 @@ public class ProfileFragment extends Fragment {
             } else if (currentUser.getProfilePhoto() != null) {
                 profilePhotoPath = currentUser.getProfilePhoto();
             }
-            
+
             // Update in database
             boolean success = dbHelper.updateUserProfile(
-                currentUser.getUserId(), 
-                firstName, 
-                lastName, 
-                phone, 
-                profilePhotoPath
+                    currentUser.getUserId(),
+                    firstName,
+                    lastName,
+                    phone,
+                    profilePhotoPath
             );
-            
+
             if (success) {
                 // Update current user object
                 currentUser.setFirstName(firstName);
                 currentUser.setLastName(lastName);
                 currentUser.setPhone(phone);
                 currentUser.setProfilePhoto(profilePhotoPath);
-                
+
                 // Clear temporary photo storage
                 sharedPrefManager.writeString("profile_photo_" + currentUser.getUserId(), "");
-                
+
                 Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Failed to update profile. Please try again.", Toast.LENGTH_SHORT).show();
@@ -201,12 +285,12 @@ public class ProfileFragment extends Fragment {
             return false;
         }
 
-        if( TextUtils.isEmpty(firstName) || firstName.length() < 3) {
+        if (TextUtils.isEmpty(firstName) || firstName.length() < 3) {
             firstNameEdit.setError("First name must be at least 2 characters");
             return false;
         }
 
-        if( TextUtils.isEmpty(lastName) || lastName.length() < 3) {
+        if (TextUtils.isEmpty(lastName) || lastName.length() < 3) {
             lastNameEdit.setError("Last name must be at least 2 characters");
             return false;
         }
@@ -233,12 +317,14 @@ public class ProfileFragment extends Fragment {
 //        }
 
         return true;
-    }    private void updatePassword() {
+    }
+
+    private void updatePassword() {
         if (currentUser == null) {
             Toast.makeText(getContext(), "No user data available", Toast.LENGTH_SHORT).show();
             return;
         }
-        
+
         String currentPassword = currentPasswordEdit.getText().toString();
         String newPassword = newPasswordEdit.getText().toString();
         String confirmPassword = confirmPasswordEdit.getText().toString();
@@ -246,11 +332,11 @@ public class ProfileFragment extends Fragment {
         if (validatePasswordChange(currentPassword, newPassword, confirmPassword)) {
             // Update password in database
             boolean success = dbHelper.updateUserPassword(
-                currentUser.getUserId(), 
-                currentPassword, 
-                newPassword
+                    currentUser.getUserId(),
+                    currentPassword,
+                    newPassword
             );
-            
+
             if (success) {
                 Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
                 currentPasswordEdit.setText("");
