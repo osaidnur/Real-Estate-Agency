@@ -77,19 +77,15 @@
                     android:text="Get In Touch"
                     style="@style/SubtitleTextStyle"
                     android:gravity="center"
-                    android:layout_marginBottom="16dp"/>
-
-                <Button
+                    android:layout_marginBottom="16dp"/>                <Button
                     android:id="@+id/btn_call"
                     style="@style/AppButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Call Us (+970599000000)"
-                    android:drawableLeft="@drawable/ic_favorite"
+                    android:drawableLeft="@drawable/ic_phone"
                     android:padding="16dp"
-                    android:layout_marginBottom="12dp"/>
-
-                <Button
+                    android:layout_marginBottom="12dp"/>                <Button
                     android:id="@+id/btn_email"
                     style="@style/AppButtonStyle"
                     android:layout_width="match_parent"
@@ -105,7 +101,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Locate Us on Maps"
-                    android:drawableLeft="@drawable/ic_home"
+                    android:drawableLeft="@drawable/ic_location"
                     android:padding="16dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
