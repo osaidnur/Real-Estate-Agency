@@ -147,8 +147,6 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
             selectedFragment = new AdminSpecialOffersFragment();
         } else if (id == R.id.admin_nav_view_reservations) {
             selectedFragment = new AdminReservationsFragment();
-        } else if (id == R.id.admin_nav_view_reports) {
-            viewReports();
         } else if (id == R.id.admin_nav_logout) {
             logout();
         }
