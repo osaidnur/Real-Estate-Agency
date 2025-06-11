@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +31,13 @@ public class PropertiesFragment extends Fragment {
     private RecyclerView recyclerView;
     private DataBaseHelper dbHelper;
     private List<Property> propertyList;
+    private PropertyAdapter adapter;
+
+    // Search UI elements
+    private EditText searchLocation;
+    private EditText searchPrice;
+    private Spinner searchType;
+    private Button searchButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,14 +53,75 @@ public class PropertiesFragment extends Fragment {
         // Initialize UI components
         recyclerView = view.findViewById(R.id.properties_recycler);
 
+        // Initialize search UI elements
+        searchLocation = view.findViewById(R.id.search_location);
+        searchPrice = view.findViewById(R.id.search_price);
+        searchType = view.findViewById(R.id.search_type);
+        searchButton = view.findViewById(R.id.search_button);
+
+        // Setup property type spinner
+        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.property_types,
+                android.R.layout.simple_spinner_item);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        searchType.setAdapter(typeAdapter);
+
         // Initialize database helper
         dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Load properties from database
+        // Set click listener for search button
+        searchButton.setOnClickListener(v -> performSearch());
+
+        // Load all properties initially
         loadProperties();
+    }
+
+    private void performSearch() {
+        String location = searchLocation.getText().toString().trim();
+        String priceStr = searchPrice.getText().toString().trim();
+        String type = searchType.getSelectedItem().toString();
+
+        // Default max price if not specified
+        double maxPrice = Double.MAX_VALUE;
+
+        if (!priceStr.isEmpty()) {
+            try {
+                maxPrice = Double.parseDouble(priceStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Please enter a valid price", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // Filter the properties based on search criteria
+        List<Property> filteredList = new ArrayList<>();
+
+        for (Property property : propertyList) {
+            boolean matchesLocation = location.isEmpty() ||
+                    property.getCity().toLowerCase().contains(location.toLowerCase()) ||
+                    property.getCountry().toLowerCase().contains(location.toLowerCase());
+
+            boolean matchesPrice = property.getPrice() <= maxPrice;
+
+            boolean matchesType = type.equals("All Types") || property.getType().equals(type);
+
+            if (matchesLocation && matchesPrice && matchesType) {
+                filteredList.add(property);
+            }
+        }
+
+        // Update the adapter with filtered results
+        adapter = new PropertyAdapter(filteredList);
+        recyclerView.setAdapter(adapter);
+
+        // Show message if no results found
+        if (filteredList.isEmpty()) {
+            Toast.makeText(getContext(), "No properties match your search criteria", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadProperties() {
@@ -88,7 +160,7 @@ public class PropertiesFragment extends Fragment {
             } while (cursor.moveToNext());
 
             // Set adapter with property list
-            PropertyAdapter adapter = new PropertyAdapter(propertyList);
+            adapter = new PropertyAdapter(propertyList);
             recyclerView.setAdapter(adapter);
 
         } else {
@@ -159,4 +231,3 @@ public class PropertiesFragment extends Fragment {
         }
     }
 }
-
