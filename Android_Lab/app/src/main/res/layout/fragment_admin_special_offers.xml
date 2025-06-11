@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/background_light">
+    android:padding="24dp"
+    android:background="@drawable/bg_blog">
 
     <!-- Header -->
     <TextView
@@ -13,7 +13,11 @@
         android:text="Special Offers Management"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/primary_text"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/olivera_demo"
+        android:background="@drawable/oval_heading_background"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="20dp"
         android:gravity="center"
         android:layout_marginBottom="16dp" />
 
@@ -34,7 +38,8 @@
         android:layout_weight="1"
         android:text="No special offers found.\nAdd special offers from the Properties section."
         android:textSize="16sp"
-        android:textColor="@color/secondary_text"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/olivera_demo"
         android:gravity="center"
         android:drawableTop="@drawable/ic_star"
         android:drawablePadding="16dp"

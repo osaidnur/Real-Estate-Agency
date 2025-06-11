@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/admin_background">
+    android:background="@drawable/bg_blog">
 
     <!-- Header -->
     <TextView
@@ -12,16 +12,19 @@
         android:text="All Reservations"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/admin_primary"
-        android:padding="16dp"
-        android:background="@color/admin_surface"
-        android:elevation="2dp" />
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/olivera_demo"
+        android:background="@drawable/oval_heading_background"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="20dp"
+        android:layout_margin="24dp"
+        android:gravity="center" />
 
     <!-- Content Container -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:padding="16dp">
 
         <!-- Reservations RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -39,7 +42,8 @@
             android:layout_gravity="center"
             android:text="No reservations found.\nReservations from customers will appear here."
             android:textSize="16sp"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/olivera_demo"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:visibility="gone" />

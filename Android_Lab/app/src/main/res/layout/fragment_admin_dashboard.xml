@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/admin_background_light"
-    android:padding="16dp">
+    android:background="@drawable/bg_blog">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
         <!-- Welcome Header -->
         <androidx.cardview.widget.CardView
@@ -33,6 +33,7 @@
                     android:textSize="26sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
+                    android:fontFamily="@font/olivera_demo"
                     android:gravity="center" />
 
                 <TextView
@@ -41,6 +42,7 @@
                     android:text="Real Estate Analytics Overview"
                     android:textSize="14sp"
                     android:textColor="@color/admin_accent_light"
+                    android:fontFamily="@font/olivera_demo"
                     android:gravity="center"
                     android:layout_marginTop="4dp" />
             </LinearLayout>

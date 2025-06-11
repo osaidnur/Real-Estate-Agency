@@ -3,15 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/bg_blog"
+    android:padding="24dp">
 
     <!-- Title -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Customer Management"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/olivera_demo"
+        android:background="@drawable/oval_heading_background"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="20dp"
         android:layout_marginBottom="16dp"
         android:gravity="center" />
 
@@ -30,7 +36,8 @@
         android:layout_weight="1"
         android:text="No customers found."
         android:textSize="16sp"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/olivera_demo"
         android:gravity="center"
         android:visibility="gone" />
 

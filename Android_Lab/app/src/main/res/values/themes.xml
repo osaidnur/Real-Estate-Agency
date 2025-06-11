@@ -6,4 +6,21 @@
     </style>
 
     <style name="Theme.1210733_1211088_CourseProject" parent="Base.Theme._1210733_1211088_CourseProject" />
+
+    <!-- Admin Theme -->
+    <style name="Theme.AdminDashboard" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/admin_primary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/admin_accent</item>
+        <item name="colorSecondary">@color/admin_secondary</item>
+        <item name="android:windowBackground">@color/admin_background</item>
+        <item name="android:statusBarColor">@color/admin_primary</item>
+        <!-- Text appearance -->
+        <item name="textAppearanceHeadline6">@style/AdminTextAppearance.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/AdminTextAppearance.Subtitle1</item>
+        <item name="textAppearanceBody1">@style/AdminTextAppearance.Body1</item>
+        <!-- Widget styles -->
+        <item name="materialButtonStyle">@style/AdminButtonStyle</item>
+        <item name="textInputStyle">@style/AdminInputStyle</item>
+    </style>
 </resources>
