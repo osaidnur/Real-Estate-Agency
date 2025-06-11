@@ -2,6 +2,7 @@ package com.example.a1210733_1211088_courseproject.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.a1210733_1211088_courseproject.R;
+import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
+import com.example.a1210733_1211088_courseproject.database.sql.ReservationQueries;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,9 +33,12 @@ public class ReservationFragment extends Fragment {
     private Button timePickerButton;
     private Button confirmReservationButton;
 
-    private int propertyId;
+    private long propertyId;
     private String propertyTitle;
     private Calendar selectedDateTime;
+    private DataBaseHelper dbHelper;
+    private SharedPrefManager prefManager;
+    private long currentUserId;
 
     public ReservationFragment() {
         // Required empty public constructor
@@ -41,10 +48,17 @@ public class ReservationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            propertyId = getArguments().getInt("propertyId", -1);
+            propertyId = getArguments().getLong("propertyId", -1);
             propertyTitle = getArguments().getString("propertyTitle", "");
         }
         selectedDateTime = Calendar.getInstance();
+
+        // Initialize database helper
+        dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
+
+        // Get current user ID
+        prefManager = SharedPrefManager.getInstance(getContext());
+        currentUserId = prefManager.getCurrentUserId();
     }
 
     @Override
@@ -129,13 +143,51 @@ public class ReservationFragment extends Fragment {
             return;
         }
 
-        // Here you would save the reservation to a database
-        // For this example, we'll just show a confirmation message
-        String confirmationMessage = "Property " + propertyTitle + " reserved for " +
-                reservationDateTextView.getText() + " at " + reservationTimeTextView.getText();
-        Toast.makeText(getContext(), confirmationMessage, Toast.LENGTH_LONG).show();
+        // Format date and time for database
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String dateTimeStr = dateTimeFormat.format(selectedDateTime.getTime());
 
-        // Navigate back to the properties fragment
-        getParentFragmentManager().popBackStack();
+        // Save the reservation to database
+        boolean success = saveReservationToDatabase(currentUserId, propertyId, dateTimeStr);
+
+        if (success) {
+            // Show confirmation message
+            String confirmationMessage = "Property " + propertyTitle + " reserved for " +
+                    reservationDateTextView.getText() + " at " + reservationTimeTextView.getText();
+            Toast.makeText(getContext(), confirmationMessage, Toast.LENGTH_LONG).show();
+
+            // Navigate back to the properties fragment
+            getParentFragmentManager().popBackStack();
+        } else {
+            Toast.makeText(getContext(), "Failed to save reservation. Please try again.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Saves a reservation to the database
+     * @param userId The user ID making the reservation
+     * @param propertyId The property ID being reserved
+     * @param dateTime The date and time of the reservation
+     * @return true if successful, false otherwise
+     */
+    private boolean saveReservationToDatabase(long userId, long propertyId, String dateTime) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(ReservationQueries.COLUMN_USER_ID, userId);
+            values.put(ReservationQueries.COLUMN_PROPERTY_ID, propertyId);
+            values.put(ReservationQueries.COLUMN_RESERVATION_DATE, dateTime);
+            values.put(ReservationQueries.COLUMN_STATUS, "Pending"); // Default status
+
+            // Insert into database
+            long id = dbHelper.getWritableDatabase().insert(
+                    ReservationQueries.TABLE_NAME,
+                    null,
+                    values);
+
+            return id != -1; // Return true if insertion was successful
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

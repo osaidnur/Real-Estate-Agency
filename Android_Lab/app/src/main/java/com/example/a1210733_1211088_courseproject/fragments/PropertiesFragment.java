@@ -19,19 +19,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a1210733_1211088_courseproject.R;
+import com.example.a1210733_1211088_courseproject.adapters.PropertyAdapter;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.models.Property;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropertiesFragment extends Fragment {
+public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPropertyInteractionListener {
 
     private RecyclerView recyclerView;
     private DataBaseHelper dbHelper;
     private List<Property> propertyList;
     private PropertyAdapter adapter;
+    private SharedPrefManager prefManager;
+    private long currentUserId;
 
     // Search UI elements
     private EditText searchLocation;
@@ -69,6 +73,10 @@ public class PropertiesFragment extends Fragment {
 
         // Initialize database helper
         dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
+
+        // Get current user ID from SharedPreferences
+        prefManager = SharedPrefManager.getInstance(getContext());
+        currentUserId = prefManager.getCurrentUserId();
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -115,7 +123,7 @@ public class PropertiesFragment extends Fragment {
         }
 
         // Update the adapter with filtered results
-        adapter = new PropertyAdapter(filteredList);
+        adapter = new PropertyAdapter(getContext(), filteredList, this);
         recyclerView.setAdapter(adapter);
 
         // Show message if no results found
@@ -159,8 +167,8 @@ public class PropertiesFragment extends Fragment {
 
             } while (cursor.moveToNext());
 
-            // Set adapter with property list
-            adapter = new PropertyAdapter(propertyList);
+            // Set adapter with property list - use the constructor that includes the listener
+            adapter = new PropertyAdapter(getContext(), propertyList, this);
             recyclerView.setAdapter(adapter);
 
         } else {
@@ -173,61 +181,39 @@ public class PropertiesFragment extends Fragment {
         }
     }
 
-    // RecyclerView Adapter for properties
-    private class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.PropertyViewHolder> {
-
-        private List<Property> properties;
-
-        PropertyAdapter(List<Property> properties) {
-            this.properties = properties;
+    // Implement OnPropertyInteractionListener methods
+    @Override
+    public void onAddToFavorites(Property property) {
+        boolean success = dbHelper.addToFavorites(currentUserId, property.getPropertyId());
+        if (success) {
+            Toast.makeText(getContext(), property.getTitle() + " added to favorites", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Property already in favorites", Toast.LENGTH_SHORT).show();
         }
+    }
 
-        @NonNull
-        @Override
-        public PropertyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_property, parent, false);
-            return new PropertyViewHolder(itemView);
+    @Override
+    public void onRemoveFromFavorites(Property property) {
+        boolean success = dbHelper.removeFromFavorites(currentUserId, property.getPropertyId());
+        if (success) {
+            Toast.makeText(getContext(), property.getTitle() + " removed from favorites", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Error removing property from favorites", Toast.LENGTH_SHORT).show();
         }
+    }
 
-        @Override
-        public void onBindViewHolder(@NonNull PropertyViewHolder holder, int position) {
-            Property property = properties.get(position);
-            holder.titleTextView.setText(property.getTitle());
-            holder.priceTextView.setText(String.format("$%.2f", property.getPrice()));
-            holder.locationTextView.setText(property.getCity());
-            holder.typeTextView.setText(property.getType());
-            holder.infoTextView.setText(String.format("%d bed, %d bath",
-                    property.getBedrooms(), property.getBathrooms()));
+    @Override
+    public void onReserveProperty(Property property) {
+        // Navigate to reservation form
+        ReservationFragment reservationFragment = new ReservationFragment();
+        Bundle args = new Bundle();
+        args.putLong("propertyId", property.getPropertyId());
+        reservationFragment.setArguments(args);
 
-            // Set click listener for item
-            holder.itemView.setOnClickListener(v -> {
-                // Show property details or navigate to detail fragment
-                Toast.makeText(getContext(), "Selected: " + property.getTitle(), Toast.LENGTH_SHORT).show();
-                // Future enhancement: Navigate to property detail page
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return properties.size();
-        }
-
-        class PropertyViewHolder extends RecyclerView.ViewHolder {
-            TextView titleTextView;
-            TextView priceTextView;
-            TextView locationTextView;
-            TextView typeTextView;
-            TextView infoTextView;
-
-            PropertyViewHolder(View view) {
-                super(view);
-                titleTextView = view.findViewById(R.id.property_title);
-                priceTextView = view.findViewById(R.id.property_price);
-                locationTextView = view.findViewById(R.id.property_location);
-                typeTextView = view.findViewById(R.id.property_type);
-                infoTextView = view.findViewById(R.id.property_info);
-            }
-        }
+        // Replace current fragment with reservation fragment
+        getParentFragmentManager().beginTransaction()
+            .replace(R.id.home_fragment_container, reservationFragment)
+            .addToBackStack(null)
+            .commit();
     }
 }

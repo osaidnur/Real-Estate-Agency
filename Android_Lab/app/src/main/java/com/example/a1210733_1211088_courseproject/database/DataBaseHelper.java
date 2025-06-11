@@ -17,6 +17,7 @@ import com.example.a1210733_1211088_courseproject.models.Reservation;
 import com.example.a1210733_1211088_courseproject.utils.PasswordUtils;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -306,9 +307,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     String dateString = cursor.getString(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_RESERVATION_DATE));
                     String status = cursor.getString(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_STATUS));
                     
-                    // Parse the date - assuming it's stored as ISO string
-                    LocalDateTime reservationDate = LocalDateTime.parse(dateString);
-                    
+                    // Parse the date string in the format it was stored - "yyyy-MM-dd HH:mm:ss"
+                    LocalDateTime reservationDate;
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        reservationDate = LocalDateTime.parse(dateString, formatter);
+                    } catch (Exception e) {
+                        Log.e("DatabaseHelper", "Error parsing date: " + e.getMessage());
+                        // Use current date as fallback
+                        reservationDate = LocalDateTime.now();
+                    }
+
                     reservations.add(new Reservation(reservationId, userId, propertyId, reservationDate, status));
                 } while (cursor.moveToNext());
             }
