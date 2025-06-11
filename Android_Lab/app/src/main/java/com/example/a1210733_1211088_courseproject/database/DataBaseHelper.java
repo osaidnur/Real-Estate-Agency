@@ -408,4 +408,84 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return featuredProperties;
     }
+    
+    /**
+     * Deletes a user from the database
+     * Note: This will also cascade delete related favorites and reservations due to foreign key constraints
+     * @param userId The ID of the user to delete
+     * @return true if successful, false otherwise
+     */
+    public boolean deleteUser(long userId) {
+        SQLiteDatabase db = getWritableDatabase();
+        
+        try {
+            // First, delete related favorites and reservations to avoid foreign key constraint issues
+            String favoritesSelection = FavoriteQueries.COLUMN_USER_ID + " = ?";
+            String reservationsSelection = ReservationQueries.COLUMN_USER_ID + " = ?";
+            String[] selectionArgs = { String.valueOf(userId) };
+            
+            // Delete user's favorites
+            db.delete(FavoriteQueries.TABLE_NAME, favoritesSelection, selectionArgs);
+            
+            // Delete user's reservations
+            db.delete(ReservationQueries.TABLE_NAME, reservationsSelection, selectionArgs);
+            
+            // Now delete the user
+            int deletedRows = db.delete(UserQueries.TABLE_NAME, 
+                                      UserQueries.COLUMN_USER_ID + " = ?", 
+                                      selectionArgs);
+            
+            boolean success = deletedRows > 0;
+            if (success) {
+                Log.d("DatabaseHelper", "User deleted successfully with ID: " + userId);
+            } else {
+                Log.e("DatabaseHelper", "Failed to delete user with ID: " + userId);
+            }
+            return success;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error deleting user: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Retrieves all customers (users with role 'customer') from the database
+     * @return List of User objects that are customers
+     */
+    public List<User> getAllCustomers() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<User> customers = new ArrayList<>();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT * FROM " + UserQueries.TABLE_NAME + 
+                          " WHERE " + UserQueries.COLUMN_ROLE + " = ?";
+            cursor = db.rawQuery(query, new String[]{"customer"});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long userId = cursor.getLong(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_USER_ID));
+                    String email = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_EMAIL));
+                    String firstName = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_FIRST_NAME));
+                    String lastName = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_LAST_NAME));
+                    String gender = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_GENDER));
+                    String phone = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_PHONE));
+                    String country = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_COUNTRY));
+                    String city = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_CITY));
+                    String role = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_ROLE));
+                    String profilePhoto = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_PROFILE_PHOTO));
+                    
+                    customers.add(new User(userId, email, null, firstName, lastName, gender,
+                                         phone, country, city, role, profilePhoto));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving customers: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return customers;
+    }
 }
