@@ -19,6 +19,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.a1210733_1211088_courseproject.R;
+import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
+import com.example.a1210733_1211088_courseproject.models.User;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +36,9 @@ public class ProfileFragment extends Fragment {
     private Button saveProfileBtn, updatePasswordBtn, changePhotoBtn;
 
     private Uri profileImageUri;
+    private DataBaseHelper dbHelper;
+    private SharedPrefManager sharedPrefManager;
+    private User currentUser;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -42,11 +48,13 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
-
-    @Override
+    }    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Initialize database and shared preferences
+        dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
+        sharedPrefManager = SharedPrefManager.getInstance(getContext());
 
         // Initialize views
         profilePic = view.findViewById(R.id.profile_image);
@@ -60,7 +68,7 @@ public class ProfileFragment extends Fragment {
         updatePasswordBtn = view.findViewById(R.id.btn_update_password);
         changePhotoBtn = view.findViewById(R.id.btn_change_photo);
 
-        // In a real app, these values would be retrieved from a database
+        // Load user profile data from database
         loadUserProfile();
 
         // Set up button click listeners
@@ -74,9 +82,7 @@ public class ProfileFragment extends Fragment {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), PICK_IMAGE_REQUEST);
-    }
-
-    @Override
+    }    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -84,31 +90,124 @@ public class ProfileFragment extends Fragment {
                 && data != null && data.getData() != null) {
             profileImageUri = data.getData();
             profilePic.setImageURI(profileImageUri);
-            // In a real app, you would save this URI to a database or shared preferences
+            
+            // Save the profile photo URI to SharedPreferences for immediate access
+            if (currentUser != null) {
+                String uriString = profileImageUri.toString();
+                sharedPrefManager.writeString("profile_photo_" + currentUser.getUserId(), uriString);
+                Toast.makeText(getContext(), "Photo selected. Save profile to update permanently.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void loadUserProfile() {
-        // In a real app, load from database. For demo, we use sample data
-        firstNameEdit.setText("John");
-        lastNameEdit.setText("Doe");
-        phoneEdit.setText("+1234567890");
+        long currentUserId = sharedPrefManager.getCurrentUserId();
+        
+        if (currentUserId == -1) {
+            Toast.makeText(getContext(), "No user logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Load user data from database
+        currentUser = dbHelper.getUserById(currentUserId);
+        
+        if (currentUser != null) {
+            firstNameEdit.setText(currentUser.getFirstName());
+            lastNameEdit.setText(currentUser.getLastName());
+            phoneEdit.setText(currentUser.getPhone());
+            
+            // Load profile photo
+            loadProfilePhoto();
+        } else {
+            Toast.makeText(getContext(), "Failed to load user profile", Toast.LENGTH_SHORT).show();
+        }
     }
-
-    private void saveProfileChanges() {
+    
+    private void loadProfilePhoto() {
+        if (currentUser == null) return;
+        
+        // First try to load from database
+        String photoPath = currentUser.getProfilePhoto();
+        if (photoPath != null && !photoPath.isEmpty()) {
+            try {
+                Uri photoUri = Uri.parse(photoPath);
+                profilePic.setImageURI(photoUri);
+                profileImageUri = photoUri;
+                return;
+            } catch (Exception e) {
+                // Photo URI might be invalid, try SharedPreferences
+            }
+        }
+        
+        // Try to load from SharedPreferences (temporary storage)
+        String tempPhotoPath = sharedPrefManager.readString("profile_photo_" + currentUser.getUserId(), "");
+        if (!tempPhotoPath.isEmpty()) {
+            try {
+                Uri photoUri = Uri.parse(tempPhotoPath);
+                profilePic.setImageURI(photoUri);
+                profileImageUri = photoUri;
+            } catch (Exception e) {
+                // Keep default image
+            }
+        }
+    }    private void saveProfileChanges() {
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "No user data available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         String firstName = firstNameEdit.getText().toString().trim();
         String lastName = lastNameEdit.getText().toString().trim();
         String phone = phoneEdit.getText().toString().trim();
 
         if (validateProfileInput(firstName, lastName, phone)) {
-            // In a real app, save to database
-            Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+            // Prepare profile photo path
+            String profilePhotoPath = "";
+            if (profileImageUri != null) {
+                profilePhotoPath = profileImageUri.toString();
+            } else if (currentUser.getProfilePhoto() != null) {
+                profilePhotoPath = currentUser.getProfilePhoto();
+            }
+            
+            // Update in database
+            boolean success = dbHelper.updateUserProfile(
+                currentUser.getUserId(), 
+                firstName, 
+                lastName, 
+                phone, 
+                profilePhotoPath
+            );
+            
+            if (success) {
+                // Update current user object
+                currentUser.setFirstName(firstName);
+                currentUser.setLastName(lastName);
+                currentUser.setPhone(phone);
+                currentUser.setProfilePhoto(profilePhotoPath);
+                
+                // Clear temporary photo storage
+                sharedPrefManager.writeString("profile_photo_" + currentUser.getUserId(), "");
+                
+                Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed to update profile. Please try again.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private boolean validateProfileInput(String firstName, String lastName, String phone) {
         if (TextUtils.isEmpty(firstName)) {
             firstNameEdit.setError("First name is required");
+            return false;
+        }
+
+        if( TextUtils.isEmpty(firstName) || firstName.length() < 3) {
+            firstNameEdit.setError("First name must be at least 2 characters");
+            return false;
+        }
+
+        if( TextUtils.isEmpty(lastName) || lastName.length() < 3) {
+            lastNameEdit.setError("Last name must be at least 2 characters");
             return false;
         }
 
@@ -122,26 +221,44 @@ public class ProfileFragment extends Fragment {
             return false;
         }
 
-        // Simple phone validation - could be made more sophisticated
-        if (!phone.matches("^\\+?[0-9]{10,15}$")) {
+
+        if (!phone.isEmpty() && !phone.matches("^\\+\\d{1,3}\\s?\\d{6,15}$")) {
             phoneEdit.setError("Please enter a valid phone number");
             return false;
         }
+        // Simple phone validation - could be made more sophisticated
+//        if (!phone.matches("^\\+?[0-9]{10,15}$")) {
+//            phoneEdit.setError("Please enter a valid phone number");
+//            return false;
+//        }
 
         return true;
-    }
-
-    private void updatePassword() {
+    }    private void updatePassword() {
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "No user data available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         String currentPassword = currentPasswordEdit.getText().toString();
         String newPassword = newPasswordEdit.getText().toString();
         String confirmPassword = confirmPasswordEdit.getText().toString();
 
         if (validatePasswordChange(currentPassword, newPassword, confirmPassword)) {
-            // In a real app, verify current password and update with new password in database
-            Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
-            currentPasswordEdit.setText("");
-            newPasswordEdit.setText("");
-            confirmPasswordEdit.setText("");
+            // Update password in database
+            boolean success = dbHelper.updateUserPassword(
+                currentUser.getUserId(), 
+                currentPassword, 
+                newPassword
+            );
+            
+            if (success) {
+                Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                currentPasswordEdit.setText("");
+                newPasswordEdit.setText("");
+                confirmPasswordEdit.setText("");
+            } else {
+                Toast.makeText(getContext(), "Failed to update password. Please check your current password and try again.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -166,11 +283,13 @@ public class ProfileFragment extends Fragment {
             return false;
         }
 
-        // Password security validation (min 8 chars, 1 uppercase, 1 number, 1 special char)
-        Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
-        Matcher matcher = pattern.matcher(newPass);
-        if (!matcher.matches()) {
-            newPasswordEdit.setError("Password must have at least 8 characters, including uppercase, number, and special character");
+        if (newPass.length() < 6) {
+            newPasswordEdit.setError("Password must be at least 6 characters");
+            return false;
+        }
+
+        if (!newPass.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
+            newPasswordEdit.setError("Password must include at least one letter, one number, and one special character");
             return false;
         }
 

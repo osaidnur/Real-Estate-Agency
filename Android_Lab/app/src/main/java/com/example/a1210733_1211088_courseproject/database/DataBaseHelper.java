@@ -598,6 +598,129 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Updates a user's profile information (excluding password)
+     * @param userId The user ID to update
+     * @param firstName The new first name
+     * @param lastName The new last name
+     * @param phone The new phone number
+     * @param profilePhoto The new profile photo URI/path
+     * @return true if successful, false otherwise
+     */
+    public boolean updateUserProfile(long userId, String firstName, String lastName, String phone, String profilePhoto) {
+        SQLiteDatabase db = getWritableDatabase();
+        
+        try {
+            ContentValues values = new ContentValues();
+            values.put(UserQueries.COLUMN_FIRST_NAME, firstName);
+            values.put(UserQueries.COLUMN_LAST_NAME, lastName);
+            values.put(UserQueries.COLUMN_PHONE, phone);
+            values.put(UserQueries.COLUMN_PROFILE_PHOTO, profilePhoto);
+            
+            String selection = UserQueries.COLUMN_USER_ID + " = ?";
+            String[] selectionArgs = { String.valueOf(userId) };
+            
+            int count = db.update(
+                UserQueries.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+                
+            if (count > 0) {
+                Log.d("DatabaseHelper", "User profile updated successfully for ID: " + userId);
+                return true;
+            } else {
+                Log.e("DatabaseHelper", "Failed to update user profile for ID: " + userId);
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating user profile: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Updates a user's password
+     * @param userId The user ID to update
+     * @param currentPassword The current password for verification
+     * @param newPassword The new password (will be hashed)
+     * @return true if successful, false otherwise
+     */
+    public boolean updateUserPassword(long userId, String currentPassword, String newPassword) {
+        SQLiteDatabase db = getWritableDatabase();
+        
+        try {
+            // First verify the current password
+            User user = getUserById(userId);
+            if (user == null) {
+                Log.e("DatabaseHelper", "User not found for ID: " + userId);
+                return false;
+            }
+            
+            // Get stored password for verification
+            Cursor cursor = db.rawQuery(
+                "SELECT " + UserQueries.COLUMN_PASSWORD + " FROM " + UserQueries.TABLE_NAME + 
+                " WHERE " + UserQueries.COLUMN_USER_ID + " = ?", 
+                new String[]{String.valueOf(userId)}
+            );
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                String storedPassword = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_PASSWORD));
+                cursor.close();
+                
+                // Verify current password
+                String hashedCurrentPassword = PasswordUtils.hashPasswordSimple(currentPassword);
+                boolean isCurrentPasswordValid = false;
+                
+                if (hashedCurrentPassword != null && hashedCurrentPassword.equals(storedPassword)) {
+                    isCurrentPasswordValid = true;
+                } else {
+                    // Try plain text comparison (for existing data)
+                    isCurrentPasswordValid = currentPassword.equals(storedPassword);
+                }
+                
+                if (!isCurrentPasswordValid) {
+                    Log.e("DatabaseHelper", "Current password verification failed for user ID: " + userId);
+                    return false;
+                }
+                
+                // Hash the new password
+                String hashedNewPassword = PasswordUtils.hashPasswordSimple(newPassword);
+                if (hashedNewPassword == null) {
+                    Log.e("DatabaseHelper", "Failed to hash new password");
+                    return false;
+                }
+                
+                // Update password
+                ContentValues values = new ContentValues();
+                values.put(UserQueries.COLUMN_PASSWORD, hashedNewPassword);
+                
+                String selection = UserQueries.COLUMN_USER_ID + " = ?";
+                String[] selectionArgs = { String.valueOf(userId) };
+                
+                int count = db.update(
+                    UserQueries.TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs);
+                    
+                if (count > 0) {
+                    Log.d("DatabaseHelper", "Password updated successfully for user ID: " + userId);
+                    return true;
+                } else {
+                    Log.e("DatabaseHelper", "Failed to update password for user ID: " + userId);
+                    return false;
+                }
+            } else {
+                Log.e("DatabaseHelper", "Could not retrieve stored password for verification");
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating user password: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Updates a property's special offer status and discount
      * @param propertyId The property ID to update
      * @param isSpecial Whether the property has a special offer
