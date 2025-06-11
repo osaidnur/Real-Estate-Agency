@@ -208,6 +208,7 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
         ReservationFragment reservationFragment = new ReservationFragment();
         Bundle args = new Bundle();
         args.putLong("propertyId", property.getPropertyId());
+        args.putString("propertyTitle", property.getTitle());
         reservationFragment.setArguments(args);
 
         // Replace current fragment with reservation fragment
