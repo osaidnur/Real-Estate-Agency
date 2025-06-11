@@ -5,42 +5,49 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.example.a1210733_1211088_courseproject.R;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
+import com.example.a1210733_1211088_courseproject.fragments.AdminCustomersFragment;
+import com.example.a1210733_1211088_courseproject.fragments.AdminDashboardFragment;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
+import com.google.android.material.navigation.NavigationView;
 
-public class AdminActivity extends AppCompatActivity {
+public class AdminActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     
     private static final String TAG = "AdminActivity";
     
-    private TextView tvWelcomeAdmin, tvPropertiesCount, tvUsersCount;
-    private Button btnManageProperties, btnManageUsers, btnViewReports, btnLogout;
-    private RecyclerView rvRecentActivities;
-      private DataBaseHelper dbHelper;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle toggle;
+    private DataBaseHelper dbHelper;
     private SharedPrefManager sharedPrefManager;
     private long userId;
-    private String adminName;
-
-    @Override
+    private String adminName;    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_admin);        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
+        setContentView(R.layout.activity_admin_drawer);
+        
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -67,92 +74,104 @@ public class AdminActivity extends AppCompatActivity {
             adminName = "Admin";
         }
 
-        // Initialize views
-        initializeViews();
+        // Setup UI components
+        setupUI();
 
-        // Set up click listeners
-        setupClickListeners();
+        // Set default fragment
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.admin_fragment_container, new AdminDashboardFragment())
+                .commit();
+            navigationView.setCheckedItem(R.id.admin_nav_dashboard);
+        }
 
-        // Load dashboard data
-        loadDashboardData();
+        // Update navigation header
+        updateNavigationHeader();
 
         Log.d(TAG, "AdminActivity started for user ID: " + userId + ", name: " + adminName);
+    }    private void setupUI() {
+        // Initialize toolbar
+        toolbar = findViewById(R.id.admin_toolbar);
+        setSupportActionBar(toolbar);
+
+        // Initialize drawer layout
+        drawerLayout = findViewById(R.id.admin_drawer_layout);
+        navigationView = findViewById(R.id.admin_nav_view);
+
+        // Set up navigation item selection listener
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Set up the drawer toggle
+        toggle = new ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
     }
-      private void initializeViews() {
-        tvWelcomeAdmin = findViewById(R.id.tv_welcome_admin);
-        tvPropertiesCount = findViewById(R.id.tv_properties_count);
-        tvUsersCount = findViewById(R.id.tv_users_count);
-        btnManageProperties = findViewById(R.id.btn_manage_properties);
-        btnManageUsers = findViewById(R.id.btn_manage_users);
-        btnViewReports = findViewById(R.id.btn_view_reports);
-        btnLogout = findViewById(R.id.btn_logout);
-        rvRecentActivities = findViewById(R.id.rv_recent_activities);
+
+    private void updateNavigationHeader() {
+        // Update navigation header with admin info
+        android.view.View headerView = navigationView.getHeaderView(0);
+        TextView adminNameView = headerView.findViewById(R.id.admin_nav_user_name);
+        TextView adminEmailView = headerView.findViewById(R.id.admin_nav_user_email);
         
-        // Set welcome message
-        tvWelcomeAdmin.setText("Welcome, " + adminName);
-    }
-    
-    private void setupClickListeners() {
-        btnManageProperties.setOnClickListener(v -> manageProperties());
-        btnManageUsers.setOnClickListener(v -> manageUsers());
-        btnViewReports.setOnClickListener(v -> viewReports());
-        btnLogout.setOnClickListener(v -> logout());
-    }
-    
-    private void loadDashboardData() {
-        // Load property count
-        loadPropertiesCount();
-        
-        // Load users count
-        loadUsersCount();
-        
-        // Load recent activities (placeholder for now)
-        setupRecentActivities();
-    }
-    
-    private void loadPropertiesCount() {
-        try {
-            Cursor cursor = dbHelper.getAllProperties();
-            int count = (cursor != null) ? cursor.getCount() : 0;
-            tvPropertiesCount.setText(String.valueOf(count));
-            
-            if (cursor != null) {
-                cursor.close();
-            }
-            
-            Log.d(TAG, "Properties count loaded: " + count);
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading properties count", e);
-            tvPropertiesCount.setText("0");
+        if (adminNameView != null) {
+            adminNameView.setText("Welcome, " + adminName);
+        }
+        if (adminEmailView != null) {
+            adminEmailView.setText("admin@admin.com");
         }
     }
-    
-    private void loadUsersCount() {
-        try {
-            Cursor cursor = dbHelper.getAllUsers();
-            int count = (cursor != null) ? cursor.getCount() : 0;
-            tvUsersCount.setText(String.valueOf(count));
-            
-            if (cursor != null) {
-                cursor.close();
-            }
-            
-            Log.d(TAG, "Users count loaded: " + count);
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading users count", e);
-            tvUsersCount.setText("0");
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks
+        int id = item.getItemId();
+        Fragment selectedFragment = null;
+
+        if (id == R.id.admin_nav_dashboard) {
+            selectedFragment = new AdminDashboardFragment();
+        } else if (id == R.id.admin_nav_view_customers) {
+            selectedFragment = new AdminCustomersFragment();
+        } else if (id == R.id.admin_nav_manage_properties) {
+            manageProperties();
+        } else if (id == R.id.admin_nav_view_reports) {
+            viewReports();
+        } else if (id == R.id.admin_nav_logout) {
+            logout();
+        }
+
+        if (selectedFragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.admin_fragment_container, selectedFragment)
+                .commit();
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Close drawer if open when back button is pressed
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
-    
-    private void setupRecentActivities() {
-        // Set up RecyclerView for recent activities
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvRecentActivities.setLayoutManager(layoutManager);
-        
-        // TODO: Create adapter for recent activities
-        // For now, we'll leave this as a placeholder
-    }
-    
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }    
     private void manageProperties() {
         Toast.makeText(this, "Property management coming soon!", Toast.LENGTH_SHORT).show();
         
@@ -191,48 +210,6 @@ public class AdminActivity extends AppCompatActivity {
             Log.d(TAG, "==================================================");
         } catch (Exception e) {
             Log.e(TAG, "Error in property management", e);
-        }
-    }
-    
-    private void manageUsers() {
-        Toast.makeText(this, "User management coming soon!", Toast.LENGTH_SHORT).show();
-        
-        // Log all users for admin review
-        try {
-            Cursor cursor = dbHelper.getAllUsers();
-            
-            Log.d(TAG, "==================================================");
-            Log.d(TAG, "                 USER MANAGEMENT                  ");
-            Log.d(TAG, "==================================================");
-            
-            if (cursor == null || cursor.getCount() == 0) {
-                Log.d(TAG, "No users found in the database.");
-            } else {
-                Log.d(TAG, "Total users: " + cursor.getCount());
-                
-                while (cursor.moveToNext()) {
-                    @SuppressLint("Range") 
-                    long userIdVal = cursor.getLong(cursor.getColumnIndex(UserQueries.COLUMN_USER_ID));
-                    @SuppressLint("Range") 
-                    String email = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_EMAIL));
-                    @SuppressLint("Range") 
-                    String firstName = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_FIRST_NAME));
-                    @SuppressLint("Range") 
-                    String lastName = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_LAST_NAME));
-                    @SuppressLint("Range") 
-                    String role = cursor.getString(cursor.getColumnIndex(UserQueries.COLUMN_ROLE));
-                    
-                    Log.d(TAG, String.format("ID: %d | %s | %s %s | %s", 
-                          userIdVal, email, firstName, lastName, role));
-
-                }
-                
-                cursor.close();
-            }
-            
-            Log.d(TAG, "==================================================");
-        } catch (Exception e) {
-            Log.e(TAG, "Error in user management", e);
         }
     }
     

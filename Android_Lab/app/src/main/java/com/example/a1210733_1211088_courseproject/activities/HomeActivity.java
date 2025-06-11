@@ -128,7 +128,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
 
         // Navigate to login screen (assuming MainActivity is the login screen)
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, authActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
