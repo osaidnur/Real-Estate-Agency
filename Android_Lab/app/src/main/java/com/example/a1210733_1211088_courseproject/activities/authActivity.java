@@ -169,19 +169,43 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             return;
         }
 
+          if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
+            Toast.makeText(this, "Password must include at least one letter, one number, and one special character", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
           if(firstName.length() < 2 || lastName.length() < 2) {
             Toast.makeText(this, "First and last names must be at least 2 characters long", Toast.LENGTH_SHORT).show();
             return;
           }
+
+
         
         // Check if user already exists
         if (dbHelper.isUserExists(email)) {
             Toast.makeText(this, "User with this email already exists", Toast.LENGTH_SHORT).show();
             return;
         }
-          // Create new user object (default role is customer)
-        User newUser = new User(email, password, firstName, lastName, gender, 
-                               phone, country, city, "customer", null);
+        // validate if country and city are not empty
+        if (country.isEmpty() || city.isEmpty()) {
+            Toast.makeText(this, "Country and city cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(phone.isEmpty()){
+            Toast.makeText(this, "Phone number cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validate phone number format (optional)
+        if (!phone.isEmpty() && !phone.matches("^\\+\\d{1,3}\\s?\\d{6,15}$")) {
+            Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Create new user object (default role is customer)
+        User newUser = new User(email, password, firstName, lastName, gender,
+                phone.replaceAll("\\s+", ""), country, city, "customer", null);
           // Insert user into database
         long userId = dbHelper.insertUser(newUser);
         
