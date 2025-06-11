@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:background="@color/admin_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Property Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:id="@+id/property_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_home"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circular_background"
+                android:backgroundTint="@color/admin_accent_light" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/property_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Property Title"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/admin_text_primary"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/property_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="$0.00"
+                    android:textSize="14sp"
+                    android:textColor="@color/admin_primary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/property_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="12sp"
+                    android:textColor="@color/admin_text_secondary"
+                    android:layout_marginTop="2dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/admin_divider"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Customer Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customer Details"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/admin_text_primary"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/customer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Customer Name"
+                android:textSize="14sp"
+                android:textColor="@color/admin_text_primary"
+                android:drawableStart="@drawable/ic_person"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/customer_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="customer@email.com"
+                android:textSize="12sp"
+                android:textColor="@color/admin_text_secondary"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/customer_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Phone Number"
+                android:textSize="12sp"
+                android:textColor="@color/admin_text_secondary"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/admin_divider"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Reservation Details Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reservation Details"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/admin_text_primary"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/reservation_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Date: Jan 1, 2024"
+                android:textSize="12sp"
+                android:textColor="@color/admin_text_secondary"
+                android:drawableStart="@drawable/ic_calendar"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/reservation_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Time: 10:00 AM"
+                android:textSize="12sp"
+                android:textColor="@color/admin_text_secondary"
+                android:drawableStart="@drawable/ic_time"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/reservation_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status: PENDING"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/admin_warning"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btn_reject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reject"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/admin_error"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirm"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/admin_success"
+                style="@style/Widget.Material3.Button.UnelevatedButton" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

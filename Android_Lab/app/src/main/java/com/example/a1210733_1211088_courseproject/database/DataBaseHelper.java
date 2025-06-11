@@ -321,6 +321,71 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Retrieves all reservations from all users (admin function)
+     * @return List of all Reservation objects in the database
+     */
+    public List<Reservation> getAllReservations() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<Reservation> reservations = new ArrayList<>();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery(ReservationQueries.GET_ALL_RESERVATIONS, null);
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long reservationId = cursor.getLong(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_RESERVATION_ID));
+                    long userId = cursor.getLong(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_USER_ID));
+                    long propertyId = cursor.getLong(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_PROPERTY_ID));
+                    String dateString = cursor.getString(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_RESERVATION_DATE));
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(ReservationQueries.COLUMN_STATUS));
+                    
+                    // Parse the date - assuming it's stored as ISO string
+                    LocalDateTime reservationDate = LocalDateTime.parse(dateString);
+                    
+                    reservations.add(new Reservation(reservationId, userId, propertyId, reservationDate, status));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving all reservations: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return reservations;
+    }
+
+    /**
+     * Updates reservation status (admin function)
+     * @param reservationId The reservation ID to update
+     * @param status The new status ("pending", "confirmed", "cancelled")
+     * @return true if successful, false otherwise
+     */
+    public boolean updateReservationStatus(long reservationId, String status) {
+        SQLiteDatabase db = getWritableDatabase();
+        
+        try {
+            ContentValues values = new ContentValues();
+            values.put(ReservationQueries.COLUMN_STATUS, status);
+            
+            String selection = ReservationQueries.COLUMN_RESERVATION_ID + " = ?";
+            String[] selectionArgs = { String.valueOf(reservationId) };
+            
+            int count = db.update(
+                ReservationQueries.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+                
+            return count > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating reservation status: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Retrieves all favorite properties for a specific user
      * @param userId The user ID to get favorite properties for
      * @return List of Property objects that are favorites for the user

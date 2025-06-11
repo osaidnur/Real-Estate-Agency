@@ -11,11 +11,22 @@
     <color name="background_light">#F5F5F5</color>
     <color name="white">#FFFFFF</color>
     <color name="light_gray">#E0E0E0</color>
-    
-    <!-- Special Offer Colors -->
+      <!-- Special Offer Colors -->
     <color name="special_offer_background">#FFF3E0</color>
     <color name="special_offer_text">#E65100</color>
     <color name="price_color">#2E7D32</color>
     <color name="discount_price_color">#C62828</color>
     <color name="savings_color">#1B5E20</color>
+    
+    <!-- Admin Theme Colors -->
+    <color name="admin_primary">#283E51</color>
+    <color name="admin_background">#F8F9FA</color>
+    <color name="admin_surface">#FFFFFF</color>
+    <color name="admin_text_primary">#212121</color>
+    <color name="admin_text_secondary">#757575</color>
+    <color name="admin_accent_light">#E3F2FD</color>
+    <color name="admin_divider">#E0E0E0</color>
+    <color name="admin_success">#4CAF50</color>
+    <color name="admin_error">#F44336</color>
+    <color name="admin_warning">#FF9800</color>
 </resources>
