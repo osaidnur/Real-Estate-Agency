@@ -15,8 +15,13 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.a1210733_1211088_courseproject.R;
+import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
+import com.example.a1210733_1211088_courseproject.models.Reservation;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -27,11 +32,14 @@ public class ReservationFragment extends Fragment {
     private TextView reservationTimeTextView;
     private Button datePickerButton;
     private Button timePickerButton;
-    private Button confirmReservationButton;
-
-    private int propertyId;
+    private Button confirmReservationButton;    private long propertyId;
     private String propertyTitle;
     private Calendar selectedDateTime;
+    
+    // Database and user session
+    private DataBaseHelper dbHelper;
+    private SharedPrefManager prefManager;
+    private long currentUserId;
 
     public ReservationFragment() {
         // Required empty public constructor
@@ -39,18 +47,21 @@ public class ReservationFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            propertyId = getArguments().getInt("propertyId", -1);
+        super.onCreate(savedInstanceState);        if (getArguments() != null) {
+            propertyId = getArguments().getLong("propertyId", -1);
             propertyTitle = getArguments().getString("propertyTitle", "");
         }
         selectedDateTime = Calendar.getInstance();
-    }
-
-    @Override
+    }    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reservation, container, false);
+        View view = inflater.inflate(R.layout.fragment_reservation, container, false);        // Initialize database and user session
+        dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
+        prefManager = SharedPrefManager.getInstance(getContext());
+        currentUserId = prefManager.getCurrentUserId();
+
+        // Clean up any invalid reservations from previous bugs (one-time cleanup)
+        dbHelper.cleanupInvalidReservations();
 
         // Initialize views
         propertyTitleTextView = view.findViewById(R.id.property_title);
@@ -119,9 +130,7 @@ public class ReservationFragment extends Fragment {
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
         String timeStr = timeFormat.format(selectedDateTime.getTime());
         reservationTimeTextView.setText(timeStr);
-    }
-
-    private void confirmReservation() {
+    }    private void confirmReservation() {
         // Check if date and time are selected
         if (reservationDateTextView.getText().toString().isEmpty() ||
                 reservationTimeTextView.getText().toString().isEmpty()) {
@@ -129,13 +138,44 @@ public class ReservationFragment extends Fragment {
             return;
         }
 
-        // Here you would save the reservation to a database
-        // For this example, we'll just show a confirmation message
-        String confirmationMessage = "Property " + propertyTitle + " reserved for " +
-                reservationDateTextView.getText() + " at " + reservationTimeTextView.getText();
-        Toast.makeText(getContext(), confirmationMessage, Toast.LENGTH_LONG).show();
+        // Check if user is logged in
+        if (currentUserId <= 0) {
+            Toast.makeText(getContext(), "Please log in to make a reservation", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Navigate back to the properties fragment
-        getParentFragmentManager().popBackStack();
+        try {
+            // Convert Calendar to LocalDateTime
+            LocalDateTime reservationDateTime = LocalDateTime.ofInstant(
+                selectedDateTime.toInstant(), 
+                ZoneId.systemDefault()
+            );
+
+            // Create reservation object
+            Reservation reservation = new Reservation(
+                currentUserId,
+                propertyId,
+                reservationDateTime,
+                "pending"
+            );            // Save to database
+            long reservationId = dbHelper.insertReservation(reservation);
+
+            if (reservationId > 0) {
+                // Success message
+                String confirmationMessage = "Property " + propertyTitle + " reserved for " +
+                        reservationDateTextView.getText() + " at " + reservationTimeTextView.getText();
+                Toast.makeText(getContext(), confirmationMessage, Toast.LENGTH_LONG).show();
+
+                // Navigate back to the properties fragment
+                getParentFragmentManager().popBackStack();
+            } else if (reservationId == -2) {
+                Toast.makeText(getContext(), "This property is already reserved by another user.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed to create reservation. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error creating reservation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

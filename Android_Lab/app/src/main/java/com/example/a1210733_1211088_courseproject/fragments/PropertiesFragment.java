@@ -15,44 +15,48 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a1210733_1211088_courseproject.R;
+import com.example.a1210733_1211088_courseproject.adapters.PropertyAdapter;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
+import com.example.a1210733_1211088_courseproject.fragments.ReservationFragment;
 import com.example.a1210733_1211088_courseproject.models.Property;
+import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropertiesFragment extends Fragment {
+public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPropertyInteractionListener {
 
     private RecyclerView recyclerView;
     private DataBaseHelper dbHelper;
+    private SharedPrefManager sharedPrefManager;
     private List<Property> propertyList;
+    private PropertyAdapter adapter;
+    private long currentUserId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_properties, container, false);
-    }
-
-    @Override
+    }    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize UI components
         recyclerView = view.findViewById(R.id.properties_recycler);
 
-        // Initialize database helper
+        // Initialize database helper and shared preferences
         dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
+        sharedPrefManager = SharedPrefManager.getInstance(getContext());
+        currentUserId = sharedPrefManager.getCurrentUserId();
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Load properties from database
         loadProperties();
-    }
-
-    private void loadProperties() {
+    }    private void loadProperties() {
         propertyList = new ArrayList<>();
 
         // Get all properties from database
@@ -78,17 +82,17 @@ public class PropertiesFragment extends Fragment {
                 String country = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_COUNTRY));
                 String city = cursor.getString(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_CITY));
                 double discount = cursor.getDouble(cursor.getColumnIndexOrThrow(PropertyQueries.COLUMN_DISCOUNT));
+                
                 // Create Property object and add to list
-
-                Property property = new Property(id, type,title,description, bedrooms, bathrooms,
-                area, price, country, city,imageUrl, isSpecial,discount);
+                Property property = new Property(id, type, title, description, bedrooms, bathrooms,
+                        area, price, country, city, imageUrl, isSpecial, discount);
 
                 propertyList.add(property);
 
             } while (cursor.moveToNext());
 
-            // Set adapter with property list
-            PropertyAdapter adapter = new PropertyAdapter(propertyList);
+            // Set adapter with property list using the proper PropertyAdapter
+            adapter = new PropertyAdapter(getContext(), propertyList, this);
             recyclerView.setAdapter(adapter);
 
         } else {
@@ -101,62 +105,62 @@ public class PropertiesFragment extends Fragment {
         }
     }
 
-    // RecyclerView Adapter for properties
-    private class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.PropertyViewHolder> {
+    // Implement PropertyAdapter.OnPropertyInteractionListener methods
 
-        private List<Property> properties;
-
-        PropertyAdapter(List<Property> properties) {
-            this.properties = properties;
-        }
-
-        @NonNull
-        @Override
-        public PropertyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_property, parent, false);
-            return new PropertyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull PropertyViewHolder holder, int position) {
-            Property property = properties.get(position);
-            holder.titleTextView.setText(property.getTitle());
-            holder.priceTextView.setText(String.format("$%.2f", property.getPrice()));
-            holder.locationTextView.setText(property.getCity());
-            holder.typeTextView.setText(property.getType());
-            holder.infoTextView.setText(String.format("%d bed, %d bath",
-                    property.getBedrooms(), property.getBathrooms()));
-
-            // Set click listener for item
-            holder.itemView.setOnClickListener(v -> {
-                // Show property details or navigate to detail fragment
-                Toast.makeText(getContext(), "Selected: " + property.getTitle(), Toast.LENGTH_SHORT).show();
-                // Future enhancement: Navigate to property detail page
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return properties.size();
-        }
-
-        class PropertyViewHolder extends RecyclerView.ViewHolder {
-            TextView titleTextView;
-            TextView priceTextView;
-            TextView locationTextView;
-            TextView typeTextView;
-            TextView infoTextView;
-
-            PropertyViewHolder(View view) {
-                super(view);
-                titleTextView = view.findViewById(R.id.property_title);
-                priceTextView = view.findViewById(R.id.property_price);
-                locationTextView = view.findViewById(R.id.property_location);
-                typeTextView = view.findViewById(R.id.property_type);
-                infoTextView = view.findViewById(R.id.property_info);
+    @Override
+    public void onAddToFavorites(Property property) {
+        // Add to database
+        boolean success = dbHelper.addToFavorites(currentUserId, property.getPropertyId());
+        
+        if (getContext() != null) {
+            if (success) {
+                Toast.makeText(getContext(),
+                    property.getTitle() + " added to favorites",
+                    Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(),
+                    "Failed to add to favorites or already in favorites",
+                    Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onRemoveFromFavorites(Property property) {
+        // Remove from database
+        boolean success = dbHelper.removeFromFavorites(currentUserId, property.getPropertyId());
+        
+        if (getContext() != null) {
+            if (success) {
+                Toast.makeText(getContext(),
+                    property.getTitle() + " removed from favorites",
+                    Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(),
+                    "Failed to remove from favorites",
+                    Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onReserveProperty(Property property) {
+        if (currentUserId == -1) {
+            Toast.makeText(getContext(), "Please log in to reserve properties", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Open reservation fragment
+        ReservationFragment reservationFragment = new ReservationFragment();
+        Bundle args = new Bundle();
+        args.putLong("propertyId", property.getPropertyId());
+        args.putString("propertyTitle", property.getTitle());
+        reservationFragment.setArguments(args);
+
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.home_fragment_container, reservationFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
 
