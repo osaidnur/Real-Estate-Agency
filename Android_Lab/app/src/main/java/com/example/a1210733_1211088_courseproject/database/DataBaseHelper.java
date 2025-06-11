@@ -38,9 +38,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         // Insert the default admin account with the provided db instance
         insertDefaultAdmin(db);
-    }
-
-    @Override
+    }    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // For more drastic changes, drop and recreate tables
         db.execSQL(ReservationQueries.DROP_TABLE);
@@ -48,6 +46,91 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(PropertyQueries.DROP_TABLE);
         db.execSQL(UserQueries.DROP_TABLE);
         onCreate(db);
+    }
+    
+    /**
+     * Forces database schema update by recreating tables with new structure
+     * This is useful when table schema changes but version number hasn't changed
+     */
+    public void forceDatabaseUpdate() {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            // Check if we need to update the reservation table structure
+            Cursor cursor = db.rawQuery("PRAGMA table_info(" + ReservationQueries.TABLE_NAME + ")", null);
+            boolean needsUpdate = false;
+            
+            // Check if property_id column has UNIQUE constraint by attempting an insert test
+            try {
+                db.beginTransaction();
+                
+                // Try to insert two test reservations with same property_id
+                ContentValues testValues1 = new ContentValues();
+                testValues1.put(ReservationQueries.COLUMN_USER_ID, 999999);
+                testValues1.put(ReservationQueries.COLUMN_PROPERTY_ID, 999999);
+                testValues1.put(ReservationQueries.COLUMN_RESERVATION_DATE, "2024-01-01T00:00:00");
+                testValues1.put(ReservationQueries.COLUMN_STATUS, "test");
+                
+                ContentValues testValues2 = new ContentValues();
+                testValues2.put(ReservationQueries.COLUMN_USER_ID, 999998);
+                testValues2.put(ReservationQueries.COLUMN_PROPERTY_ID, 999999); // Same property_id
+                testValues2.put(ReservationQueries.COLUMN_RESERVATION_DATE, "2024-01-01T00:00:00");
+                testValues2.put(ReservationQueries.COLUMN_STATUS, "test");
+                
+                long id1 = db.insert(ReservationQueries.TABLE_NAME, null, testValues1);
+                long id2 = db.insert(ReservationQueries.TABLE_NAME, null, testValues2);
+                
+                // If second insert fails, we have UNIQUE constraint
+                if (id1 > 0 && id2 == -1) {
+                    needsUpdate = true;
+                }
+                
+                // Clean up test data
+                db.delete(ReservationQueries.TABLE_NAME, 
+                         ReservationQueries.COLUMN_PROPERTY_ID + " = 999999", null);
+                         
+                db.setTransactionSuccessful();
+            } catch (Exception e) {
+                needsUpdate = true; // If any error occurs, assume we need update
+            } finally {
+                db.endTransaction();
+            }
+            
+            if (cursor != null) {
+                cursor.close();
+            }
+            
+            if (needsUpdate) {
+                Log.d("DatabaseHelper", "Updating database schema to remove UNIQUE constraint");
+                
+                // Backup existing data
+                List<Reservation> existingReservations = getAllReservations();
+                
+                // Drop and recreate tables
+                db.execSQL(ReservationQueries.DROP_TABLE);
+                db.execSQL(ReservationQueries.CREATE_TABLE);
+                
+                // Restore data (excluding invalid entries)
+                for (Reservation reservation : existingReservations) {
+                    if (reservation.getPropertyId() > 0 && reservation.getUserId() > 0) {
+                        try {
+                            ContentValues values = new ContentValues();
+                            values.put(ReservationQueries.COLUMN_USER_ID, reservation.getUserId());
+                            values.put(ReservationQueries.COLUMN_PROPERTY_ID, reservation.getPropertyId());
+                            values.put(ReservationQueries.COLUMN_RESERVATION_DATE, reservation.getReservationDate().toString());
+                            values.put(ReservationQueries.COLUMN_STATUS, reservation.getStatus());
+                            db.insert(ReservationQueries.TABLE_NAME, null, values);
+                        } catch (Exception e) {
+                            Log.e("DatabaseHelper", "Error restoring reservation: " + e.getMessage());
+                        }
+                    }
+                }
+                
+                Log.d("DatabaseHelper", "Database schema updated successfully");
+            }
+            
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error during database update: " + e.getMessage());
+        }
     }
 
     /**
@@ -386,16 +469,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }    /**
      * Inserts a new reservation into the database
      * @param reservation The Reservation object to insert
-     * @return The ID of the inserted reservation, or -1 if insertion failed
+     * @return The ID of the inserted reservation, or -1 if insertion failed, or -2 if property already reserved
      */
     public long insertReservation(Reservation reservation) {
         SQLiteDatabase db = getWritableDatabase();
         
         try {
-            // First check if property already has an active reservation
+            // First check if property already has an active (non-cancelled) reservation
             String checkQuery = "SELECT COUNT(*) FROM " + ReservationQueries.TABLE_NAME + 
                               " WHERE " + ReservationQueries.COLUMN_PROPERTY_ID + " = ? " +
-                              " AND " + ReservationQueries.COLUMN_STATUS + " != 'cancelled'";
+                              " AND " + ReservationQueries.COLUMN_STATUS + " IN ('pending', 'confirmed')";
             Cursor cursor = db.rawQuery(checkQuery, new String[]{String.valueOf(reservation.getPropertyId())});
             
             boolean hasActiveReservation = false;
@@ -428,17 +511,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             Log.e("DatabaseHelper", "Error inserting reservation: " + e.getMessage());
             return -1;
         }
-    }
-
-    /**
-     * Cleans up invalid reservations with property_id = -1 (for debugging/testing)
+    }    /**
+     * Cleans up invalid reservations with property_id = -1 or other invalid data
      * @return Number of deleted invalid reservations
      */
     public int cleanupInvalidReservations() {
         SQLiteDatabase db = getWritableDatabase();
         
         try {
-            String selection = ReservationQueries.COLUMN_PROPERTY_ID + " = ?";
+            // Clean up reservations with invalid property IDs
+            String selection = ReservationQueries.COLUMN_PROPERTY_ID + " = ? OR " +
+                             ReservationQueries.COLUMN_PROPERTY_ID + " < 0";
             String[] selectionArgs = { "-1" };
             
             int deletedRows = db.delete(ReservationQueries.TABLE_NAME, selection, selectionArgs);

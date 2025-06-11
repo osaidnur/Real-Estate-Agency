@@ -60,7 +60,10 @@ public class ReservationFragment extends Fragment {
         prefManager = SharedPrefManager.getInstance(getContext());
         currentUserId = prefManager.getCurrentUserId();
 
-        // Clean up any invalid reservations from previous bugs (one-time cleanup)
+        // Force database schema update to remove UNIQUE constraint (one-time fix)
+        dbHelper.forceDatabaseUpdate();
+
+        // Clean up any invalid reservations from previous bugs
         dbHelper.cleanupInvalidReservations();
 
         // Initialize views
@@ -142,9 +145,7 @@ public class ReservationFragment extends Fragment {
         if (currentUserId <= 0) {
             Toast.makeText(getContext(), "Please log in to make a reservation", Toast.LENGTH_SHORT).show();
             return;
-        }
-
-        try {
+        }        try {
             // Convert Calendar to LocalDateTime
             LocalDateTime reservationDateTime = LocalDateTime.ofInstant(
                 selectedDateTime.toInstant(), 
@@ -172,10 +173,12 @@ public class ReservationFragment extends Fragment {
                 Toast.makeText(getContext(), "This property is already reserved by another user.", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Failed to create reservation. Please try again.", Toast.LENGTH_SHORT).show();
+                Log.e("ReservationFragment", "Failed to insert reservation - insertReservation returned: " + reservationId);
             }
 
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error creating reservation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("ReservationFragment", "Exception in confirmReservation: " + e.getMessage(), e);
         }
     }
 }

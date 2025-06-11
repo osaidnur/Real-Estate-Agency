@@ -13,14 +13,12 @@ public class ReservationQueries {
     public static final String COLUMN_USER_ID = "user_id";
     public static final String COLUMN_PROPERTY_ID = "property_id";
     public static final String COLUMN_RESERVATION_DATE = "reservation_date";
-    public static final String COLUMN_STATUS = "status";
-
-    // Create table query
+    public static final String COLUMN_STATUS = "status";    // Create table query
     public static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
             COLUMN_RESERVATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             COLUMN_USER_ID + " INTEGER NOT NULL," +
-            COLUMN_PROPERTY_ID + " INTEGER NOT NULL UNIQUE," + // enforce one reservation per property
+            COLUMN_PROPERTY_ID + " INTEGER NOT NULL," + // removed UNIQUE constraint - allow multiple reservations per property
             COLUMN_RESERVATION_DATE + " DATE NOT NULL," +
             COLUMN_STATUS + " TEXT NOT NULL," +
             " FOREIGN KEY(" + COLUMN_USER_ID + ") REFERENCES " + UserQueries.TABLE_NAME + "(" + UserQueries.COLUMN_USER_ID + ") ON DELETE CASCADE," +
