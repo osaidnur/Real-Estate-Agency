@@ -4,10 +4,13 @@
     <item android:id="@+id/admin_nav_dashboard" 
           android:title="Dashboard" 
           android:icon="@drawable/ic_home1"/>
-    
-    <item android:id="@+id/admin_nav_view_customers" 
+      <item android:id="@+id/admin_nav_view_customers" 
           android:title="View Customers" 
           android:icon="@drawable/ic_person"/>
+    
+    <item android:id="@+id/admin_nav_view_admins" 
+          android:title="View Admins" 
+          android:icon="@drawable/ic_admin"/>
     
     <item android:id="@+id/admin_nav_manage_properties" 
           android:title="Manage Properties" 

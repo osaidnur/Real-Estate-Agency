@@ -488,4 +488,45 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return customers;
     }
+
+    /**
+     * Retrieves all admins (users with role 'admin') from the database
+     * @return List of User objects that are admins
+     */
+    public List<User> getAllAdmins() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<User> admins = new ArrayList<>();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT * FROM " + UserQueries.TABLE_NAME + 
+                          " WHERE " + UserQueries.COLUMN_ROLE + " = ?";
+            cursor = db.rawQuery(query, new String[]{"admin"});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long userId = cursor.getLong(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_USER_ID));
+                    String email = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_EMAIL));
+                    String firstName = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_FIRST_NAME));
+                    String lastName = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_LAST_NAME));
+                    String gender = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_GENDER));
+                    String phone = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_PHONE));
+                    String country = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_COUNTRY));
+                    String city = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_CITY));
+                    String role = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_ROLE));
+                    String profilePhoto = cursor.getString(cursor.getColumnIndexOrThrow(UserQueries.COLUMN_PROFILE_PHOTO));
+                    
+                    admins.add(new User(userId, email, null, firstName, lastName, gender,
+                                      phone, country, city, role, profilePhoto));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error retrieving admins: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return admins;
+    }
 }
