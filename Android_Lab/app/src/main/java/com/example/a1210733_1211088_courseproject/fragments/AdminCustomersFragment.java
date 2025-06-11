@@ -121,6 +121,7 @@ public class AdminCustomersFragment extends Fragment implements CustomerAdapter.
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
