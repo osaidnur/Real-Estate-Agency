@@ -27,6 +27,8 @@ import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
 import com.example.a1210733_1211088_courseproject.fragments.AdminCustomersFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminDashboardFragment;
+import com.example.a1210733_1211088_courseproject.fragments.AdminPropertiesFragment;
+import com.example.a1210733_1211088_courseproject.fragments.AdminSpecialOffersFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminsFragment;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 import com.google.android.material.navigation.NavigationView;
@@ -133,15 +135,16 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         Fragment selectedFragment = null;        if (id == R.id.admin_nav_dashboard) {
             selectedFragment = new AdminDashboardFragment();
         } else if (id == R.id.admin_nav_view_customers) {
-            selectedFragment = new AdminCustomersFragment();
-        } else if (id == R.id.admin_nav_view_admins) {
+            selectedFragment = new AdminCustomersFragment();        } else if (id == R.id.admin_nav_view_admins) {
             selectedFragment = new AdminsFragment();
             // Pass current admin's user ID to prevent self-deletion
             Bundle args = new Bundle();
             args.putLong("current_admin_id", userId);
             selectedFragment.setArguments(args);
-        } else if (id == R.id.admin_nav_manage_properties) {
-            manageProperties();
+        } else if (id == R.id.admin_nav_view_properties) {
+            selectedFragment = new AdminPropertiesFragment();
+        } else if (id == R.id.admin_nav_view_special_offers) {
+            selectedFragment = new AdminSpecialOffersFragment();
         } else if (id == R.id.admin_nav_view_reports) {
             viewReports();
         } else if (id == R.id.admin_nav_logout) {
