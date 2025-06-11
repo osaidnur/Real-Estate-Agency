@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/background_light">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Special Offers Management"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary_text"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Special Offers RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/admin_special_offers_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:visibility="gone" />
+
+    <!-- Empty state view -->
+    <TextView
+        android:id="@+id/admin_special_offers_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="No special offers found.\nAdd special offers from the Properties section."
+        android:textSize="16sp"
+        android:textColor="@color/secondary_text"
+        android:gravity="center"
+        android:drawableTop="@drawable/ic_star"
+        android:drawablePadding="16dp"
+        android:visibility="visible" />
+
+</LinearLayout>

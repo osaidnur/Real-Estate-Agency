@@ -529,4 +529,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return admins;
     }
+
+    /**
+     * Updates a property's special offer status and discount
+     * @param propertyId The property ID to update
+     * @param isSpecial Whether the property has a special offer
+     * @param discount The discount percentage
+     * @return true if successful, false otherwise
+     */
+    public boolean updatePropertySpecialOffer(long propertyId, boolean isSpecial, double discount) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(PropertyQueries.COLUMN_IS_SPECIAL, isSpecial ? 1 : 0);
+        values.put(PropertyQueries.COLUMN_DISCOUNT, discount);
+        
+        try {
+            String whereClause = PropertyQueries.COLUMN_PROPERTY_ID + " = ?";
+            String[] whereArgs = {String.valueOf(propertyId)};
+            
+            int rowsAffected = db.update(PropertyQueries.TABLE_NAME, values, whereClause, whereArgs);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating property special offer: " + e.getMessage());
+            return false;
+        }
+    }
 }
