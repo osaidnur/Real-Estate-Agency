@@ -18,7 +18,9 @@ import com.example.a1210733_1211088_courseproject.utils.PasswordUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
@@ -618,5 +620,322 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             Log.e("DatabaseHelper", "Error updating property special offer: " + e.getMessage());
             return false;
         }
+    }
+
+    // =================== DASHBOARD STATISTICS METHODS ===================
+
+    /**
+     * Dashboard Statistics Class for organized data
+     */
+    public static class DashboardStats {
+        public int totalUsers;
+        public int totalCustomers;
+        public int totalProperties;
+        public int totalReservations;
+        public int reservedProperties;
+        public Map<String, Integer> customersByCountry;
+        public Map<String, Integer> genderDistribution;
+        public List<PropertyStatusInfo> propertyStatus;
+        public List<ReservationStatusInfo> reservationStatus;
+
+        public static class PropertyStatusInfo {
+            public String status;
+            public int count;
+            public String color;
+
+            public PropertyStatusInfo(String status, int count, String color) {
+                this.status = status;
+                this.count = count;
+                this.color = color;
+            }
+        }
+
+        public static class ReservationStatusInfo {
+            public String status;
+            public int count;
+            public String color;
+
+            public ReservationStatusInfo(String status, int count, String color) {
+                this.status = status;
+                this.count = count;
+                this.color = color;
+            }
+        }
+    }
+
+    /**
+     * Get comprehensive dashboard statistics
+     * @return DashboardStats object with all statistics
+     */
+    public DashboardStats getDashboardStats() {
+        DashboardStats stats = new DashboardStats();
+        
+        try {
+            stats.totalUsers = getTotalUsersCount();
+            stats.totalCustomers = getTotalCustomersCount();
+            stats.totalProperties = getTotalPropertiesCount();
+            stats.totalReservations = getTotalReservationsCount();
+            stats.reservedProperties = getReservedPropertiesCount();
+            stats.customersByCountry = getCustomersByCountry();
+            stats.genderDistribution = getGenderDistribution();
+            stats.propertyStatus = getPropertyStatusDistribution();
+            stats.reservationStatus = getReservationStatusDistribution();
+            
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting dashboard stats: " + e.getMessage());
+        }
+        
+        return stats;
+    }
+
+    /**
+     * Get total number of users (all roles)
+     */
+    public int getTotalUsersCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + UserQueries.TABLE_NAME, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting users count: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return 0;
+    }
+
+    /**
+     * Get total number of customers
+     */
+    public int getTotalCustomersCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT COUNT(*) FROM " + UserQueries.TABLE_NAME + 
+                          " WHERE " + UserQueries.COLUMN_ROLE + " = 'customer'";
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting customers count: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return 0;
+    }
+
+    /**
+     * Get total number of properties
+     */
+    public int getTotalPropertiesCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + PropertyQueries.TABLE_NAME, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting properties count: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return 0;
+    }
+
+    /**
+     * Get total number of reservations
+     */
+    public int getTotalReservationsCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + ReservationQueries.TABLE_NAME, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting reservations count: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return 0;
+    }
+
+    /**
+     * Get number of reserved properties (properties with reservations)
+     */
+    public int getReservedPropertiesCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT COUNT(DISTINCT " + ReservationQueries.COLUMN_PROPERTY_ID + ") " +
+                          "FROM " + ReservationQueries.TABLE_NAME;
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting reserved properties count: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return 0;
+    }
+
+    /**
+     * Get customers distribution by country
+     */
+    public Map<String, Integer> getCustomersByCountry() {
+        SQLiteDatabase db = getReadableDatabase();
+        Map<String, Integer> countryMap = new HashMap<>();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT " + UserQueries.COLUMN_COUNTRY + ", COUNT(*) as count " +
+                          "FROM " + UserQueries.TABLE_NAME + 
+                          " WHERE " + UserQueries.COLUMN_ROLE + " = 'customer' " +
+                          " AND " + UserQueries.COLUMN_COUNTRY + " IS NOT NULL " +
+                          " AND " + UserQueries.COLUMN_COUNTRY + " != '' " +
+                          " GROUP BY " + UserQueries.COLUMN_COUNTRY + 
+                          " ORDER BY count DESC";
+            
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String country = cursor.getString(0);
+                    int count = cursor.getInt(1);
+                    countryMap.put(country, count);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting customers by country: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return countryMap;
+    }
+
+    /**
+     * Get gender distribution
+     */
+    public Map<String, Integer> getGenderDistribution() {
+        SQLiteDatabase db = getReadableDatabase();
+        Map<String, Integer> genderMap = new HashMap<>();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT " + UserQueries.COLUMN_GENDER + ", COUNT(*) as count " +
+                          "FROM " + UserQueries.TABLE_NAME + 
+                          " WHERE " + UserQueries.COLUMN_ROLE + " = 'customer' " +
+                          " AND " + UserQueries.COLUMN_GENDER + " IS NOT NULL " +
+                          " AND " + UserQueries.COLUMN_GENDER + " != '' " +
+                          " GROUP BY " + UserQueries.COLUMN_GENDER;
+            
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String gender = cursor.getString(0);
+                    int count = cursor.getInt(1);
+                    genderMap.put(gender, count);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting gender distribution: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return genderMap;
+    }
+
+    /**
+     * Get property status distribution (with/without special offers)
+     */
+    public List<DashboardStats.PropertyStatusInfo> getPropertyStatusDistribution() {
+        List<DashboardStats.PropertyStatusInfo> statusList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            // Get special offer properties
+            String query = "SELECT " + PropertyQueries.COLUMN_IS_SPECIAL + ", COUNT(*) as count " +
+                          "FROM " + PropertyQueries.TABLE_NAME + 
+                          " GROUP BY " + PropertyQueries.COLUMN_IS_SPECIAL;
+            
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    int isSpecial = cursor.getInt(0);
+                    int count = cursor.getInt(1);
+                    
+                    if (isSpecial == 1) {
+                        statusList.add(new DashboardStats.PropertyStatusInfo("Special Offers", count, "#FF9800"));
+                    } else {
+                        statusList.add(new DashboardStats.PropertyStatusInfo("Regular", count, "#2196F3"));
+                    }
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting property status distribution: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return statusList;
+    }
+
+    /**
+     * Get reservation status distribution
+     */
+    public List<DashboardStats.ReservationStatusInfo> getReservationStatusDistribution() {
+        List<DashboardStats.ReservationStatusInfo> statusList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        
+        try {
+            String query = "SELECT " + ReservationQueries.COLUMN_STATUS + ", COUNT(*) as count " +
+                          "FROM " + ReservationQueries.TABLE_NAME + 
+                          " GROUP BY " + ReservationQueries.COLUMN_STATUS;
+            
+            cursor = db.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String status = cursor.getString(0);
+                    int count = cursor.getInt(1);
+                    String color;
+                    
+                    switch (status.toLowerCase()) {
+                        case "confirmed":
+                            color = "#4CAF50";
+                            break;
+                        case "pending":
+                            color = "#FF9800";
+                            break;
+                        case "cancelled":
+                            color = "#F44336";
+                            break;
+                        default:
+                            color = "#9E9E9E";
+                            break;
+                    }
+                    
+                    statusList.add(new DashboardStats.ReservationStatusInfo(
+                        status.substring(0, 1).toUpperCase() + status.substring(1), count, color));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting reservation status distribution: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return statusList;
     }
 }
