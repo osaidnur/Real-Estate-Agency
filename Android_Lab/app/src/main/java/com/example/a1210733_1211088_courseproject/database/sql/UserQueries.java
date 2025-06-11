@@ -77,4 +77,19 @@ public class UserQueries {
             COLUMN_ROLE + ", " +
             COLUMN_PROFILE_PHOTO +
             ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+    // Update user profile query (excluding password)
+    public static final String UPDATE_USER_PROFILE =
+            "UPDATE " + TABLE_NAME + " SET " +
+            COLUMN_FIRST_NAME + " = ?, " +
+            COLUMN_LAST_NAME + " = ?, " +
+            COLUMN_PHONE + " = ?, " +
+            COLUMN_PROFILE_PHOTO + " = ? " +
+            "WHERE " + COLUMN_USER_ID + " = ?";
+
+    // Update user password query
+    public static final String UPDATE_USER_PASSWORD =
+            "UPDATE " + TABLE_NAME + " SET " +
+            COLUMN_PASSWORD + " = ? " +
+            "WHERE " + COLUMN_USER_ID + " = ?";
 }
