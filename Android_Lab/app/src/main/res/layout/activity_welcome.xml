@@ -17,6 +17,16 @@
         android:layout_height="match_parent"
         android:background="#80000000" />
 
+    <!-- Company Icon -->
+    <ImageView
+        android:id="@+id/companyIcon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/icon"
+        android:contentDescription="Company Logo" />
+
     <!-- App Name -->
     <TextView
         android:id="@+id/appName"
@@ -27,7 +37,8 @@
         android:textSize="34sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_below="@id/companyIcon"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/brillant"
         />
 
@@ -48,4 +59,3 @@
 
 
 </RelativeLayout>
-

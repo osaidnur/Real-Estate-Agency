@@ -9,7 +9,7 @@
         android:translateX="21.6"
         android:translateY="21.6">
         <bitmap
-            android:src="@drawable/logo"
+            android:src="@drawable/icon"
             android:gravity="center" />
     </group>
 </vector>
