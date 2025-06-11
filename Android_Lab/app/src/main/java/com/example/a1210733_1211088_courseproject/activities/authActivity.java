@@ -104,18 +104,19 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        if (password.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // in login , no need to check password length
+//        if (password.length() < 6) {
+//            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
-        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
-            Toast.makeText(this, "Password must include at least one letter, one number, and one special character", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
+//            Toast.makeText(this, "Password must include at least one letter, one number, and one special character", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         // Attempt authentication
-        User authenticatedUser = authManager.authenticateUser(email, password);        if (authenticatedUser != null) {
+        User authenticatedUser = authManager.authenticateUser(email, password);
+        if (authenticatedUser != null) {
             // Authentication successful
             Toast.makeText(this, "Login successful! Welcome " + authenticatedUser.getFirstName(), 
                           Toast.LENGTH_SHORT).show();
