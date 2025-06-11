@@ -3,6 +3,8 @@ package com.example.a1210733_1211088_courseproject.activities;
 import android.os.Bundle;
 import android.content.Intent;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +28,7 @@ import com.example.a1210733_1211088_courseproject.fragments.HomeFragment;
 import com.example.a1210733_1211088_courseproject.fragments.ProfileFragment;
 import com.example.a1210733_1211088_courseproject.fragments.ReservationsFragment;
 import com.example.a1210733_1211088_courseproject.fragments.PropertiesFragment;
+import com.example.a1210733_1211088_courseproject.models.User;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 import com.google.android.material.navigation.NavigationView;
 
@@ -86,6 +89,31 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         );
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        // Update the navigation header with the current user's email
+        updateNavigationHeader();
+    }
+
+    /**
+     * Updates the navigation header with the current user's email
+     */
+    private void updateNavigationHeader() {
+        // Get current user ID from shared preferences
+        long userId = prefManager.getCurrentUserId();
+
+        if (userId != -1) {
+            // Get the user object from the database
+            User currentUser = dbHelper.getUserById(userId);
+
+            if (currentUser != null) {
+                // Find the email TextView in the navigation header and update it
+                View headerView = navigationView.getHeaderView(0);
+                TextView userEmailTextView = headerView.findViewById(R.id.nav_user_email);
+
+                // Set the email text
+                userEmailTextView.setText(currentUser.getEmail());
+            }
+        }
     }
 
     @Override
