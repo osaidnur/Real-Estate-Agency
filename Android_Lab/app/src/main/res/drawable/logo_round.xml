@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Circular background -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/white"/>
+            <stroke android:width="2dp" android:color="#E0E0E0"/>
+        </shape>
+    </item>
+    
+    <!-- Logo with circular clipping -->
+    <item
+        android:left="18dp"
+        android:top="18dp"
+        android:right="18dp"
+        android:bottom="18dp">
+        <bitmap
+            android:src="@drawable/logo"
+            android:gravity="center"/>
+    </item>
+</layer-list>
