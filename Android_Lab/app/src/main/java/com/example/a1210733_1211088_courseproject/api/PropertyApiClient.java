@@ -14,7 +14,9 @@ import java.util.List;
 
 public class PropertyApiClient {
     private static final String TAG = "PropertyAPI";
-    private static final String API_URL = "https://mocki.io/v1/4d533823-8133-4631-8112-00e69a143881";
+//    private static final String API_URL = "https://mocki.io/v1/4d533823-8133-4631-8112-00e69a143881";
+
+    private static final String API_URL = "https://mocki.io/v1/fde9b206-44f5-4a49-830a-6b0f3ad499b6";
     private Context context;
     private DataBaseHelper dbHelper;
     private boolean importSuccess = false;

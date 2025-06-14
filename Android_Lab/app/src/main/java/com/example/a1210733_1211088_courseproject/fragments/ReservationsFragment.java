@@ -25,7 +25,10 @@ import com.example.a1210733_1211088_courseproject.database.sql.ReservationQuerie
 import com.example.a1210733_1211088_courseproject.models.Property;
 import com.example.a1210733_1211088_courseproject.models.Reservation;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
+import com.example.a1210733_1211088_courseproject.utils.ImageUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -129,17 +132,9 @@ public class ReservationsFragment extends Fragment {
         public void onBindViewHolder(@NonNull ReservationViewHolder holder, int position) {
             ReservationWithProperty rwp = reservations.get(position);
             Property property = rwp.property;
-            Reservation reservation = rwp.reservation;
-
-            // Set property details
-            // Check if there's an image URL and load it, otherwise use placeholder
-            if (property.getImageUrl() != null && !property.getImageUrl().isEmpty()) {
-                // You could use a library like Picasso or Glide to load the image
-                // For now, just using a placeholder
-                holder.propertyImage.setImageResource(R.drawable.ic_home);
-            } else {
-                holder.propertyImage.setImageResource(R.drawable.ic_home);
-            }            holder.propertyTitle.setText(property.getTitle());
+            Reservation reservation = rwp.reservation;            // Set property details
+            // Load image using ImageUtils
+            ImageUtils.loadPropertyImage(getContext(), property.getImageUrl(), holder.propertyImage);holder.propertyTitle.setText(property.getTitle());
             holder.propertyPrice.setText(String.format("$%.2f", property.getPrice()));
             holder.propertyLocation.setText(property.getCity() + ", " + property.getCountry());
 
@@ -268,7 +263,6 @@ public class ReservationsFragment extends Fragment {
             // Reload reservations to reflect the change
             loadReservations();
         } else {
-            Toast.makeText(getContext(), "Failed to cancel reservation", Toast.LENGTH_SHORT).show();
-        }
+            Toast.makeText(getContext(), "Failed to cancel reservation", Toast.LENGTH_SHORT).show();        }
     }
 }

@@ -15,7 +15,10 @@ import com.example.a1210733_1211088_courseproject.R;
 import com.example.a1210733_1211088_courseproject.models.Property;
 import com.example.a1210733_1211088_courseproject.models.Reservation;
 import com.example.a1210733_1211088_courseproject.models.User;
+import com.example.a1210733_1211088_courseproject.utils.ImageUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -63,15 +66,13 @@ public class AdminReservationAdapter extends RecyclerView.Adapter<AdminReservati
         ReservationWithDetails item = reservationsList.get(position);
         Reservation reservation = item.reservation;
         Property property = item.property;
-        User user = item.user;
-
-        // Set property details
+        User user = item.user;        // Set property details
         holder.propertyTitle.setText(property.getTitle());
         holder.propertyPrice.setText(String.format("$%.2f", property.getPrice()));
         holder.propertyLocation.setText(property.getCity() + ", " + property.getCountry());
         
-        // Set property image (placeholder for now)
-        holder.propertyImage.setImageResource(R.drawable.ic_home);
+        // Load property image using ImageUtils
+        ImageUtils.loadPropertyImage(context, property.getImageUrl(), holder.propertyImage);
 
         // Set customer details
         holder.customerName.setText(user.getFirstName() + " " + user.getLastName());
@@ -128,9 +129,7 @@ public class AdminReservationAdapter extends RecyclerView.Adapter<AdminReservati
             holder.btnConfirm.setVisibility(View.GONE);
             holder.btnReject.setVisibility(View.GONE);
         }
-    }
-
-    @Override
+    }    @Override
     public int getItemCount() {
         return reservationsList.size();
     }
