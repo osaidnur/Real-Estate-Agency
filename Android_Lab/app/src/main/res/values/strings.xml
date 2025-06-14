@@ -1,15 +1,12 @@
 <resources>
-    <string name="app_name">Real Estate Agency</string>
+    <string name="app_name">Luxora</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="property_types">
         <item>All</item>
-        <item>House</item>
         <item>Apartment</item>
         <item>Villa</item>
-        <item>Studio</item>
-        <item>Office</item>
-        <item>Cabin</item>
+        <item>Land</item>
     </string-array>
 
     <!-- Navigation Drawer -->

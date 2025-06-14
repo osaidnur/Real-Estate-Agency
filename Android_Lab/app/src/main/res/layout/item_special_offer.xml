@@ -123,28 +123,29 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2">
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_view_offer_details"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="View Details"
-                android:background="@drawable/button_outline_background"
-                android:textColor="@color/primary_color"
+                android:background="@drawable/button_view_details_background"
+                android:textColor="@color/white"
                 android:textSize="14sp"
-                android:layout_marginEnd="4dp" />
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@null" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_remove_special_offer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Remove Offer"
-                android:background="@drawable/delete_button_background"
+                android:background="@drawable/button_remove_offer_background"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:layout_marginStart="4dp" />
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@null" />
 
         </LinearLayout>
 

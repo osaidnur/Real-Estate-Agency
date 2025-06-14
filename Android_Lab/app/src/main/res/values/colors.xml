@@ -4,7 +4,13 @@
     <color name="colorAccent">#4B79A1</color>
     <color name="drawerText">#ffffff</color>
     <color name= "logoBackground">#09172B</color>
-    
+
+    <color name="palette1">#183B4E</color>
+    <color name="palette2">#27548A</color>
+    <color name="palette_gold">#DDA853</color>
+    <color name="palette_white">#F3F3E0</color>
+
+
     <!-- Admin UI Colors -->
     <color name="primary_color">#283E51</color>
     <color name="primary_text">#212121</color>
