@@ -2,21 +2,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- المحتوى الأساسي -->
+    android:layout_width="match_parent"    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">    <!-- المحتوى الأساسي -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!-- Toolbar with company icon -->
+        android:orientation="vertical"><!-- Toolbar with company icon -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 

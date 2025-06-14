@@ -1,20 +1,26 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources xmlns:tools="http://schemas.android.com/tools">    <!-- Base application theme. -->
     <style name="Base.Theme._1210733_1211088_CourseProject" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Handle window insets properly for notched devices -->
+        <item name="android:windowTranslucentStatus">false</item>        <item name="android:windowTranslucentNavigation">false</item>        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="Theme.1210733_1211088_CourseProject" parent="Base.Theme._1210733_1211088_CourseProject" />
-
-    <!-- Admin Theme -->
+    <style name="Theme.1210733_1211088_CourseProject" parent="Base.Theme._1210733_1211088_CourseProject" /><!-- Admin Theme -->
     <style name="Theme.AdminDashboard" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/admin_primary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/admin_accent</item>
         <item name="colorSecondary">@color/admin_secondary</item>
         <item name="android:windowBackground">@color/admin_background</item>
-        <item name="android:statusBarColor">@color/admin_primary</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Handle window insets properly for notched devices -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
         <!-- Text appearance -->
         <item name="textAppearanceHeadline6">@style/AdminTextAppearance.Headline6</item>
         <item name="textAppearanceSubtitle1">@style/AdminTextAppearance.Subtitle1</item>

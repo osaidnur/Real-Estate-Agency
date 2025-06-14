@@ -17,7 +17,10 @@ import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.FavoriteQueries;
 import com.example.a1210733_1211088_courseproject.models.Property;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
+import com.example.a1210733_1211088_courseproject.utils.ImageUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +42,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
         // Get current user ID from SharedPreferences
         SharedPrefManager prefManager = SharedPrefManager.getInstance(context);
         this.currentUserId = prefManager.getCurrentUserId();
-    }
-
-    @NonNull
+    }    @NonNull
     @Override
     public PropertyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_property, parent, false);
@@ -52,25 +53,18 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
     public void onBindViewHolder(@NonNull PropertyViewHolder holder, int position) {
         Property property = propertyList.get(position);
 
-        // Load image - if URL is not empty, could use Picasso or Glide here
-        // For now, just using a placeholder image
-        if (property.getImageUrl() != null && !property.getImageUrl().isEmpty()) {
-            // In a real app, you would load the image from the URL:
-            // Picasso.get().load(property.getImageUrl()).into(holder.propertyImage);
-            holder.propertyImage.setImageResource(R.drawable.ic_home);
-        } else {
-            holder.propertyImage.setImageResource(R.drawable.ic_home);
-        }
+        // Load image from URL or local file using ImageUtils
+        ImageUtils.loadPropertyImage(context, property.getImageUrl(), holder.propertyImage);
 
         holder.propertyTitle.setText(property.getTitle());
         holder.propertyDescription.setText(property.getDescription());
         holder.propertyPrice.setText(String.format("$%.2f", property.getPrice()));
         holder.propertyLocation.setText(property.getCountry());
-        holder.propertyType.setText(property.getType());
-
-        // Property info (bedrooms/bathrooms)
+        holder.propertyType.setText(property.getType());        // Property info (bedrooms/bathrooms)
         holder.propertyInfo.setText(String.format("%d bed, %d bath",
-                property.getBedrooms(), property.getBathrooms()));        // Check if property is in user's favorites
+                property.getBedrooms(), property.getBathrooms()));
+
+        // Check if property is in user's favorites
         boolean isFavorite = isPropertyInFavorites(property.getPropertyId());
         updateFavoriteButton(holder.favoriteButton, isFavorite);
 

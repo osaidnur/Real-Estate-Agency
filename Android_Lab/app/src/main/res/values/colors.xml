@@ -3,6 +3,7 @@
     <color name="colorPrimaryDark">#1a2a3a</color>
     <color name="colorAccent">#4B79A1</color>
     <color name="drawerText">#ffffff</color>
+    <color name= "logoBackground">#09172B</color>
     
     <!-- Admin UI Colors -->
     <color name="primary_color">#283E51</color>
