@@ -47,13 +47,11 @@
 
             <Button
                 android:id="@+id/btn_delete_customer"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="Delete"
-                android:textSize="12sp"
-                android:backgroundTint="@android:color/holo_red_light"
-                android:textColor="@android:color/white"
-                android:layout_gravity="center_vertical" />
+                style="@style/CustomerDeleteButtonStyle"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Delete" />
 
         </LinearLayout>
 
