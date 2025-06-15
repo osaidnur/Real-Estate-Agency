@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,9 +48,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
     public PropertyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_property, parent, false);
         return new PropertyViewHolder(view);
-    }
-
-    @Override
+    }    @Override
     public void onBindViewHolder(@NonNull PropertyViewHolder holder, int position) {
         Property property = propertyList.get(position);
 
@@ -58,11 +57,58 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
 
         holder.propertyTitle.setText(property.getTitle());
         holder.propertyDescription.setText(property.getDescription());
-        holder.propertyPrice.setText(String.format("$%.2f", property.getPrice()));
-        holder.propertyLocation.setText(property.getCountry());
-        holder.propertyType.setText(property.getType());        // Property info (bedrooms/bathrooms)
+        holder.propertyType.setText(property.getType());
+
+        // Set area with formatting
+        holder.propertyArea.setText(String.format("%.0f m²", property.getArea()));
+
+        // Set location with city and country
+        String location = "";
+        if (property.getCity() != null && !property.getCity().isEmpty()) {
+            location = property.getCity();
+            if (property.getCountry() != null && !property.getCountry().isEmpty()) {
+                location += ", " + property.getCountry();
+            }
+        } else if (property.getCountry() != null && !property.getCountry().isEmpty()) {
+            location = property.getCountry();
+        }
+        holder.propertyLocation.setText(location);
+
+        // Property info (bedrooms/bathrooms)
         holder.propertyInfo.setText(String.format("%d bed, %d bath",
                 property.getBedrooms(), property.getBathrooms()));
+
+        // Handle special offers and pricing
+        if (property.isSpecial() && property.getDiscount() > 0) {
+            // Show special offer section
+            holder.specialOfferSection.setVisibility(View.VISIBLE);
+            holder.regularPriceSection.setVisibility(View.GONE);
+            
+            // Set discount badge
+            holder.discountBadge.setText(String.format("%.0f%% OFF", property.getDiscount()));
+            
+            // Calculate prices
+            double originalPriceValue = property.getPrice();
+            double discountAmount = originalPriceValue * (property.getDiscount() / 100);
+            double salePriceValue = originalPriceValue - discountAmount;
+            
+            // Set original price with strikethrough
+            holder.originalPrice.setText(String.format("$%.2f", originalPriceValue));
+            holder.originalPrice.setPaintFlags(holder.originalPrice.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+            
+            // Set sale price
+            holder.salePrice.setText(String.format("$%.2f", salePriceValue));
+            
+            // Set savings amount
+            holder.savingsAmount.setText(String.format("You save $%.2f!", discountAmount));
+        } else {
+            // Show regular price section
+            holder.specialOfferSection.setVisibility(View.GONE);
+            holder.regularPriceSection.setVisibility(View.VISIBLE);
+            
+            // Set regular price
+            holder.propertyPrice.setText(String.format("$%.2f", property.getPrice()));
+        }
 
         // Check if property is in user's favorites
         boolean isFavorite = isPropertyInFavorites(property.getPropertyId());
@@ -191,11 +237,11 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
             }
         }
         notifyDataSetChanged();
-    }
-
-    public static class PropertyViewHolder extends RecyclerView.ViewHolder {
+    }    public static class PropertyViewHolder extends RecyclerView.ViewHolder {
         ImageView propertyImage;
-        TextView propertyTitle, propertyDescription, propertyPrice, propertyLocation, propertyType, propertyInfo;
+        TextView propertyTitle, propertyDescription, propertyPrice, propertyLocation, propertyType, propertyInfo, propertyArea;
+        TextView discountBadge, originalPrice, salePrice, savingsAmount;
+        LinearLayout specialOfferSection, regularPriceSection;
         Button favoriteButton, reserveButton;
 
         public PropertyViewHolder(@NonNull View itemView) {
@@ -207,6 +253,16 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
             propertyLocation = itemView.findViewById(R.id.property_location);
             propertyType = itemView.findViewById(R.id.property_type);
             propertyInfo = itemView.findViewById(R.id.property_info);
+            propertyArea = itemView.findViewById(R.id.property_area);
+            
+            // Special offer views
+            specialOfferSection = itemView.findViewById(R.id.special_offer_section);
+            regularPriceSection = itemView.findViewById(R.id.regular_price_section);
+            discountBadge = itemView.findViewById(R.id.discount_badge);
+            originalPrice = itemView.findViewById(R.id.original_price);
+            salePrice = itemView.findViewById(R.id.sale_price);
+            savingsAmount = itemView.findViewById(R.id.savings_amount);
+            
             favoriteButton = itemView.findViewById(R.id.btn_favorite);
             reserveButton = itemView.findViewById(R.id.btn_reserve);
         }

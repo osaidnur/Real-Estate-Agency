@@ -32,6 +32,7 @@ import com.example.a1210733_1211088_courseproject.fragments.AdminPropertiesFragm
 import com.example.a1210733_1211088_courseproject.fragments.AdminReservationsFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminSpecialOffersFragment;
 import com.example.a1210733_1211088_courseproject.fragments.AdminsFragment;
+import com.example.a1210733_1211088_courseproject.models.User;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 import com.google.android.material.navigation.NavigationView;
 
@@ -106,11 +107,13 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         );
+        
+        // Set navigation drawer toggle color to palette_gold
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.palette_white, getTheme()));
+        
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-    }
-
-    private void updateNavigationHeader() {
+    }    private void updateNavigationHeader() {
         // Update navigation header with admin info
         android.view.View headerView = navigationView.getHeaderView(0);
         TextView adminNameView = headerView.findViewById(R.id.admin_nav_user_name);
@@ -119,8 +122,15 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         if (adminNameView != null) {
             adminNameView.setText("Welcome, " + adminName);
         }
+        
         if (adminEmailView != null) {
-            adminEmailView.setText("admin@admin.com");
+            // Get the current admin's information from database
+            User currentAdmin = dbHelper.getUserById(userId);
+            if (currentAdmin != null) {
+                adminEmailView.setText(currentAdmin.getEmail());
+            } else {
+                adminEmailView.setText("admin@admin.com"); // fallback
+            }
         }
     }
 
@@ -293,12 +303,12 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         if (dbHelper != null) {
             dbHelper.close();
         }
-    }
-
-    @Override
+    }    @Override
     protected void onResume() {
         super.onResume();
         // Force status bar color again when activity resumes
         setupStatusBar();
+        // Update navigation header with current admin email
+        updateNavigationHeader();
     }
 }

@@ -8,7 +8,7 @@
     <color name="palette1">#183B4E</color>
     <color name="palette2">#27548A</color>
     <color name="palette_gold">#DDA853</color>
-    <color name="palette_white">#F3F3E0</color>
+        <color name="palette_white">#F3F3E0</color>
 
 
     <!-- Admin UI Colors -->

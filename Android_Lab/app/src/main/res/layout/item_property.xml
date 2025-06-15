@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:orientation="vertical"
@@ -17,65 +18,78 @@
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_home" />
-
-        <LinearLayout
+            android:src="@drawable/ic_home" />        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
+            android:padding="20dp"><TextView
                 android:id="@+id/property_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/olivera_demo"
-                android:textColor="#283E51"
-                android:layout_marginBottom="4dp"/>
-
-            <TextView
+                android:fontFamily="@font/inter_variable_font_family"
+                android:textColor="#1A1A1A"
+                android:letterSpacing="0.01"
+                android:layout_marginBottom="6dp"/>            <TextView
                 android:id="@+id/property_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="italic"
-                android:fontFamily="@font/olivera_demo"
-                android:textColor="#4B79A1"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
+                android:textSize="15sp"
+                android:textStyle="normal"
+                android:fontFamily="@font/inter_variable_font_family"
+                android:textColor="#6366F1"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05"
+                android:layout_marginBottom="10dp"/>            <TextView
                 android:id="@+id/property_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:fontFamily="@font/olivera_demo"
-                android:layout_marginBottom="8dp"/>
+                android:textSize="15sp"
+                android:fontFamily="@font/inter_variable_font_family"
+                android:textColor="#4B5563"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="12dp"/>
 
+            <!-- Area and Bedrooms/Bathrooms Info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Price: "
+                    android:text="Area: "
                     android:textStyle="bold"
-                    android:fontFamily="@font/olivera_demo"/>
+                    android:textSize="16sp"
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#374151"/>
 
                 <TextView
-                    android:id="@+id/property_price"
+                    android:id="@+id/property_area"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:textColor="#283E51"
-                    android:fontFamily="@font/olivera_demo"/>
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#6B7280"/>
+
+                <TextView
+                    android:id="@+id/property_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#6B7280"
+                    android:background="#F3F4F6"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:layout_marginStart="8dp"/>
             </LinearLayout>
 
+            <!-- Location with City -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,16 +101,131 @@
                     android:layout_height="wrap_content"
                     android:text="Location: "
                     android:textStyle="bold"
-                    android:fontFamily="@font/olivera_demo"/>
+                    android:textSize="16sp"
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#374151"/>
 
                 <TextView
                     android:id="@+id/property_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/olivera_demo"/>
+                    android:textSize="16sp"
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#6B7280"
+                    android:drawableStart="@drawable/ic_location"
+                    android:drawablePadding="6dp"/>
             </LinearLayout>
 
+            <!-- Special Offer Section (conditionally visible) -->
             <LinearLayout
+                android:id="@+id/special_offer_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FEF7F0"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="🔥 SPECIAL OFFER"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/inter_variable_font_family"
+                        android:textColor="#EA580C"/>
+
+                    <TextView
+                        android:id="@+id/discount_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:background="#EA580C"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Original Price"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/inter_variable_font_family"
+                            android:textColor="#9CA3AF"/>
+
+                        <TextView
+                            android:id="@+id/original_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/inter_variable_font_family"
+                            android:textColor="#6B7280"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sale Price"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/inter_variable_font_family"
+                            android:textColor="#9CA3AF"/>
+
+                        <TextView
+                            android:id="@+id/sale_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/inter_variable_font_family"
+                            android:textColor="#059669"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/savings_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#DC2626"
+                    android:layout_marginTop="8dp"
+                    android:background="#FEE2E2"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"/>
+            </LinearLayout>
+
+            <!-- Regular Price Section (when no special offer) -->
+            <LinearLayout
+                android:id="@+id/regular_price_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -105,45 +234,54 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Info: "
+                    android:text="Price: "
                     android:textStyle="bold"
-                    android:fontFamily="@font/olivera_demo"/>
+                    android:textSize="16sp"
+                    android:fontFamily="@font/inter_variable_font_family"
+                    android:textColor="#374151"/>
 
                 <TextView
-                    android:id="@+id/property_info"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/property_price"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/olivera_demo"/>
-            </LinearLayout>
-
-            <View
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#059669"
+                    android:fontFamily="@font/inter_variable_font_family"/>
+            </LinearLayout><View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#DDDDDD"
-                android:layout_marginBottom="12dp"/>
-
-            <LinearLayout
+                android:background="#E5E7EB"
+                android:layout_marginVertical="16dp"/><LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:layout_marginTop="4dp">
 
                 <Button
                     android:id="@+id/btn_favorite"
                     style="@style/AppButtonStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="Add to Favorites"
+                    android:textSize="13sp"
                     android:drawableLeft="@drawable/ic_favorite"
-                    android:layout_marginEnd="8dp"/>
+                    android:drawablePadding="8dp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginEnd="12dp"/>
 
                 <Button
                     android:id="@+id/btn_reserve"
                     style="@style/AppButtonStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="Reserve Property"
-                    android:drawableLeft="@drawable/ic_calendar"/>
+                    android:textSize="13sp"
+                    android:drawableLeft="@drawable/ic_calendar"
+                    android:drawablePadding="8dp"
+                    android:paddingHorizontal="16dp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
