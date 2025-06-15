@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,34 +36,36 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     public CustomerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_customer, parent, false);
         return new CustomerViewHolder(view);
-    }
-
-    @Override
+    }    @Override
     public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
         User customer = customersList.get(position);
-        
-        // Set customer details
+          // Set customer details
         holder.customerName.setText(customer.getFirstName() + " " + customer.getLastName());
         holder.customerEmail.setText(customer.getEmail());
+          // Set customer details (Phone, Location & Gender) on separate lines
+        StringBuilder details = new StringBuilder();
         
-        // Format and set customer info
-        StringBuilder info = new StringBuilder();
-        if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
-            info.append("Phone: ").append(customer.getPhone()).append("\n");
-        }
         if (customer.getCountry() != null && !customer.getCountry().isEmpty()) {
-            info.append("Location: ").append(customer.getCountry());
+            details.append(customer.getCountry());
             if (customer.getCity() != null && !customer.getCity().isEmpty()) {
-                info.append(", ").append(customer.getCity());
+                details.append(", ").append(customer.getCity());
             }
-            info.append("\n");
+        }
+        if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
+            if (details.length() > 0) details.append("\n");
+            details.append("Phone: ").append(customer.getPhone());
         }
         if (customer.getGender() != null && !customer.getGender().isEmpty()) {
-            info.append("Gender: ").append(customer.getGender());
+            if (details.length() > 0) details.append("\n");
+            details.append("Gender: ").append(customer.getGender());
         }
+        holder.customerDetails.setText(details.length() > 0 ? details.toString() : "No additional details");
         
-        holder.customerInfo.setText(info.toString().trim());
-        holder.customerId.setText("ID: " + customer.getUserId());
+        // Set role badge
+        holder.customerRoleBadge.setText("CUSTOMER");
+        
+        // Set profile icon (default)
+        holder.profileIcon.setImageResource(R.drawable.ic_person);
         
         // Set delete button click listener
         holder.deleteButton.setOnClickListener(v -> {
@@ -75,18 +78,18 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     @Override
     public int getItemCount() {
         return customersList.size();
-    }
-
-    static class CustomerViewHolder extends RecyclerView.ViewHolder {
-        TextView customerName, customerEmail, customerInfo, customerId;
+    }    static class CustomerViewHolder extends RecyclerView.ViewHolder {
+        ImageView profileIcon;
+        TextView customerName, customerEmail, customerDetails, customerRoleBadge;
         Button deleteButton;
 
         public CustomerViewHolder(@NonNull View itemView) {
             super(itemView);
+            profileIcon = itemView.findViewById(R.id.customer_profile_icon);
             customerName = itemView.findViewById(R.id.customer_name);
             customerEmail = itemView.findViewById(R.id.customer_email);
-            customerInfo = itemView.findViewById(R.id.customer_info);
-            customerId = itemView.findViewById(R.id.customer_id);
+            customerDetails = itemView.findViewById(R.id.customer_details);
+            customerRoleBadge = itemView.findViewById(R.id.customer_role_badge);
             deleteButton = itemView.findViewById(R.id.btn_delete_customer);
         }
     }
