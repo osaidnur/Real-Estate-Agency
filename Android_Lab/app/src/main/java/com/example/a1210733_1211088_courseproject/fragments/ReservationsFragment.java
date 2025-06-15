@@ -187,17 +187,12 @@ public class ReservationsFragment extends Fragment {
                 reservationTime = itemView.findViewById(R.id.reservation_time);
                 reservationStatus = itemView.findViewById(R.id.reservation_status);
                 btnViewDetails = itemView.findViewById(R.id.btn_view_details);
-                btnCancel = itemView.findViewById(R.id.btn_cancel);
-
-                // Set up click listeners for buttons
+                btnCancel = itemView.findViewById(R.id.btn_cancel);                // Set up click listeners for buttons
                 btnViewDetails.setOnClickListener(v -> {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         ReservationWithProperty rwp = reservations.get(position);
-                        Toast.makeText(itemView.getContext(),
-                                "Viewing details for: " + rwp.property.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                        // Future enhancement: Navigate to reservation detail screen
+                        showReservationDetails(rwp);
                     }
                 });
 
@@ -210,7 +205,37 @@ public class ReservationsFragment extends Fragment {
                     }
                 });
             }
-        }
+        }    }    /**
+     * Shows detailed information about a reservation in a dialog
+     * @param rwp The reservation with property data to display
+     */
+    private void showReservationDetails(ReservationWithProperty rwp) {
+        androidx.appcompat.app.AlertDialog.Builder builder = 
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+        
+        // Create the dialog content as a formatted string
+        StringBuilder details = new StringBuilder();
+        details.append("Property: ").append(rwp.property.getTitle()).append("\n\n");
+        details.append("Location: ").append(rwp.property.getCity()).append(", ").append(rwp.property.getCountry()).append("\n\n");
+        details.append("Price: $").append(String.format("%.2f", rwp.property.getPrice())).append("\n\n");
+        details.append("Type: ").append(rwp.property.getType()).append("\n\n");
+        details.append("Bedrooms: ").append(rwp.property.getBedrooms()).append("\n\n");
+        details.append("Bathrooms: ").append(rwp.property.getBathrooms()).append("\n\n");
+        details.append("Area: ").append(rwp.property.getArea()).append(" sq ft\n\n");
+        
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+        LocalDateTime dateTime = rwp.reservation.getReservationDate();
+        
+        details.append("Reservation Date: ").append(dateTime.format(dateFormatter)).append("\n");
+        details.append("Reservation Time: ").append(dateTime.format(timeFormatter)).append("\n");
+        details.append("Status: ").append(rwp.reservation.getStatus()).append("\n\n");
+        details.append("Description:\n").append(rwp.property.getDescription() != null ? rwp.property.getDescription() : "No description available");
+        
+        builder.setTitle("Reservation Details");
+        builder.setMessage(details.toString());
+        builder.setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
+        builder.create().show();
     }
 
     /**
