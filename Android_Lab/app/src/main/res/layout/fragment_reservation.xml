@@ -3,28 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_real_estate_back3">
-
-    <LinearLayout
+    android:background="@drawable/bg_real_estate_back3">    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
+        <!-- Header Layout -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Property Reservation"
             style="@style/TitleTextStyle"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"/>
+            android:gravity="center"
+            android:layout_marginTop="4dp"            android:layout_marginBottom="20dp"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
             android:elevation="4dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,27 +35,188 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="You are reserving:"
-                    android:fontFamily="@font/olivera_demo"
+                    android:fontFamily="@font/inter_variablefont_opsz_wght"
                     android:textSize="16sp"
-                    android:layout_marginBottom="8dp"/>
+                    android:textColor="#666666"
+                    android:layout_marginBottom="12dp"/>
 
                 <TextView
                     android:id="@+id/property_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/olivera_demo"
-                    android:layout_marginBottom="24dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:fontFamily="@font/inter_variablefont_opsz_wght"
+                    android:textColor="#283E51"
+                    android:layout_marginBottom="16dp"/>                <!-- Property Details Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+
+                    <!-- Location Info -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_location"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#FF6B35"/>
+
+                        <TextView
+                            android:id="@+id/property_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Location details"
+                            android:fontFamily="@font/inter_variablefont_opsz_wght"
+                            android:textSize="14sp"
+                            android:textColor="#555555"/>
+                    </LinearLayout>
+
+                    <!-- Price Info -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_price"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#4CAF50"/>
+
+                        <TextView
+                            android:id="@+id/property_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Price information"
+                            android:fontFamily="@font/inter_variablefont_opsz_wght"
+                            android:textSize="14sp"
+                            android:textColor="#555555"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Property Type -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_category"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#9C27B0"/>
+
+                        <TextView
+                            android:id="@+id/property_category"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Property type"
+                            android:fontFamily="@font/inter_variablefont_opsz_wght"
+                            android:textSize="14sp"
+                            android:textColor="#555555"/>
+                    </LinearLayout>
+
+                    <!-- Bedrooms and Bathrooms -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_home"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#FF9800"/>
+
+                        <TextView
+                            android:id="@+id/property_rooms"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rooms &amp; bathrooms"
+                            android:fontFamily="@font/inter_variablefont_opsz_wght"
+                            android:textSize="14sp"
+                            android:textColor="#555555"/>
+                    </LinearLayout>
+
+                    <!-- Area -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_list"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#607D8B"/>
+
+                        <TextView
+                            android:id="@+id/property_area"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Area information"
+                            android:fontFamily="@font/inter_variablefont_opsz_wght"
+                            android:textSize="14sp"
+                            android:textColor="#555555"/>
+                    </LinearLayout>
+
+                    <!-- Special Property Badge -->
+                    <LinearLayout
+                        android:id="@+id/special_property_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_star"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#FFD700"/>
+
+                        <TextView
+                            android:id="@+id/property_special"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Special Offer!"
+                            android:fontFamily="@font/inter_variablefont_opsz_wght"
+                            android:textSize="14sp"
+                            android:textColor="#E91E63"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
             android:elevation="4dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -64,6 +224,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <!-- Date Selection -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -71,13 +232,22 @@
                     android:gravity="center_vertical"
                     android:layout_marginBottom="16dp">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_calendar"
+                        android:layout_marginEnd="12dp"
+                        app:tint="#FF6B35"/>
+
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Date:"
-                        android:fontFamily="@font/olivera_demo"
-                        android:textSize="16sp"/>
+                        android:text="Visit Date:"
+                        android:fontFamily="@font/inter_variablefont_opsz_wght"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#283E51"/>
 
                     <TextView
                         android:id="@+id/reservation_date"
@@ -85,7 +255,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textSize="16sp"
-                        android:fontFamily="@font/olivera_demo"
+                        android:fontFamily="@font/inter_variablefont_opsz_wght"
+                        android:textColor="#666666"
                         android:hint="Select date"/>
 
                     <Button
@@ -93,23 +264,33 @@
                         style="@style/AppButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select Date"/>
+                        android:text="Select"
+                        android:fontFamily="@font/inter_variablefont_opsz_wght"/>
                 </LinearLayout>
 
+                <!-- Time Selection -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_time"
+                        android:layout_marginEnd="12dp"
+                        app:tint="#4CAF50"/>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Time:"
-                        android:fontFamily="@font/olivera_demo"
-                        android:textSize="16sp"/>
+                        android:text="Visit Time:"
+                        android:fontFamily="@font/inter_variablefont_opsz_wght"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#283E51"/>
 
                     <TextView
                         android:id="@+id/reservation_time"
@@ -117,7 +298,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textSize="16sp"
-                        android:fontFamily="@font/olivera_demo"
+                        android:fontFamily="@font/inter_variablefont_opsz_wght"
+                        android:textColor="#666666"
                         android:hint="Select time"/>
 
                     <Button
@@ -125,28 +307,91 @@
                         style="@style/AppButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select Time"/>
+                        android:text="Select"
+                        android:fontFamily="@font/inter_variablefont_opsz_wght"/>
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <TextView
+        </androidx.cardview.widget.CardView>        <!-- Information Card -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="By confirming this reservation, you agree to visit the property at the selected date and time. The real estate agent will be waiting for you."
-            android:textSize="14sp"
-            android:textStyle="italic"
-            android:fontFamily="@font/olivera_demo"
-            android:layout_marginBottom="24dp"/>
+            app:cardCornerRadius="12dp"
+            android:elevation="2dp"
+            app:cardBackgroundColor="#F8F9FA"
+            android:layout_marginBottom="20dp">
 
-        <Button
-            android:id="@+id/btn_confirm_reservation"
-            style="@style/AppButtonStyle"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_reservation"
+                    android:layout_marginEnd="12dp"
+                    app:tint="#2196F3"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="By confirming this reservation, you agree to visit the property at the selected date and time. The real estate agent will be waiting for you."
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_variablefont_opsz_wght"
+                    android:textColor="#666666"
+                    android:lineSpacingExtra="2dp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>        <!-- Button Row -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Confirm Reservation"
-            android:textSize="18sp"
-            android:padding="12dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp"
+            android:paddingBottom="16dp">            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:background="@drawable/back_button_outline_ripple"
+                android:text="← Back"
+                android:textSize="16sp"
+                android:fontFamily="@font/inter_variablefont_opsz_wght"
+                android:textStyle="normal"
+                android:textColor="#374151"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:layout_marginEnd="12dp"
+                android:minWidth="100dp"
+                android:letterSpacing="0.01"
+                android:gravity="center"/>
+
+            <Button
+                android:id="@+id/btn_confirm_reservation"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/app_button_background"
+                android:text="CONFIRM"
+                android:textSize="16sp"
+                android:fontFamily="@font/inter_variablefont_opsz_wght"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:letterSpacing="0.01"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="none"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

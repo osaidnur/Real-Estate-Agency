@@ -3,12 +3,15 @@ package com.example.a1210733_1211088_courseproject.fragments;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -18,20 +21,27 @@ import androidx.fragment.app.Fragment;
 import com.example.a1210733_1211088_courseproject.R;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.ReservationQueries;
+import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
+import com.example.a1210733_1211088_courseproject.models.Property;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ReservationFragment extends Fragment {
-
-    private TextView propertyTitleTextView;
+public class ReservationFragment extends Fragment {    private TextView propertyTitleTextView;
+    private TextView propertyLocationTextView;
+    private TextView propertyPriceTextView;
+    private TextView propertyCategoryTextView;
+    private TextView propertyRoomsTextView;
+    private TextView propertyAreaTextView;
+    private TextView propertySpecialTextView;
+    private LinearLayout specialPropertyLayout;
     private TextView reservationDateTextView;
-    private TextView reservationTimeTextView;
-    private Button datePickerButton;
+    private TextView reservationTimeTextView;    private Button datePickerButton;
     private Button timePickerButton;
     private Button confirmReservationButton;
+    private Button backButton;
 
     private long propertyId;
     private String propertyTitle;
@@ -59,23 +69,33 @@ public class ReservationFragment extends Fragment {
         // Get current user ID
         prefManager = SharedPrefManager.getInstance(getContext());
         currentUserId = prefManager.getCurrentUserId();
-    }
-
-    @Override
+    }    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reservation, container, false);
-
-        // Initialize views
+        View view = inflater.inflate(R.layout.fragment_reservation, container, false);        // Initialize views
         propertyTitleTextView = view.findViewById(R.id.property_title);
+        propertyLocationTextView = view.findViewById(R.id.property_location);
+        propertyPriceTextView = view.findViewById(R.id.property_price);
+        propertyCategoryTextView = view.findViewById(R.id.property_category);
+        propertyRoomsTextView = view.findViewById(R.id.property_rooms);
+        propertyAreaTextView = view.findViewById(R.id.property_area);
+        propertySpecialTextView = view.findViewById(R.id.property_special);
+        specialPropertyLayout = view.findViewById(R.id.special_property_layout);
         reservationDateTextView = view.findViewById(R.id.reservation_date);
         reservationTimeTextView = view.findViewById(R.id.reservation_time);
         datePickerButton = view.findViewById(R.id.btn_pick_date);
         timePickerButton = view.findViewById(R.id.btn_pick_time);
         confirmReservationButton = view.findViewById(R.id.btn_confirm_reservation);
+        backButton = view.findViewById(R.id.btn_back);        // Set up back button
+        backButton.setOnClickListener(v -> {
+            if (getParentFragmentManager() != null) {
+                // Pop the back stack to return to the previous fragment
+                getParentFragmentManager().popBackStack();
+            }
+        });
 
-        // Set property title
-        propertyTitleTextView.setText(propertyTitle);
+        // Set property details
+        loadPropertyDetails();
 
         // Set up date picker
         datePickerButton.setOnClickListener(v -> showDatePicker());
@@ -87,6 +107,74 @@ public class ReservationFragment extends Fragment {
         confirmReservationButton.setOnClickListener(v -> confirmReservation());
 
         return view;
+    }    private void loadPropertyDetails() {
+        if (propertyId == -1) return;
+        
+        try {
+            // Use the proper database method to get property by ID
+            Property property = dbHelper.getPropertyById(propertyId);
+            
+            if (property != null) {
+                // Set property title
+                propertyTitleTextView.setText(property.getTitle());
+                
+                // Set location (city, country)
+                String location = property.getCity() + ", " + property.getCountry();
+                propertyLocationTextView.setText(location);
+                
+                // Set price with discount handling
+                double displayPrice = property.getDiscountedPrice();
+                String priceText;
+                if (property.isSpecial() && property.getDiscount() > 0) {
+                    priceText = String.format(Locale.getDefault(), "$%.2f (%.0f%% off)", 
+                            displayPrice, property.getDiscount());
+                } else {
+                    priceText = String.format(Locale.getDefault(), "$%.2f", displayPrice);
+                }
+                propertyPriceTextView.setText(priceText);
+                
+                // Set property type/category
+                propertyCategoryTextView.setText(property.getType());
+                
+                // Set rooms and bathrooms information
+                String roomsInfo = property.getBedrooms() + " bedrooms, " + property.getBathrooms() + " bathrooms";
+                propertyRoomsTextView.setText(roomsInfo);
+                
+                // Set area information
+                String areaInfo = String.format(Locale.getDefault(), "%.1f m²", property.getArea());
+                propertyAreaTextView.setText(areaInfo);
+                
+                // Handle special property badge
+                if (property.isSpecial()) {
+                    specialPropertyLayout.setVisibility(View.VISIBLE);
+                    if (property.getDiscount() > 0) {
+                        propertySpecialTextView.setText(String.format(Locale.getDefault(), 
+                                "Special Offer! %.0f%% OFF", property.getDiscount()));
+                    } else {
+                        propertySpecialTextView.setText("Featured Property");
+                    }
+                } else {
+                    specialPropertyLayout.setVisibility(View.GONE);
+                }
+                
+            } else {
+                // Fallback if property not found
+                setFallbackPropertyDetails();
+            }
+        } catch (Exception e) {
+            Log.e("ReservationFragment", "Error loading property details: " + e.getMessage());
+            setFallbackPropertyDetails();
+        }
+    }
+    
+    private void setFallbackPropertyDetails() {
+        propertyTitleTextView.setText(propertyTitle.isEmpty() ? "Property Details" : propertyTitle);
+        propertyLocationTextView.setText("Location information available upon contact");
+        propertyPriceTextView.setText("Contact for pricing");
+        propertyCategoryTextView.setText("Property details");
+        propertyRoomsTextView.setText("Room details available");
+        propertyAreaTextView.setText("Area information available");
+        specialPropertyLayout.setVisibility(View.GONE);
     }
 
     private void showDatePicker() {
