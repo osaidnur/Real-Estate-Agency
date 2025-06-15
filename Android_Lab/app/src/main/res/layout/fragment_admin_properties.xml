@@ -32,28 +32,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp"
-            android:background="@drawable/gradient_card_background">            <!-- Compact Header -->
+            android:padding="10dp"
+            android:background="@drawable/gradient_card_background"><!-- Interactive Header with Toggle Button -->
             <LinearLayout
+                android:id="@+id/admin_search_header_clickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">                <ImageView
+                android:layout_marginBottom="6dp"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!-- Beautiful Search Icon -->
+                <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_search"
-                    android:layout_marginEnd="6dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_search_beautiful"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@color/palette1" />                <TextView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Search &amp; Filter"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/palette1"
                     android:fontFamily="sans-serif-medium" />
-            </LinearLayout>            <!-- Compact Search Row 1: Property Name and Location -->
+                
+                <!-- Toggle Button -->
+                <ImageButton
+                    android:id="@+id/admin_btn_toggle_search"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_expand_more"
+                    android:contentDescription="Toggle search panel"
+                    android:scaleType="centerInside"
+                    app:tint="@color/palette1" />
+            </LinearLayout>
+
+            <!-- Collapsible Search Content -->
+            <LinearLayout
+                android:id="@+id/admin_search_content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"><!-- Compact Search Row 1: Property Name and Location -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -177,10 +205,11 @@
                     app:cornerRadius="10dp"
                     app:icon="@drawable/ic_clear"
                     app:iconSize="18dp"
-                    app:iconTint="@color/palette1"
-                    app:strokeColor="@color/palette1"
+                    app:iconTint="@color/palette1"                    app:strokeColor="@color/palette1"
                     app:strokeWidth="1.5dp" />
             </LinearLayout>
+            
+            </LinearLayout> <!-- End of collapsible search content layout -->
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

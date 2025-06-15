@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +46,11 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
     private AutoCompleteTextView searchType;
     private MaterialButton searchButton;
     private MaterialButton clearButton;
+      // Toggle UI elements
+    private ImageButton toggleSearchButton;
+    private LinearLayout searchContentLayout;
+    private LinearLayout searchHeaderClickable;
+    private boolean isSearchVisible = false; // Start hidden
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,15 +63,17 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
 
         try {
             // Initialize UI components
-            recyclerView = view.findViewById(R.id.properties_recycler);
-
-            // Initialize search UI elements
+            recyclerView = view.findViewById(R.id.properties_recycler);            // Initialize search UI elements
             searchName = view.findViewById(R.id.search_name);
             searchLocation = view.findViewById(R.id.search_location);
             searchPrice = view.findViewById(R.id.search_price);
             searchType = view.findViewById(R.id.search_type);
             searchButton = view.findViewById(R.id.search_button);
             clearButton = view.findViewById(R.id.clear_button);
+              // Initialize toggle UI elements
+            toggleSearchButton = view.findViewById(R.id.btn_toggle_search);
+            searchContentLayout = view.findViewById(R.id.search_content_layout);
+            searchHeaderClickable = view.findViewById(R.id.search_header_clickable);
 
             // Check for null views
             if (searchType == null) {
@@ -72,6 +83,9 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
 
             // Setup property type dropdown
             setupPropertyTypeDropdown();
+            
+            // Setup toggle functionality
+            setupToggleSearchButton();
 
         // Initialize database helper
         dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
@@ -266,5 +280,54 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
             .replace(R.id.home_fragment_container, reservationFragment)
             .addToBackStack(null)
             .commit();
+    }    /**
+     * Sets up the toggle button functionality for showing/hiding the search panel
+     */
+    private void setupToggleSearchButton() {
+        if (toggleSearchButton != null && searchContentLayout != null) {
+            toggleSearchButton.setOnClickListener(v -> toggleSearchVisibility());
+        }
+          // Make the entire header clickable to toggle search (expand/collapse)
+        if (searchHeaderClickable != null) {
+            searchHeaderClickable.setOnClickListener(v -> toggleSearchVisibility());
+        }
+    }    /**
+     * Toggles the visibility of the search content with smooth animation
+     */
+    private void toggleSearchVisibility() {
+        if (searchContentLayout == null || toggleSearchButton == null) return;
+
+        Animation animation;
+        
+        if (isSearchVisible) {
+            // Hide search content with smooth collapse
+            animation = AnimationUtils.loadAnimation(getContext(), R.anim.collapse_smooth_out);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    searchContentLayout.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            searchContentLayout.startAnimation(animation);
+            
+            // Update toggle button icon to expand_more
+            toggleSearchButton.setImageResource(R.drawable.ic_expand_more);
+            isSearchVisible = false;
+        } else {
+            // Show search content with smooth expand
+            searchContentLayout.setVisibility(View.VISIBLE);
+            animation = AnimationUtils.loadAnimation(getContext(), R.anim.expand_smooth_in);
+            searchContentLayout.startAnimation(animation);
+            
+            // Update toggle button icon to expand_less
+            toggleSearchButton.setImageResource(R.drawable.ic_expand_less);
+            isSearchVisible = true;
+        }
     }
 }

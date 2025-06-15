@@ -24,32 +24,60 @@
         android:layout_marginHorizontal="8dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="@android:color/white">
-
-        <LinearLayout
+        app:cardBackgroundColor="@android:color/white">        <LinearLayout
             android:id="@+id/filter_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Header -->
+            android:padding="12dp"><!-- Interactive Header -->
             <LinearLayout
+                android:id="@+id/search_header_clickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="8dp"
+                android:paddingVertical="6dp"
+                android:paddingHorizontal="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Beautiful Search Icon -->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_search_beautiful"
+                    android:layout_marginEnd="10dp"
+                    app:tint="@color/palette1" />                <TextView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Search &amp; Filter Properties"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/palette1"
                     android:fontFamily="sans-serif-medium" />
+                
+                <!-- Toggle Button -->
+                <ImageButton
+                    android:id="@+id/btn_toggle_search"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_expand_more"
+                    android:contentDescription="Toggle search panel"
+                    android:scaleType="centerInside"
+                    app:tint="@color/palette1" />
             </LinearLayout>
+
+            <!-- Collapsible Search Content -->
+            <LinearLayout
+                android:id="@+id/search_content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
 
             <!-- Search Row 1: Property Name and Location -->
             <LinearLayout
@@ -160,9 +188,10 @@
                     android:text="CLEAR"
                     android:textColor="@color/palette1"
                     android:textSize="14sp"
-                    app:cornerRadius="8dp"
-                    app:strokeColor="@color/palette1" />
+                    app:cornerRadius="8dp"                    app:strokeColor="@color/palette1" />
             </LinearLayout>
+            
+            </LinearLayout> <!-- End of search_content_layout -->
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
