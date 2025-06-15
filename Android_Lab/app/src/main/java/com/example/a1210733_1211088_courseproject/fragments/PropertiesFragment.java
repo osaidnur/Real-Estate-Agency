@@ -246,19 +246,23 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
         } else {
             Toast.makeText(getContext(), "Error removing property from favorites", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
+    }    @Override
     public void onReserveProperty(Property property) {
-        // Navigate to reservation form
+        // Navigate to reservation form with smooth transition animation
         ReservationFragment reservationFragment = new ReservationFragment();
         Bundle args = new Bundle();
         args.putLong("propertyId", property.getPropertyId());
         args.putString("propertyTitle", property.getTitle());
         reservationFragment.setArguments(args);
 
-        // Replace current fragment with reservation fragment
+        // Replace current fragment with reservation fragment with custom animations
         getParentFragmentManager().beginTransaction()
+            .setCustomAnimations(
+                R.anim.reservation_enter,      // Enter animation - slides up with bounce
+                R.anim.reservation_exit,       // Exit animation - slides up and fades
+                R.anim.reservation_pop_enter,  // Pop enter animation (when returning)
+                R.anim.reservation_pop_exit    // Pop exit animation (when returning)
+            )
             .replace(R.id.home_fragment_container, reservationFragment)
             .addToBackStack(null)
             .commit();

@@ -140,13 +140,16 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
                 }
             }
         });        holder.reserveButton.setOnClickListener(v -> {
-            // Add button press animation
-            Animation pressAnimation = AnimationUtils.loadAnimation(context, R.anim.button_press);
+            // Add enhanced button press animation
+            Animation pressAnimation = AnimationUtils.loadAnimation(context, R.anim.reserve_button_enhanced);
             v.startAnimation(pressAnimation);
             
-            if (listener != null) {
-                listener.onReserveProperty(property);
-            }
+            // Delay the navigation to allow animation to complete
+            v.postDelayed(() -> {
+                if (listener != null) {
+                    listener.onReserveProperty(property);
+                }
+            }, 300); // Delay matches animation duration
         });
     }
 

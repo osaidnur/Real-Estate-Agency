@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -101,13 +103,49 @@ public class ReservationFragment extends Fragment {    private TextView property
         datePickerButton.setOnClickListener(v -> showDatePicker());
 
         // Set up time picker
-        timePickerButton.setOnClickListener(v -> showTimePicker());
-
-        // Set up confirm button
+        timePickerButton.setOnClickListener(v -> showTimePicker());        // Set up confirm button
         confirmReservationButton.setOnClickListener(v -> confirmReservation());
 
+        // Start content animation after a short delay
+        view.postDelayed(() -> animateContent(view), 100);
+
         return view;
-    }    private void loadPropertyDetails() {
+    }    /**
+     * Animates the content elements with staggered fade-in animations
+     */
+    private void animateContent(View rootView) {
+        // Find the main content containers by their IDs
+        View propertyCard = rootView.findViewById(R.id.property_details_card);
+        View dateTimeCard = rootView.findViewById(R.id.datetime_selection_card);
+        View buttonsLayout = rootView.findViewById(R.id.buttons_layout);
+        
+        // Create staggered animations
+        if (propertyCard != null) {
+            Animation fadeIn1 = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_up);
+            fadeIn1.setStartOffset(0);
+            propertyCard.startAnimation(fadeIn1);
+        }
+        
+        if (dateTimeCard != null) {
+            Animation fadeIn2 = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_up);
+            fadeIn2.setStartOffset(150);
+            dateTimeCard.startAnimation(fadeIn2);
+        }
+        
+        if (buttonsLayout != null) {
+            Animation fadeIn3 = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_up);
+            fadeIn3.setStartOffset(300);
+            buttonsLayout.startAnimation(fadeIn3);
+            
+            // Add pulsating animation to confirm button after content is loaded
+            buttonsLayout.postDelayed(() -> {
+                if (confirmReservationButton != null) {
+                    Animation pulseAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.button_pulse);
+                    confirmReservationButton.startAnimation(pulseAnimation);
+                }
+            }, 800); // Start pulsing after content animation completes
+        }
+    }private void loadPropertyDetails() {
         if (propertyId == -1) return;
         
         try {

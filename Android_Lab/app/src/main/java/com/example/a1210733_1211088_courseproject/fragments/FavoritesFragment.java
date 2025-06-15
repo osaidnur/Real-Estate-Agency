@@ -122,11 +122,9 @@ public class FavoritesFragment extends Fragment implements PropertyAdapter.OnPro
                     android.widget.Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    @Override
+    }    @Override
     public void onReserveProperty(Property property) {
-        // Open reservation fragment
+        // Open reservation fragment with smooth transition animation
         ReservationFragment reservationFragment = new ReservationFragment();
         Bundle args = new Bundle();
         args.putLong("propertyId", property.getPropertyId());
@@ -134,6 +132,12 @@ public class FavoritesFragment extends Fragment implements PropertyAdapter.OnPro
         reservationFragment.setArguments(args);
 
         getParentFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                    R.anim.reservation_enter,      // Enter animation - slides up with bounce
+                    R.anim.reservation_exit,       // Exit animation - slides up and fades
+                    R.anim.reservation_pop_enter,  // Pop enter animation (when returning)
+                    R.anim.reservation_pop_exit    // Pop exit animation (when returning)
+                )
                 .replace(R.id.home_fragment_container, reservationFragment)
                 .addToBackStack(null)
                 .commit();
