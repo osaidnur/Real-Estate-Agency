@@ -24,15 +24,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
+            android:padding="16dp">            <TextView
                 android:id="@+id/property_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/wasted_vindey"
+                android:fontFamily="sans-serif"
                 android:textColor="#283E51"
                 android:layout_marginBottom="8dp"/>
 
@@ -40,14 +38,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <TextView
+                android:layout_marginBottom="8dp">                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Price: "
                     android:textStyle="bold"
-                    android:fontFamily="@font/wasted_vindey"/>
+                    android:fontFamily="sans-serif"/>
 
                 <TextView
                     android:id="@+id/property_price"
@@ -56,42 +52,38 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="#283E51"
-                    android:fontFamily="@font/wasted_vindey"/>
+                    android:fontFamily="sans-serif"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
-
-                <TextView
+                android:layout_marginBottom="12dp">                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Location: "
                     android:textStyle="bold"
-                    android:fontFamily="@font/wasted_vindey"/>
+                    android:fontFamily="sans-serif"/>
 
                 <TextView
                     android:id="@+id/property_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/wasted_vindey"/>
+                    android:fontFamily="sans-serif"/>
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#DDDDDD"
-                android:layout_marginBottom="12dp"/>
-
-            <TextView
+                android:layout_marginBottom="12dp"/>            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reservation Details"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:fontFamily="@font/wasted_vindey"
+                android:fontFamily="sans-serif"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
@@ -99,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Date: June 15, 2025"
-                android:fontFamily="@font/wasted_vindey"
+                android:fontFamily="sans-serif"
                 android:drawableStart="@drawable/ic_calendar"
                 android:drawablePadding="8dp"
                 android:layout_marginBottom="4dp"/>
@@ -109,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Time: 2:30 PM"
-                android:fontFamily="@font/wasted_vindey"
+                android:fontFamily="sans-serif"
                 android:drawableStart="@drawable/ic_calendar"
                 android:drawablePadding="8dp"
                 android:layout_marginBottom="4dp"/>
@@ -119,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Status: Pending"
-                android:fontFamily="@font/wasted_vindey"
+                android:fontFamily="sans-serif"
                 android:textStyle="bold"
                 android:textColor="#FFA500"
                 android:layout_marginBottom="8dp"/>
@@ -128,11 +120,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end">
-
-                <Button
+                android:gravity="end">                <Button
                     android:id="@+id/btn_view_details"
-                    style="@style/AppButtonStyle"
+                    style="@style/ReservationButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="View Details"
@@ -140,10 +130,10 @@
 
                 <Button
                     android:id="@+id/btn_cancel"
-                    style="@style/AppButtonStyle"
+                    style="@style/CancelReservationButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cancel Reservation"/>
+                    android:text="Cancel"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

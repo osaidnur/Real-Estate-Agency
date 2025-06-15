@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- First bounce - scale up -->
+    <scale
+        android:duration="150"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1.4"
+        android:toYScale="1.4" />
+    
+    <!-- Second bounce - scale down with slight overshoot -->
+    <scale
+        android:duration="150"
+        android:fromXScale="1.4"
+        android:fromYScale="1.4"
+        android:interpolator="@android:anim/overshoot_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="150"
+        android:toXScale="1.0"
+        android:toYScale="1.0" />
+    
+    <!-- Alpha pulse for extra effect -->
+    <alpha
+        android:duration="100"
+        android:fromAlpha="1.0"
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:toAlpha="0.8" />
+    <alpha
+        android:duration="200"
+        android:fromAlpha="0.8"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:startOffset="100"
+        android:toAlpha="1.0" />
+</set>

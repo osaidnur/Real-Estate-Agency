@@ -6,9 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -112,9 +115,7 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
 
         // Check if property is in user's favorites
         boolean isFavorite = isPropertyInFavorites(property.getPropertyId());
-        updateFavoriteButton(holder.favoriteButton, isFavorite);
-
-        // Set click listeners
+        updateFavoriteButton(holder.favoriteButton, isFavorite);        // Set click listeners
         holder.favoriteButton.setOnClickListener(v -> {
             boolean newFavoriteStatus = !isPropertyInFavorites(property.getPropertyId());
 
@@ -127,8 +128,8 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
                 removeFromFavorites(property.getPropertyId());
             }
 
-            // Update UI
-            updateFavoriteButton(holder.favoriteButton, newFavoriteStatus);
+            // Update UI with animation
+            animateHeartButton(holder.favoriteButton, newFavoriteStatus);
 
             // Notify listener
             if (listener != null) {
@@ -138,9 +139,11 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
                     listener.onRemoveFromFavorites(property);
                 }
             }
-        });
-
-        holder.reserveButton.setOnClickListener(v -> {
+        });        holder.reserveButton.setOnClickListener(v -> {
+            // Add button press animation
+            Animation pressAnimation = AnimationUtils.loadAnimation(context, R.anim.button_press);
+            v.startAnimation(pressAnimation);
+            
             if (listener != null) {
                 listener.onReserveProperty(property);
             }
@@ -181,16 +184,29 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
      */
     private void removeFromFavorites(long propertyId) {
         dbHelper.removeFromFavorites(currentUserId, propertyId);
-    }
-
-    private void updateFavoriteButton(Button button, boolean isFavorite) {
+    }    private void updateFavoriteButton(ImageButton button, boolean isFavorite) {
+        button.setSelected(isFavorite);
         if (isFavorite) {
-            button.setText("Remove from Favorites");
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite, 0, 0, 0);
+            button.setContentDescription("Remove from favorites");
         } else {
-            button.setText("Add to Favorites");
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_star, 0, 0, 0);
+            button.setContentDescription("Add to favorites");
         }
+    }
+    
+    private void animateHeartButton(ImageButton button, boolean isFavorite) {
+        // Update the button state first
+        updateFavoriteButton(button, isFavorite);
+        
+        // Apply animation
+        Animation animation;
+        if (isFavorite) {
+            // Heart filled - bounce animation
+            animation = AnimationUtils.loadAnimation(context, R.anim.heart_bounce);
+        } else {
+            // Heart empty - shrink animation
+            animation = AnimationUtils.loadAnimation(context, R.anim.heart_shrink);
+        }
+        button.startAnimation(animation);
     }
 
     @Override
@@ -242,7 +258,8 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
         TextView propertyTitle, propertyDescription, propertyPrice, propertyLocation, propertyType, propertyInfo, propertyArea;
         TextView discountBadge, originalPrice, salePrice, savingsAmount;
         LinearLayout specialOfferSection, regularPriceSection;
-        Button favoriteButton, reserveButton;
+        ImageButton favoriteButton;
+        Button reserveButton;
 
         public PropertyViewHolder(@NonNull View itemView) {
             super(itemView);

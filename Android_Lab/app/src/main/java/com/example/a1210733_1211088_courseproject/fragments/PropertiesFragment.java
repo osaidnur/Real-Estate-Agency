@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +22,8 @@ import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.models.Property;
 import com.example.a1210733_1211088_courseproject.utils.SharedPrefManager;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,41 +35,43 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
     private List<Property> propertyList;
     private PropertyAdapter adapter;
     private SharedPrefManager prefManager;
-    private long currentUserId;
-
-    // Search UI elements
-    private EditText searchLocation;
-    private EditText searchPrice;
-    private Spinner searchType;
-    private Button searchButton;
+    private long currentUserId;    // Search UI elements
+    private TextInputEditText searchName;
+    private TextInputEditText searchLocation;
+    private TextInputEditText searchPrice;
+    private AutoCompleteTextView searchType;
+    private MaterialButton searchButton;
+    private MaterialButton clearButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_properties, container, false);
-    }
-
-    @Override
+    }    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize UI components
-        recyclerView = view.findViewById(R.id.properties_recycler);
+        try {
+            // Initialize UI components
+            recyclerView = view.findViewById(R.id.properties_recycler);
 
-        // Initialize search UI elements
-        searchLocation = view.findViewById(R.id.search_location);
-        searchPrice = view.findViewById(R.id.search_price);
-        searchType = view.findViewById(R.id.search_type);
-        searchButton = view.findViewById(R.id.search_button);
+            // Initialize search UI elements
+            searchName = view.findViewById(R.id.search_name);
+            searchLocation = view.findViewById(R.id.search_location);
+            searchPrice = view.findViewById(R.id.search_price);
+            searchType = view.findViewById(R.id.search_type);
+            searchButton = view.findViewById(R.id.search_button);
+            clearButton = view.findViewById(R.id.clear_button);
 
-        // Setup property type spinner
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.property_types,
-                android.R.layout.simple_spinner_item);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        searchType.setAdapter(typeAdapter);
+            // Check for null views
+            if (searchType == null) {
+                Toast.makeText(getContext(), "Search type view not found", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Setup property type dropdown
+            setupPropertyTypeDropdown();
 
         // Initialize database helper
         dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
@@ -79,19 +81,44 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
         currentUserId = prefManager.getCurrentUserId();
 
         // Set up RecyclerView
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // Set click listener for search button
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));        // Set click listeners for buttons
         searchButton.setOnClickListener(v -> performSearch());
+        clearButton.setOnClickListener(v -> clearFilters());
 
         // Load all properties initially
         loadProperties();
-    }
-
-    private void performSearch() {
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error initializing properties view: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }private void setupPropertyTypeDropdown() {
+        try {
+            String[] propertyTypes = getResources().getStringArray(R.array.property_types);
+            
+            // Create a material design dropdown adapter
+            ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
+                    requireContext(),
+                    com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
+                    propertyTypes
+            );
+            
+            searchType.setAdapter(typeAdapter);
+            searchType.setText("All", false); // Set default selection without triggering dropdown
+            
+            // Set the dropdown to be non-editable
+            searchType.setKeyListener(null);
+            
+            // Ensure dropdown shows when clicked
+            searchType.setOnClickListener(v -> searchType.showDropDown());
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error setting up dropdown: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }private void performSearch() {
+        String propertyName = searchName.getText().toString().trim();
         String location = searchLocation.getText().toString().trim();
         String priceStr = searchPrice.getText().toString().trim();
-        String type = searchType.getSelectedItem().toString();
+        String type = searchType.getText().toString().trim();
 
         // Default max price if not specified
         double maxPrice = Double.MAX_VALUE;
@@ -109,15 +136,18 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
         List<Property> filteredList = new ArrayList<>();
 
         for (Property property : propertyList) {
+            boolean matchesName = propertyName.isEmpty() ||
+                    property.getTitle().toLowerCase().contains(propertyName.toLowerCase());
+            
             boolean matchesLocation = location.isEmpty() ||
                     property.getCity().toLowerCase().contains(location.toLowerCase()) ||
                     property.getCountry().toLowerCase().contains(location.toLowerCase());
 
             boolean matchesPrice = property.getPrice() <= maxPrice;
 
-            boolean matchesType = type.equals("All") || property.getType().equals(type);
+            boolean matchesType = type.equals("All") || type.isEmpty() || property.getType().equals(type);
 
-            if (matchesLocation && matchesPrice && matchesType) {
+            if (matchesName && matchesLocation && matchesPrice && matchesType) {
                 filteredList.add(property);
             }
         }
@@ -126,10 +156,26 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
         adapter = new PropertyAdapter(getContext(), filteredList, this);
         recyclerView.setAdapter(adapter);
 
-        // Show message if no results found
+        // Show message with results
         if (filteredList.isEmpty()) {
             Toast.makeText(getContext(), "No properties match your search criteria", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Found " + filteredList.size() + " properties", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void clearFilters() {
+        // Clear all search fields
+        searchName.setText("");
+        searchLocation.setText("");
+        searchPrice.setText("");
+        searchType.setText("All", false);
+        
+        // Reset to show all properties
+        adapter = new PropertyAdapter(getContext(), propertyList, this);
+        recyclerView.setAdapter(adapter);
+        
+        Toast.makeText(getContext(), "Filters cleared", Toast.LENGTH_SHORT).show();
     }
 
     private void loadProperties() {
