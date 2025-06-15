@@ -20,11 +20,13 @@
         android:theme="@style/Base.Theme._1210733_1211088_CourseProject"
         tools:targetApi="31">        <activity
             android:name=".activities.HomeActivity"
+            android:theme="@style/Theme.CustomerHome"
             android:exported="false" />
         <activity
             android:name=".activities.authActivity"
             android:exported="false" />        <activity
             android:name=".activities.AdminActivity"
+            android:theme="@style/Theme.AdminDashboard"
             android:exported="false" />
         <activity
             android:name=".activities.AddAdminActivity"

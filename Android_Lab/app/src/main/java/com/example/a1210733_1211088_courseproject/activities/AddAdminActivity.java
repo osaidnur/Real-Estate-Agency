@@ -34,13 +34,14 @@ public class AddAdminActivity extends AppCompatActivity {
     private DataBaseHelper dbHelper;
     
     // Country-City mapping (same as in registration)
-    private Map<String, String[]> countryCityMap;
-
-    @Override
+    private Map<String, String[]> countryCityMap;    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_admin);
+
+        // Set status bar color to palette1
+        getWindow().setStatusBarColor(getResources().getColor(R.color.palette1, getTheme()));
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.add_admin_container), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

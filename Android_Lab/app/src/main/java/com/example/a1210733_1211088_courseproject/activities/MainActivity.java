@@ -3,14 +3,18 @@ package com.example.a1210733_1211088_courseproject.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,13 +29,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private Button btnConnect;
-    private PropertyApiClient propertyApiClient;
-
-    @Override
+    private PropertyApiClient propertyApiClient;    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_welcome);
+
+        // Force set status bar color more aggressively
+        setupStatusBar();
 
         View rootView = findViewById(android.R.id.content);
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
@@ -191,12 +196,35 @@ public class MainActivity extends AppCompatActivity {
             // Close the cursor when done
             if (cursor != null) {
                 cursor.close();
-            }
-        } catch (Exception e) {
+            }        } catch (Exception e) {
             System.out.println("Error retrieving users: " + e.getMessage());
             Log.e(TAG, "Error retrieving users", e);
         } finally {
             dbHelper.close();
+        }
+    }
+    
+    private void setupStatusBar() {
+        Window window = getWindow();
+        
+        // Enable drawing under status bar
+        window.getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
+        
+        // Make status bar translucent first
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        
+        // Set the status bar color using ContextCompat for better compatibility
+        int statusBarColor = ContextCompat.getColor(this, R.color.palette1);
+        window.setStatusBarColor(statusBarColor);
+        
+        // Ensure status bar text is white (since we're using a dark color)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decorView = window.getDecorView();
+            decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
     }
 

@@ -36,13 +36,15 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
     private AuthPagerAdapter authPagerAdapter;
     private AuthenticationManager authManager;
     private DataBaseHelper dbHelper;
-    private SharedPrefManager sharedPrefManager;
-
-    @Override
+    private SharedPrefManager sharedPrefManager;    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_auth);
+
+        // Set status bar color to palette1
+        getWindow().setStatusBarColor(getResources().getColor(R.color.palette1, getTheme()));
+
           // Initialize authentication manager
         authManager = new AuthenticationManager(this);
           // Initialize database helper
