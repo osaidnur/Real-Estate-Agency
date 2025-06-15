@@ -77,6 +77,9 @@ public class AddAdminActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Add New Admin");
+            
+            // Set the back arrow color to palette_gold
+            toolbar.getNavigationIcon().setTint(getResources().getColor(R.color.palette_white, getTheme()));
         }
         
         // Apply Olivera font to toolbar title

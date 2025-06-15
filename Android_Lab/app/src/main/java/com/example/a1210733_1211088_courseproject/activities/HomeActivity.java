@@ -81,6 +81,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         );
+        
+        // Set navigation drawer toggle color to palette_gold
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.palette_white, getTheme()));
+        
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
