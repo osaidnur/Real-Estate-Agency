@@ -74,14 +74,13 @@ public class AdminSpecialOffersFragment extends Fragment implements SpecialOffer
             Log.d(TAG, "No special offers found");
         }
     }
-    
-    @Override
+      @Override
     public void onRemoveSpecialOffer(Property property) {
         // Show confirmation dialog
-        new AlertDialog.Builder(getContext())
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Remove Special Offer")
                 .setMessage("Are you sure you want to remove the special offer for \"" + property.getTitle() + "\"?")
-                .setPositiveButton("Remove", (dialog, which) -> {
+                .setPositiveButton("Remove", (dialogInterface, which) -> {
                     // Remove special offer from database
                     if (dbHelper.updatePropertySpecialOffer(property.getPropertyId(), false, 0.0)) {
                         // Remove from local list and update adapter
@@ -105,7 +104,17 @@ public class AdminSpecialOffersFragment extends Fragment implements SpecialOffer
                     }
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
+                .create();
+        
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
     
     @Override
@@ -113,8 +122,7 @@ public class AdminSpecialOffersFragment extends Fragment implements SpecialOffer
         // Show property details dialog
         showPropertyDetailsDialog(property);
     }
-    
-    private void showPropertyDetailsDialog(Property property) {
+      private void showPropertyDetailsDialog(Property property) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Property Details");
         
@@ -139,7 +147,14 @@ public class AdminSpecialOffersFragment extends Fragment implements SpecialOffer
         
         builder.setMessage(details);
         builder.setPositiveButton("Close", null);
-        builder.show();
+        
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
     
     @Override

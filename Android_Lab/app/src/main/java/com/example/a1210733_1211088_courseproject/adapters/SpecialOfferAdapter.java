@@ -1,6 +1,7 @@
 package com.example.a1210733_1211088_courseproject.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a1210733_1211088_courseproject.R;
@@ -70,8 +72,7 @@ public class SpecialOfferAdapter extends RecyclerView.Adapter<SpecialOfferAdapte
         CardView cardView;
         TextView tvTitle, tvType, tvOriginalPrice, tvDiscountedPrice, tvDiscount, tvLocation, tvSavings;
         Button btnRemoveOffer, btnViewDetails;
-        
-        public SpecialOfferViewHolder(@NonNull View itemView) {
+          public SpecialOfferViewHolder(@NonNull View itemView) {
             super(itemView);
             
             cardView = itemView.findViewById(R.id.special_offer_card);
@@ -84,6 +85,12 @@ public class SpecialOfferAdapter extends RecyclerView.Adapter<SpecialOfferAdapte
             tvSavings = itemView.findViewById(R.id.special_offer_savings);
             btnRemoveOffer = itemView.findViewById(R.id.btn_remove_special_offer);
             btnViewDetails = itemView.findViewById(R.id.btn_view_offer_details);
+            
+            // Set Inter Variable font for the Remove Offer button
+            Typeface interFont = ResourcesCompat.getFont(itemView.getContext(), R.font.inter_variablefont_opsz_wght);
+            if (interFont != null) {
+                btnRemoveOffer.setTypeface(interFont);
+            }
         }
     }
 }

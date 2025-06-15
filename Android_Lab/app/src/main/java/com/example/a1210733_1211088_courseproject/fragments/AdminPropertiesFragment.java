@@ -124,8 +124,7 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
                     Toast.LENGTH_SHORT).show();
         }
     }
-    
-    private void showDiscountDialog(Property property) {
+      private void showDiscountDialog(Property property) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add Special Offer");
         builder.setMessage("Enter discount percentage for " + property.getTitle() + ":");
@@ -173,7 +172,17 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
         });
         
         builder.setNegativeButton("Cancel", null);
-        builder.show();
+        
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
     
     private boolean updatePropertySpecialStatus(long propertyId, boolean isSpecial, double discount) {
