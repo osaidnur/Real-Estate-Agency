@@ -1,10 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">    <!-- Base application theme for API 27+ (devices with notches) -->
     <style name="Base.Theme._1210733_1211088_CourseProject" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- Handle window insets properly for notched devices -->
+        <!-- Customize your light theme here. -->        <!-- Handle window insets properly for notched devices -->
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/palette1</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
@@ -14,8 +13,7 @@
         <item name="colorPrimary">@color/admin_primary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/admin_accent</item>
-        <item name="colorSecondary">@color/admin_secondary</item>
-        <item name="android:windowBackground">@color/admin_background</item>        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorSecondary">@color/admin_secondary</item>        <item name="android:windowBackground">@color/admin_background</item>        <item name="android:statusBarColor">@color/palette1</item>
         <!-- Handle window insets properly for notched devices -->
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>

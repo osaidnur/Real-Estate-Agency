@@ -3,9 +3,13 @@ package com.example.a1210733_1211088_courseproject.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -43,6 +48,9 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
     private long userId;
     private String adminName;    @Override
     protected void onCreate(Bundle savedInstanceState) {        super.onCreate(savedInstanceState);        setContentView(R.layout.activity_admin_drawer);
+
+        // Force set status bar color more aggressively
+        setupStatusBar();
         
         // Initialize database helper
         dbHelper = new DataBaseHelper(this, "RealEstate", null, 1);
@@ -250,6 +258,33 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }    private void setupStatusBar() {
+        Window window = getWindow();
+        
+        // Enable drawing under status bar
+        window.getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
+        
+        // Make status bar translucent first
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        
+        // Set to palette1 color (#183B4E)
+        int statusBarColor = 0xFF183B4E; // palette1 color
+        window.setStatusBarColor(statusBarColor);
+        
+        // Also try alternative method
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(0xFF183B4E);
+        }
+        
+        // Ensure status bar text is white (since we're using a dark color)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decorView = window.getDecorView();
+            decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
     }
     
     @Override
@@ -258,5 +293,12 @@ public class AdminActivity extends AppCompatActivity implements NavigationView.O
         if (dbHelper != null) {
             dbHelper.close();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Force status bar color again when activity resumes
+        setupStatusBar();
     }
 }

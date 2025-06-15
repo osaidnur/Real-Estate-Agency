@@ -89,12 +89,35 @@
         <item name="boxStrokeColor">@color/admin_secondary</item>
         <item name="android:textColorHint">@color/admin_text_secondary</item>
         <item name="errorTextColor">@color/admin_error</item>
-    </style>
-
-    <style name="AdminCardStyle" parent="Widget.MaterialComponents.CardView">
+    </style>    <style name="AdminCardStyle" parent="Widget.MaterialComponents.CardView">
         <item name="cardElevation">2dp</item>
         <item name="cardBackgroundColor">@color/admin_surface</item>
         <item name="cardCornerRadius">8dp</item>
         <item name="contentPadding">16dp</item>
+    </style>    <!-- Admin Delete Button Style - Specific style for delete buttons -->
+    <style name="AdminDeleteButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="backgroundTint">@color/admin_error</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="cornerRadius">4dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">32dp</item>
+    </style>
+
+    <!-- Customer Delete Button Style - Specific style for customer delete buttons -->
+    <style name="CustomerDeleteButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/inter_variablefont_opsz_wght</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">8dp</item>
+        <item name="backgroundTint">@android:color/holo_red_light</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="cornerRadius">4dp</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 </resources>
