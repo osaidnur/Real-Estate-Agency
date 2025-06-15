@@ -1,19 +1,25 @@
 package com.example.a1210733_1211088_courseproject.activities;
 
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,10 +44,8 @@ public class AddAdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_add_admin);
-
-        // Set status bar color to palette1
-        getWindow().setStatusBarColor(getResources().getColor(R.color.palette1, getTheme()));
+        setContentView(R.layout.activity_add_admin);        // Setup status bar like AdminActivity
+        setupStatusBar();
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.add_admin_container), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -66,15 +70,24 @@ public class AddAdminActivity extends AppCompatActivity {
 
         // Setup add admin button
         setupAddAdminButton();
-    }
-
-    private void setupToolbar() {
+    }    private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_add_admin);
         setSupportActionBar(toolbar);
         
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Add New Admin");
+        }
+        
+        // Apply Olivera font to toolbar title
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            View view = toolbar.getChildAt(i);
+            if (view instanceof TextView) {
+                TextView textView = (TextView) view;
+                Typeface olivera = ResourcesCompat.getFont(this, R.font.olivera_font_family);
+                textView.setTypeface(olivera);
+                textView.setTextColor(getResources().getColor(android.R.color.white, getTheme()));
+            }
         }
     }
 
@@ -302,15 +315,40 @@ public class AddAdminActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Failed to create admin. Please try again.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
+    }    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }    private void setupStatusBar() {
+        Window window = getWindow();
+        
+        // Enable drawing under status bar
+        window.getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
+        
+        // Make status bar translucent first
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        
+        // Set to palette1 color (#183B4E)
+        int statusBarColor = 0xFF183B4E; // palette1 color
+        window.setStatusBarColor(statusBarColor);
+        
+        // Also try alternative method
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(0xFF183B4E);
+        }
+        
+        // Ensure status bar text is white (since we're using a dark color)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decorView = window.getDecorView();
+            decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
     }
 
     @Override
