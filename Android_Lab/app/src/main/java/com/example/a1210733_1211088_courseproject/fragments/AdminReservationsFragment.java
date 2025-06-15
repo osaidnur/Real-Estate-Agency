@@ -122,15 +122,23 @@ public class AdminReservationsFragment extends Fragment implements AdminReservat
             "Are you sure you want to reject this reservation?",
             () -> updateReservationStatus(reservation, "cancelled")
         );
-    }
-
-    private void showConfirmationDialog(String title, String message, Runnable onConfirm) {
-        new AlertDialog.Builder(requireContext())
+    }    private void showConfirmationDialog(String title, String message, Runnable onConfirm) {
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton("Yes", (dialog, which) -> onConfirm.run())
-            .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-            .show();
+            .setPositiveButton("Yes", (dialogInterface, which) -> onConfirm.run())
+            .setNegativeButton("No", (dialogInterface, which) -> dialogInterface.dismiss())
+            .create();
+        
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
 
     private void updateReservationStatus(Reservation reservation, String newStatus) {

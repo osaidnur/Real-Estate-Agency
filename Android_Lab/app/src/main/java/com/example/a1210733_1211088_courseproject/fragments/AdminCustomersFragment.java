@@ -73,15 +73,13 @@ public class AdminCustomersFragment extends Fragment implements CustomerAdapter.
             adapter = new CustomerAdapter(getContext(), customersList, this);
             recyclerView.setAdapter(adapter);
         }
-    }
-
-    @Override
+    }    @Override
     public void onDeleteCustomer(User customer) {
         // Show confirmation dialog
-        new AlertDialog.Builder(getContext())
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Delete Customer")
                 .setMessage("Are you sure you want to delete " + customer.getFirstName() + " " + customer.getLastName() + "?\n\nThis will also delete all their favorites and reservations.")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setPositiveButton("Delete", (dialogInterface, which) -> {
                     // Perform delete operation
                     boolean success = dbHelper.deleteUser(customer.getUserId());
                     
@@ -109,7 +107,17 @@ public class AdminCustomersFragment extends Fragment implements CustomerAdapter.
                     }
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
+                .create();
+        
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
 
     @Override

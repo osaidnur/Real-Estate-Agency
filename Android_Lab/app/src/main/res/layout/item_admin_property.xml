@@ -123,9 +123,7 @@
             android:textColor="@color/secondary_text"
             android:maxLines="2"
             android:ellipsize="end"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Action Button -->
+            android:layout_marginBottom="12dp" />        <!-- Action Button -->
         <Button
             android:id="@+id/btn_admin_special_offer"
             android:layout_width="match_parent"
@@ -133,8 +131,9 @@
             android:text="Add Special Offer"
             android:background="@drawable/button_background"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
+            android:fontFamily="arial"
             android:padding="12dp" />
 
     </LinearLayout>

@@ -117,8 +117,7 @@ public class AdminsFragment extends Fragment implements AdminAdapter.OnAdminInte
                           Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        // Show confirmation dialog
+          // Show confirmation dialog
         androidx.appcompat.app.AlertDialog.Builder builder = 
             new androidx.appcompat.app.AlertDialog.Builder(getContext());
         builder.setTitle("Delete Admin");
@@ -135,7 +134,17 @@ public class AdminsFragment extends Fragment implements AdminAdapter.OnAdminInte
             }
         });
         builder.setNegativeButton("Cancel", null);
-        builder.show();
+        
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
+        if (dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
 
     @Override

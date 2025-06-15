@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,8 @@ import com.example.a1210733_1211088_courseproject.adapters.AdminPropertyAdapter;
 import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.models.Property;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,14 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
     private AdminPropertyAdapter adapter;
     private DataBaseHelper dbHelper;
     private List<Property> propertyList;
+    private List<Property> originalPropertyList; // Keep original list for filtering
+      // Search and filter UI elements
+    private TextInputEditText searchName;
+    private TextInputEditText searchLocation;
+    private TextInputEditText searchPrice;
+    private AutoCompleteTextView searchType;
+    private MaterialButton searchButton;
+    private MaterialButton clearButton;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +62,13 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
         // Initialize views
         recyclerView = view.findViewById(R.id.admin_properties_recycler);
         emptyView = view.findViewById(R.id.admin_properties_empty_view);
+          // Initialize search and filter UI elements
+        searchName = view.findViewById(R.id.admin_search_name);
+        searchLocation = view.findViewById(R.id.admin_search_location);
+        searchPrice = view.findViewById(R.id.admin_search_price);
+        searchType = view.findViewById(R.id.admin_search_type);
+        searchButton = view.findViewById(R.id.admin_search_button);
+        clearButton = view.findViewById(R.id.admin_clear_button);
         
         // Initialize database helper
         dbHelper = new DataBaseHelper(getContext(), "RealEstate", null, 1);
@@ -57,12 +76,125 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
         // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         
+        // Setup property type dropdown
+        setupPropertyTypeDropdown();
+        
+        // Setup search functionality
+        setupSearchFunctionality();
+        
         // Load properties
         loadProperties();
+    }
+      private void setupPropertyTypeDropdown() {
+        String[] propertyTypes = getResources().getStringArray(R.array.property_types);
+        
+        // Create a material design dropdown adapter
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
+                requireContext(),
+                com.google.android.material.R.layout.support_simple_spinner_dropdown_item,
+                propertyTypes
+        );
+        
+        searchType.setAdapter(typeAdapter);
+        searchType.setText("All", false); // Set default selection without triggering dropdown
+        
+        // Set the dropdown to be non-editable
+        searchType.setKeyListener(null);
+        
+        // Ensure dropdown shows when clicked
+        searchType.setOnClickListener(v -> searchType.showDropDown());
+        
+        Log.d(TAG, "Property type dropdown setup with " + propertyTypes.length + " items");
+    }
+    
+    private void setupSearchFunctionality() {
+        searchButton.setOnClickListener(v -> performSearch());
+        clearButton.setOnClickListener(v -> clearFilters());
+    }
+      private void performSearch() {
+        String propertyName = searchName.getText().toString().trim();
+        String location = searchLocation.getText().toString().trim();
+        String priceStr = searchPrice.getText().toString().trim();
+        String type = searchType.getText().toString().trim();
+
+        // Default max price if not specified
+        double maxPrice = Double.MAX_VALUE;
+
+        if (!priceStr.isEmpty()) {
+            try {
+                maxPrice = Double.parseDouble(priceStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Please enter a valid price", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // Filter the properties based on search criteria
+        List<Property> filteredList = new ArrayList<>();
+
+        for (Property property : originalPropertyList) {
+            boolean matchesName = propertyName.isEmpty() ||
+                    property.getTitle().toLowerCase().contains(propertyName.toLowerCase());
+            
+            boolean matchesLocation = location.isEmpty() ||
+                    property.getCity().toLowerCase().contains(location.toLowerCase()) ||
+                    property.getCountry().toLowerCase().contains(location.toLowerCase());
+
+            boolean matchesPrice = property.getPrice() <= maxPrice;
+
+            boolean matchesType = type.equals("All") || type.isEmpty() || property.getType().equals(type);
+
+            if (matchesName && matchesLocation && matchesPrice && matchesType) {
+                filteredList.add(property);
+            }
+        }
+
+        // Update the adapter with filtered results
+        propertyList.clear();
+        propertyList.addAll(filteredList);
+        adapter.notifyDataSetChanged();
+
+        // Update visibility based on results
+        if (filteredList.isEmpty()) {
+            emptyView.setText("No properties match your search criteria.\nTry adjusting your filters.");
+            emptyView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "No properties match your search criteria", Toast.LENGTH_SHORT).show();
+        } else {
+            emptyView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            Toast.makeText(getContext(), "Found " + filteredList.size() + " properties", Toast.LENGTH_SHORT).show();
+        }        Log.d(TAG, "Search performed: name=" + propertyName + ", location=" + location + 
+              ", maxPrice=" + maxPrice + ", type=" + type + ", results=" + filteredList.size());
+    }
+      private void clearFilters() {
+        // Clear all search fields
+        searchName.setText("");
+        searchLocation.setText("");
+        searchPrice.setText("");
+        searchType.setText("All", false);
+        
+        // Restore original property list
+        propertyList.clear();
+        propertyList.addAll(originalPropertyList);
+        adapter.notifyDataSetChanged();
+        
+        // Update visibility
+        if (originalPropertyList.isEmpty()) {
+            emptyView.setText("No properties found.\nConnect to API to load properties.");
+            emptyView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            emptyView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }        
+        Toast.makeText(getContext(), "Filters cleared", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Filters cleared, showing all " + originalPropertyList.size() + " properties");
     }
     
     private void loadProperties() {
         propertyList = new ArrayList<>();
+        originalPropertyList = new ArrayList<>(); // Initialize original list
         
         Cursor cursor = dbHelper.getAllProperties();
         
@@ -89,6 +221,7 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
                         area, price, country, city, imageUrl, isSpecial, discount);
                 
                 propertyList.add(property);
+                originalPropertyList.add(property); // Add to both lists
                 
             } while (cursor.moveToNext());
             
@@ -124,8 +257,7 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
                     Toast.LENGTH_SHORT).show();
         }
     }
-    
-    private void showDiscountDialog(Property property) {
+      private void showDiscountDialog(Property property) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add Special Offer");
         builder.setMessage("Enter discount percentage for " + property.getTitle() + ":");
@@ -173,7 +305,17 @@ public class AdminPropertiesFragment extends Fragment implements AdminPropertyAd
         });
         
         builder.setNegativeButton("Cancel", null);
-        builder.show();
+        
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        // Reset button fonts to default system font
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTypeface(android.graphics.Typeface.DEFAULT);
+        }
     }
     
     private boolean updatePropertySpecialStatus(long propertyId, boolean isSpecial, double discount) {

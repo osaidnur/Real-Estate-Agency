@@ -1,6 +1,7 @@
 package com.example.a1210733_1211088_courseproject.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a1210733_1211088_courseproject.R;
@@ -91,8 +93,7 @@ public class AdminPropertyAdapter extends RecyclerView.Adapter<AdminPropertyAdap
         TextView tvTitle, tvType, tvPrice, tvLocation, tvDescription, tvDetails;
         TextView tvSpecialStatus, tvDiscountedPrice;
         Button btnSpecialOffer;
-        
-        public PropertyViewHolder(@NonNull View itemView) {
+          public PropertyViewHolder(@NonNull View itemView) {
             super(itemView);
             
             cardView = itemView.findViewById(R.id.admin_property_card);
@@ -105,6 +106,12 @@ public class AdminPropertyAdapter extends RecyclerView.Adapter<AdminPropertyAdap
             tvSpecialStatus = itemView.findViewById(R.id.admin_property_special_status);
             tvDiscountedPrice = itemView.findViewById(R.id.admin_property_discounted_price);
             btnSpecialOffer = itemView.findViewById(R.id.btn_admin_special_offer);
+            
+            // Set Inter Variable font for the button
+            Typeface interFont = ResourcesCompat.getFont(itemView.getContext(), R.font.inter_variablefont_opsz_wght);
+            if (interFont != null) {
+                btnSpecialOffer.setTypeface(interFont);
+            }
         }
     }
 }
