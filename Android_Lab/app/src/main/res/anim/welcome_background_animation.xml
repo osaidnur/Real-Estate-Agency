@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/linear_interpolator">
+    
+    <!-- Subtle zoom in and out animation -->
+    <scale
+        android:fromXScale="1.0"
+        android:toXScale="1.15"
+        android:fromYScale="1.0"
+        android:toYScale="1.15"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="20000"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse" />
+        
+    <!-- Subtle horizontal pan -->
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="30"
+        android:duration="15000"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse" />
+        
+    <!-- Very subtle vertical movement -->
+    <translate
+        android:fromYDelta="0"
+        android:toYDelta="-20"
+        android:duration="18000"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse" />
+        
+</set>

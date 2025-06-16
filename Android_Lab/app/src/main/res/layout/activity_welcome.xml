@@ -9,15 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/bg_real_estate" />
-
-    <!-- Overlay color for contrast -->
+        android:src="@drawable/bg_real_estate" />    <!-- Overlay color for contrast -->
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000" />
-
-    <!-- Company Icon -->
+        android:background="@drawable/elegant_welcome_overlay" />    <!-- Company Icon -->
     <ImageView
         android:id="@+id/companyIcon"
         android:layout_width="150dp"
@@ -25,37 +21,42 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
         android:src="@drawable/icon"
-        android:contentDescription="Company Logo" />
-
-    <!-- App Name -->
+        android:contentDescription="Company Logo"
+        android:elevation="8dp" /><!-- App Name -->
     <TextView
         android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Luxora"
         android:textColor="@android:color/white"
-        android:textSize="34sp"
+        android:textSize="36sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/companyIcon"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:fontFamily="@font/brillant"
-        />
-
-    <!-- Connect Button -->
+        android:shadowColor="#40000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:letterSpacing="0.05"
+        /><!-- Connect Button -->
     <Button
         android:id="@+id/btnConnect"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:text="Connect"
         android:textColor="#FFFFFF"
-        android:background="@drawable/rounded_button"
-        android:elevation="8dp"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif-medium"
+        android:background="@drawable/elegant_welcome_button"
+        android:elevation="12dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/facultyglyphic_regular"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/appName"
-        android:layout_marginTop="60dp" />
+        android:layout_marginTop="60dp"
+        android:letterSpacing="0.1"
+        android:stateListAnimator="@null" />
 
 
 </RelativeLayout>

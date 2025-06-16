@@ -9,7 +9,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,11 +29,12 @@ import com.example.a1210733_1211088_courseproject.database.DataBaseHelper;
 import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
 
-public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "MainActivity";
+public class MainActivity extends AppCompatActivity {    private static final String TAG = "MainActivity";
     private Button btnConnect;
-    private PropertyApiClient propertyApiClient;    @Override
+    private ImageView bgImage;
+    private ImageView companyIcon;
+    private TextView appName;
+    private PropertyApiClient propertyApiClient;@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -44,10 +49,17 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });        // Initialize PropertyApiClient
-        propertyApiClient = new PropertyApiClient(this);
+        propertyApiClient = new PropertyApiClient(this);        // Initialize views
+        bgImage = findViewById(R.id.bgImage);
+        companyIcon = findViewById(R.id.companyIcon);
+        appName = findViewById(R.id.appName);
+        btnConnect = findViewById(R.id.btnConnect);
+        
+        // Start animations
+        startWelcomeAnimations();
 
         // Set up connect button click listener
-        btnConnect = findViewById(R.id.btnConnect);        btnConnect.setOnClickListener(new View.OnClickListener() {
+        btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Perform API fetch directly without confirmation dialog
@@ -231,6 +243,41 @@ public class MainActivity extends AppCompatActivity {
             View decorView = window.getDecorView();
             decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
+    }    /**
+     * Starts the elegant welcome page animations
+     */
+    private void startWelcomeAnimations() {
+        // Load animations
+        Animation backgroundAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_background_animation);
+        Animation iconAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_icon_animation);
+        Animation titleAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_title_animation);
+        Animation buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_button_animation);
+        
+        // Start background animation
+        bgImage.startAnimation(backgroundAnimation);
+        
+        // Start icon animation
+        companyIcon.startAnimation(iconAnimation);
+        
+        // Initially hide title and start its animation
+        appName.setVisibility(View.INVISIBLE);
+        appName.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                appName.setVisibility(View.VISIBLE);
+                appName.startAnimation(titleAnimation);
+            }
+        }, 1000);
+        
+        // Initially hide button and start its animation
+        btnConnect.setVisibility(View.INVISIBLE);
+        btnConnect.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                btnConnect.setVisibility(View.VISIBLE);
+                btnConnect.startAnimation(buttonAnimation);
+            }
+        }, 1500); // Delay to sync with other animations
     }
 
 }
