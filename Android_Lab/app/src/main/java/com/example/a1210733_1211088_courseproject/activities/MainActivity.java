@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {    private static final St
     private ImageView bgImage;
     private ImageView companyIcon;
     private TextView appName;
+    private TextView developerNames;
+    private TextView creditsLabel;
     private PropertyApiClient propertyApiClient;@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +54,9 @@ public class MainActivity extends AppCompatActivity {    private static final St
         bgImage = findViewById(R.id.bgImage);
         companyIcon = findViewById(R.id.companyIcon);
         appName = findViewById(R.id.appName);
-        btnConnect = findViewById(R.id.btnConnect);        // Force button background to override any theme issues
+        btnConnect = findViewById(R.id.btnConnect);
+        developerNames = findViewById(R.id.developerNames);
+        creditsLabel = findViewById(R.id.creditsLabel);        // Force button background to override any theme issues
         btnConnect.setBackgroundResource(R.drawable.transparent_palette1_button);
         
         // Start animations
@@ -258,6 +262,7 @@ public class MainActivity extends AppCompatActivity {    private static final St
         Animation iconAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_icon_animation);
         Animation titleAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_title_animation);
         Animation buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_button_animation);
+        Animation creditsAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_credits_animation);
         
         // Start background animation immediately
         bgImage.startAnimation(backgroundAnimation);
@@ -282,6 +287,19 @@ public class MainActivity extends AppCompatActivity {    private static final St
             public void run() {
                 btnConnect.setVisibility(View.VISIBLE);
                 btnConnect.startAnimation(buttonAnimation);
+            }
+        }, 0); // Start immediately, animation has its own delay
+        
+        // Start credits animation with delay (600ms)
+        developerNames.setVisibility(View.INVISIBLE);
+        creditsLabel.setVisibility(View.INVISIBLE);
+        developerNames.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                developerNames.setVisibility(View.VISIBLE);
+                creditsLabel.setVisibility(View.VISIBLE);
+                developerNames.startAnimation(creditsAnimation);
+                creditsLabel.startAnimation(creditsAnimation);
             }
         }, 0); // Start immediately, animation has its own delay
     }
