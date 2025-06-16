@@ -376,9 +376,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
+                android:padding="16dp">                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="🌍 Top Customer Countries"
@@ -386,13 +384,14 @@
                     android:textStyle="bold"
                     android:textColor="@color/admin_primary"
                     android:layout_marginBottom="16dp"
-                    android:gravity="center" />
-
-                <androidx.recyclerview.widget.RecyclerView
+                    android:gravity="center" />                <com.example.a1210733_1211088_courseproject.views.WrapContentRecyclerView
                     android:id="@+id/rv_countries"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:paddingBottom="8dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>        <!-- Reservation Status Card -->
         <androidx.cardview.widget.CardView

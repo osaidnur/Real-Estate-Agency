@@ -110,13 +110,14 @@ public class AdminDashboardFragment extends Fragment {
             pbRejectedProgress.setMax(100);
             pbRejectedProgress.setProgressTintList(getResources().getColorStateList(R.color.chart_rejected, null));
         }
-    }
-    
-    private void setupCountriesRecyclerView() {
+    }    private void setupCountriesRecyclerView() {
         countryAdapter = new CountryStatsAdapter(getContext());
         rvCountries.setLayoutManager(new LinearLayoutManager(getContext()));
         rvCountries.setAdapter(countryAdapter);
         rvCountries.setNestedScrollingEnabled(false);
+        rvCountries.setHasFixedSize(false); // Allow dynamic sizing
+        
+        Log.d(TAG, "Countries RecyclerView setup completed with custom wrap content");
     }
       private void loadDashboardData() {
         try {
@@ -213,22 +214,75 @@ public class AdminDashboardFragment extends Fragment {
             if (pbConfirmedProgress != null) pbConfirmedProgress.setProgress(0);
             if (pbRejectedProgress != null) pbRejectedProgress.setProgress(0);
         }
-    }
-    
-    private void updateCountriesList(Map<String, Integer> countriesData) {
+    }    private void updateCountriesList(Map<String, Integer> countriesData) {
+        Log.d(TAG, "updateCountriesList called with " + countriesData.size() + " countries");
+        for (Map.Entry<String, Integer> entry : countriesData.entrySet()) {
+            Log.d(TAG, "Country from DB: " + entry.getKey() + " = " + entry.getValue());
+        }
+        
         countryAdapter.updateData(countriesData);
+        
+        // The custom WrapContentRecyclerView will automatically adjust its height
+        // But let's also use the programmatic approach as backup
+        rvCountries.post(() -> {
+            setRecyclerViewHeightBasedOnContent();
+        });
+        
+        Log.d(TAG, "Countries list updated - height will adjust automatically");
+    }/**
+     * Public method to refresh dashboard data
+     * Call this method when customer data changes
+     */
+    public void refreshDashboardData() {
+        Log.d(TAG, "Manual refresh requested");
+        if (dbHelper != null) {
+            loadDashboardData();
+        }
+    }    /**
+     * Helper method to ensure RecyclerView measures properly
+     */
+    private void ensureRecyclerViewMeasurement() {
+        if (rvCountries != null && rvCountries.getAdapter() != null) {
+            rvCountries.post(() -> {
+                // Force the RecyclerView to remeasure its height
+                rvCountries.getLayoutManager().requestLayout();
+            });
+        }
+    }
+
+    /**
+     * Alternative method to set RecyclerView height programmatically
+     */
+    private void setRecyclerViewHeightBasedOnContent() {
+        if (rvCountries == null || countryAdapter == null) return;
+        
+        int itemCount = countryAdapter.getItemCount();
+        if (itemCount == 0) {
+            rvCountries.getLayoutParams().height = 0;
+            rvCountries.requestLayout();
+            return;
+        }
+        
+        // Approximate height per item (item height + margins)
+        int itemHeight = 80; // dp - adjust this based on your item layout
+        float density = getResources().getDisplayMetrics().density;
+        int totalHeightPx = (int) (itemCount * itemHeight * density);
+        
+        rvCountries.getLayoutParams().height = totalHeightPx;
+        rvCountries.requestLayout();
+        
+        Log.d(TAG, "Set RecyclerView height to " + totalHeightPx + "px for " + itemCount + " items");
     }
       private void setDefaultValues() {
         tvUsersCount.setText("0");
         tvPropertiesCount.setText("0");
         tvCustomersCount.setText("0");
         tvReservationsCount.setText("0");
-    }
-
-    @Override
+    }    @Override
     public void onResume() {
         super.onResume();
         // Refresh dashboard data when fragment becomes visible
+        Log.d(TAG, "onResume - refreshing dashboard data");
         if (dbHelper != null) {
             loadDashboardData();
         }
