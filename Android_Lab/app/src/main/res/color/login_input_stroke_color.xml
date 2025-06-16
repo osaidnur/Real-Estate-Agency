@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused state with palette2 (blue) -->
+    <item android:color="@color/palette2" android:state_focused="true"/>
+    <!-- Error state -->
+    <item android:color="@color/admin_error" android:state_activated="false" android:state_focused="false"/>
+    <!-- Normal state with palette1 -->
+    <item android:color="@color/palette1"/>
+</selector>

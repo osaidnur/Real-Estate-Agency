@@ -1,57 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="@android:color/transparent">
+    android:background="@drawable/login_background_gradient"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp">    <!-- Logo -->
+    <ImageView
+        android:id="@+id/login_logo"
+        android:layout_width="167dp"
+        android:layout_height="107dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="logo"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_home1" />
 
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome Back"
+        style="@style/LoginTitleStyle" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign in to your account"
+        style="@style/LoginSubtitleStyle" />
+
+    <!-- Email Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/LoginInputStyle"
+        app:startIconDrawable="@android:drawable/sym_action_email"
+        app:startIconTint="@color/login_icon_tint">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/login_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email Address"
+            android:inputType="textEmailAddress"
+            style="@style/LoginEditTextStyle" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Password Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/LoginInputStyle"
+        app:startIconDrawable="@android:drawable/ic_lock_lock"
+        app:startIconTint="@color/login_icon_tint"
+        app:endIconMode="password_toggle"
+        app:endIconTint="@color/login_icon_tint">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            style="@style/LoginEditTextStyle" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Remember Me -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp">
 
-        <!-- لوجو أو صورة -->
-        <ImageView
-            android:id="@+id/login_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_home1"
-            android:layout_marginBottom="24dp"
-            android:contentDescription="logo" />
-
-        <!-- Email -->
-        <EditText
-            android:id="@+id/login_email"
-            style="@style/InputFieldStyle"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
-
-        <!-- Password -->
-        <EditText
-            android:id="@+id/login_password"
-            style="@style/InputFieldStyle"
-            android:hint="Password"
-            android:inputType="textPassword" />
-
-        <!-- Remember Me -->
         <CheckBox
             android:id="@+id/checkbox_remember"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Remember Me"
-            android:layout_marginTop="12dp"
-            android:textColor="#ffffff" />
+            style="@style/LoginCheckboxStyle" />
+    </LinearLayout>    <!-- Login Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        style="@style/LoginButtonStyle" />
 
-        <!-- Login Button -->
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Login"
-            android:textColor="@android:color/white"
-            android:background="@drawable/rounded_button"
-            android:textSize="18sp"
-            android:layout_marginTop="16dp"/>
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
