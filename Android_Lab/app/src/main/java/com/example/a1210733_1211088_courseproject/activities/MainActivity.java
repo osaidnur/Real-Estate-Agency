@@ -43,43 +43,15 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-        });
-
-        // Initialize PropertyApiClient
+        });        // Initialize PropertyApiClient
         propertyApiClient = new PropertyApiClient(this);
 
         // Set up connect button click listener
-        btnConnect = findViewById(R.id.btnConnect);
-        btnConnect.setOnClickListener(new View.OnClickListener() {
+        btnConnect = findViewById(R.id.btnConnect);        btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show loading message
-                Toast.makeText(MainActivity.this, "Connecting to API...", Toast.LENGTH_SHORT).show();
-
-                // Disable button to prevent multiple clicks
-                btnConnect.setEnabled(false);
-
-                // Fetch properties from API
-                propertyApiClient.fetchAndStoreProperties();
-
-                // Re-enable button after a delay (to prevent rapid clicking)
-                btnConnect.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        btnConnect.setEnabled(true);
-                        // Get and print all properties
-                        getAllPropertiesAndPrint();
-                        // Optionally, get and print all users
-                        getUsersAndPrint();
-
-                        if (propertyApiClient.isImportSuccessful()) {
-                            // Navigate to AuthActivity only if successful
-                            Intent intent = new Intent(MainActivity.this, authActivity.class);
-                            startActivity(intent);
-                            finish(); // Optional: close current activity
-                        }
-                    }
-                }, 2000); // 2 seconds delay
+                // Perform API fetch directly without confirmation dialog
+                performApiFetch();
             }
         });
 
@@ -204,6 +176,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
+    /**
+     * Performs the API fetch operation
+     */
+    private void performApiFetch() {
+        // Show loading message
+        Toast.makeText(MainActivity.this, "Connecting to API...", Toast.LENGTH_SHORT).show();
+
+        // Disable button to prevent multiple clicks
+        btnConnect.setEnabled(false);
+
+        // Fetch properties from API
+        propertyApiClient.fetchAndStoreProperties();
+
+        // Re-enable button after a delay (to prevent rapid clicking)
+        btnConnect.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                btnConnect.setEnabled(true);
+                // Get and print all properties
+                getAllPropertiesAndPrint();
+                // Optionally, get and print all users
+                getUsersAndPrint();
+
+                if (propertyApiClient.isImportSuccessful()) {
+                    // Navigate to AuthActivity only if successful
+                    Intent intent = new Intent(MainActivity.this, authActivity.class);
+                    startActivity(intent);
+                    finish(); // Optional: close current activity
+                }
+            }
+        }, 2000); // 2 seconds delay
+    }
+
     private void setupStatusBar() {
         Window window = getWindow();
         

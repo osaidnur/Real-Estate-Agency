@@ -1,5 +1,7 @@
 package com.example.a1210733_1211088_courseproject.activities;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.content.Intent;
@@ -7,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,10 +93,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         // Update the navigation header with the current user's email
         updateNavigationHeader();
-    }
-
-    /**
-     * Updates the navigation header with the current user's email
+    }    /**
+     * Updates the navigation header with the current user's profile information
      */
     private void updateNavigationHeader() {
         // Get current user ID from shared preferences
@@ -104,14 +105,63 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             User currentUser = dbHelper.getUserById(userId);
 
             if (currentUser != null) {
-                // Find the email TextView in the navigation header and update it
+                // Find the views in the navigation header
                 View headerView = navigationView.getHeaderView(0);
+                TextView userNameTextView = headerView.findViewById(R.id.nav_user_name);
                 TextView userEmailTextView = headerView.findViewById(R.id.nav_user_email);
+                ImageView userProfilePhoto = headerView.findViewById(R.id.nav_user_profile_photo);
+
+                // Set the user's full name
+                String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+                userNameTextView.setText(fullName);
 
                 // Set the email text
-                userEmailTextView.setText(currentUser.getEmail());
+                userEmailTextView.setText(currentUser.getEmail());                // Handle profile photo
+                String profilePhotoPath = currentUser.getProfilePhoto();
+                if (profilePhotoPath != null && !profilePhotoPath.isEmpty()) {
+                    // Try to load the profile photo
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeFile(profilePhotoPath);
+                        if (bitmap != null) {
+                            // Clear any default styling and load the real photo
+                            userProfilePhoto.setBackground(null);
+                            userProfilePhoto.setPadding(0, 0, 0, 0);
+                            userProfilePhoto.clearColorFilter();
+                            userProfilePhoto.setImageBitmap(bitmap);
+                            userProfilePhoto.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                            // Debug log
+                            System.out.println("Successfully loaded profile photo from: " + profilePhotoPath);
+                        } else {
+                            // Use default icon if bitmap couldn't be loaded
+                            System.out.println("Failed to decode bitmap from: " + profilePhotoPath);
+                            setDefaultProfilePhoto(userProfilePhoto);
+                        }
+                    } catch (Exception e) {
+                        // Use default icon if there's an error loading the image
+                        System.out.println("Error loading profile photo: " + e.getMessage());
+                        setDefaultProfilePhoto(userProfilePhoto);
+                    }
+                } else {
+                    // Use default icon if no profile photo path
+                    System.out.println("No profile photo path found, using default");
+                    setDefaultProfilePhoto(userProfilePhoto);
+                }
             }
         }
+    }    /**
+     * Sets the default profile photo icon with proper styling
+     */
+    private void setDefaultProfilePhoto(ImageView profilePhotoView) {
+        // Clear any existing image and styling
+        profilePhotoView.setImageDrawable(null);
+        profilePhotoView.clearColorFilter();
+        
+        // Set default icon and styling
+        profilePhotoView.setImageResource(R.drawable.ic_person);
+        profilePhotoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        profilePhotoView.setBackground(getResources().getDrawable(R.drawable.profile_photo_background));
+        profilePhotoView.setPadding(20, 20, 20, 20);
+        profilePhotoView.setColorFilter(getResources().getColor(android.R.color.white));
     }
 
     @Override

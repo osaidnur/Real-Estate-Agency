@@ -239,28 +239,18 @@ public class PropertiesFragment extends Fragment implements PropertyAdapter.OnPr
         if (cursor != null) {
             cursor.close();
         }
-    }
-
-    // Implement OnPropertyInteractionListener methods
+    }    // Implement OnPropertyInteractionListener methods
     @Override
     public void onAddToFavorites(Property property) {
-        boolean success = dbHelper.addToFavorites(currentUserId, property.getPropertyId());
-        if (success) {
-            Toast.makeText(getContext(), property.getTitle() + " added to favorites", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "Property already in favorites", Toast.LENGTH_SHORT).show();
-        }
+        // Only called when database operation was successful
+        Toast.makeText(getContext(), property.getTitle() + " added to favorites", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRemoveFromFavorites(Property property) {
-        boolean success = dbHelper.removeFromFavorites(currentUserId, property.getPropertyId());
-        if (success) {
-            Toast.makeText(getContext(), property.getTitle() + " removed from favorites", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "Error removing property from favorites", Toast.LENGTH_SHORT).show();
-        }
-    }    @Override
+        // Only called when database operation was successful
+        Toast.makeText(getContext(), property.getTitle() + " removed from favorites", Toast.LENGTH_SHORT).show();
+    }@Override
     public void onReserveProperty(Property property) {
         // Navigate to reservation form with smooth transition animation
         ReservationFragment reservationFragment = new ReservationFragment();

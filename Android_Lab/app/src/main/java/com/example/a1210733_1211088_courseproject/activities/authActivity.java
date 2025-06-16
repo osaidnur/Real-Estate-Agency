@@ -106,16 +106,7 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
             return;
         }
-        // in login , no need to check password length
-//        if (password.length() < 6) {
-//            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
 
-//        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^()_+=\\-{}\\[\\]:;\"'<>,./~`|\\\\]).+$")) {
-//            Toast.makeText(this, "Password must include at least one letter, one number, and one special character", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
         // Attempt authentication
         User authenticatedUser = authManager.authenticateUser(email, password);
         if (authenticatedUser != null) {
@@ -239,8 +230,8 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
     private void navigateBasedOnRole(User user) {
         if (authManager.isAdmin(user)) {
             // Navigate to admin dashboard
-            Toast.makeText(this, "Admin login detected - redirecting to admin panel", 
-                          Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Admin login detected - redirecting to admin panel",
+//                          Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, AdminActivity.class);
             intent.putExtra("user_id", user.getUserId());
             intent.putExtra("admin_name", user.getFirstName());
@@ -248,8 +239,8 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             finish();
         } else if (authManager.isCustomer(user)) {
             // Navigate to customer dashboard
-            Toast.makeText(this, "Customer login detected - redirecting to home", 
-                          Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Customer login detected - redirecting to home",
+//                          Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra("user_id", user.getUserId());
             startActivity(intent);
@@ -288,19 +279,4 @@ public class authActivity extends AppCompatActivity implements AuthCallbackInter
             }
         }
     }
-    
-    /**
-     *   remember me functionality - save or clear credentials
-     */
-//    private void handleRememberMe(String email, String password, boolean rememberMe) {
-//        if (rememberMe) {
-//            // Save credentials
-//            sharedPrefManager.writeString(SharedPrefManager.KEY_REMEMBER_EMAIL, email);
-//            sharedPrefManager.writeString(SharedPrefManager.KEY_REMEMBER_PASSWORD, password);
-//            sharedPrefManager.writeBoolean(SharedPrefManager.KEY_REMEMBER_ME, true);
-//        } else {
-//            // Clear saved credentials
-//            sharedPrefManager.clearRememberMe();
-//        }
-//    }
 }

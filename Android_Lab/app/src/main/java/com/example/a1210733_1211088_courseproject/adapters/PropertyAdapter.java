@@ -117,29 +117,45 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
         boolean isFavorite = isPropertyInFavorites(property.getPropertyId());
         updateFavoriteButton(holder.favoriteButton, isFavorite);        // Set click listeners
         holder.favoriteButton.setOnClickListener(v -> {
-            boolean newFavoriteStatus = !isPropertyInFavorites(property.getPropertyId());
+            boolean currentFavoriteStatus = isPropertyInFavorites(property.getPropertyId());
+            boolean newFavoriteStatus = !currentFavoriteStatus;
 
-            // Update database
+            // Update database and check for success
+            boolean operationSuccess = false;
             if (newFavoriteStatus) {
                 // Add to favorites
-                addToFavorites(property.getPropertyId());
+                operationSuccess = dbHelper.addToFavorites(currentUserId, property.getPropertyId());
             } else {
                 // Remove from favorites
-                removeFromFavorites(property.getPropertyId());
+                operationSuccess = dbHelper.removeFromFavorites(currentUserId, property.getPropertyId());
             }
 
-            // Update UI with animation
-            animateHeartButton(holder.favoriteButton, newFavoriteStatus);
+            // Only update UI if database operation was successful
+            if (operationSuccess) {
+                // Update UI with animation
+                animateHeartButton(holder.favoriteButton, newFavoriteStatus);
 
-            // Notify listener
-            if (listener != null) {
-                if (newFavoriteStatus) {
-                    listener.onAddToFavorites(property);
-                } else {
-                    listener.onRemoveFromFavorites(property);
+                // Notify listener
+                if (listener != null) {
+                    if (newFavoriteStatus) {
+                        listener.onAddToFavorites(property);
+                    } else {
+                        listener.onRemoveFromFavorites(property);
+                    }
+                }
+            } else {
+                // Database operation failed, show error and don't change UI
+                if (listener != null) {
+                    if (newFavoriteStatus) {
+                        // Failed to add to favorites
+                        android.widget.Toast.makeText(context, "Failed to add to favorites", android.widget.Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Failed to remove from favorites
+                        android.widget.Toast.makeText(context, "Failed to remove from favorites", android.widget.Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-        });        holder.reserveButton.setOnClickListener(v -> {
+        });holder.reserveButton.setOnClickListener(v -> {
             // Add enhanced button press animation
             Animation pressAnimation = AnimationUtils.loadAnimation(context, R.anim.reserve_button_enhanced);
             v.startAnimation(pressAnimation);
@@ -171,23 +187,23 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
                 cursor.close();
             }
         }
-    }
-
-    /**
+    }    /**
      * Adds a property to user's favorites
      * @param propertyId The property ID to add
+     * @return true if successful, false otherwise
      */
-    private void addToFavorites(long propertyId) {
-        dbHelper.addToFavorites(currentUserId, propertyId);
+    private boolean addToFavorites(long propertyId) {
+        return dbHelper.addToFavorites(currentUserId, propertyId);
     }
 
     /**
      * Removes a property from user's favorites
      * @param propertyId The property ID to remove
+     * @return true if successful, false otherwise
      */
-    private void removeFromFavorites(long propertyId) {
-        dbHelper.removeFromFavorites(currentUserId, propertyId);
-    }    private void updateFavoriteButton(ImageButton button, boolean isFavorite) {
+    private boolean removeFromFavorites(long propertyId) {
+        return dbHelper.removeFromFavorites(currentUserId, propertyId);
+    }private void updateFavoriteButton(ImageButton button, boolean isFavorite) {
         button.setSelected(isFavorite);
         if (isFavorite) {
             button.setContentDescription("Remove from favorites");
