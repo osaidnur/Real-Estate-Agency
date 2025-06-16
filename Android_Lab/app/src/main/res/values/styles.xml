@@ -166,5 +166,100 @@
         <item name="cornerRadius">8dp</item>
         <item name="android:textColor">#283E51</item>
         <item name="android:textAllCaps">false</item>
+    </style>    <!-- Enhanced Login/Register Input Style -->
+    <style name="LoginInputStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/palette1</item>
+        <item name="boxStrokeColor">@color/palette1</item>
+        <item name="android:textColorHint">@color/admin_text_secondary</item>
+        <item name="errorTextColor">@color/admin_error</item>        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>        <item name="boxStrokeWidth">2dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+    </style>    <!-- Login EditText Style -->
+    <style name="LoginEditTextStyle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/admin_text_primary</item>
+        <item name="android:padding">12dp</item>
+    </style>    <!-- Enhanced Login Button Style -->
+    <style name="LoginButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/facultyglyphic_regular</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">18dp</item>
+        <item name="backgroundTint">@color/palette1</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>    <!-- Login Title Style -->
+    <style name="LoginTitleStyle">
+        <item name="android:fontFamily">@font/facultyglyphic_regular</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/palette1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:letterSpacing">0.02</item>
     </style>
+
+    <!-- Login Subtitle Style -->
+    <style name="LoginSubtitleStyle">
+        <item name="android:fontFamily">@font/facultyglyphic_regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/admin_text_secondary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginBottom">20dp</item>
+    </style>
+
+    <!-- Login Checkbox Style -->
+    <style name="LoginCheckboxStyle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/admin_text_secondary</item>
+        <item name="android:buttonTint">@color/palette1</item>
+    </style>
+
+    <!-- Login Label Style -->
+    <style name="LoginLabelStyle">
+        <item name="android:fontFamily">@font/facultyglyphic_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/palette1</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <!-- Gold Accent Button Style (for special buttons) -->
+    <style name="GoldAccentButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">12dp</item>
+        <item name="strokeColor">@color/palette_gold</item>
+        <item name="android:textColor">@color/palette_gold</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeWidth">2dp</item>
+    </style>    <!-- Gold Accent Text Style -->
+    <style name="GoldAccentTextStyle">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/palette_gold</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Custom Tab Text Appearance with facultyglyphic_regular font -->
+    <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/facultyglyphic_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
 </resources>
