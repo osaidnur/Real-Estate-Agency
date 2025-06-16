@@ -939,8 +939,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Map<String, Integer> countryMap = new HashMap<>();
         Cursor cursor = null;
-        
-        try {
+          try {
             String query = "SELECT " + UserQueries.COLUMN_COUNTRY + ", COUNT(*) as count " +
                           "FROM " + UserQueries.TABLE_NAME + 
                           " WHERE " + UserQueries.COLUMN_ROLE + " = 'customer' " +
@@ -949,14 +948,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                           " GROUP BY " + UserQueries.COLUMN_COUNTRY + 
                           " ORDER BY count DESC";
             
+            Log.d("DatabaseHelper", "Executing query: " + query);
+            
             cursor = db.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     String country = cursor.getString(0);
                     int count = cursor.getInt(1);
+                    Log.d("DatabaseHelper", "Found country: " + country + " with " + count + " customers");
                     countryMap.put(country, count);
                 } while (cursor.moveToNext());
+            } else {
+                Log.d("DatabaseHelper", "No countries found or cursor is null");
             }
+            
+            Log.d("DatabaseHelper", "Total countries found: " + countryMap.size());
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Error getting customers by country: " + e.getMessage());
         } finally {

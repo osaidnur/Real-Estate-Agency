@@ -129,19 +129,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_favorites) {
             selectedFragment = new FavoritesFragment();
         } else if (id == R.id.nav_featured) {
-            selectedFragment = new FeaturedFragment();
-        } else if (id == R.id.nav_profile) {
-            selectedFragment = new ProfileFragment();
+            selectedFragment = new FeaturedFragment();        } else if (id == R.id.nav_profile) {
+            try {
+                selectedFragment = new ProfileFragment();
+            } catch (Exception e) {
+                android.util.Log.e("HomeActivity", "Error creating ProfileFragment", e);
+                Toast.makeText(this, "Error opening profile. Please try again.", Toast.LENGTH_SHORT).show();
+                return true; // Don't proceed with fragment transaction
+            }
         } else if (id == R.id.nav_contact) {
             selectedFragment = new ContactFragment();
         } else if (id == R.id.nav_logout) {
             logoutUser();
-        }
-
-        if (selectedFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.home_fragment_container, selectedFragment)
-                .commit();
+        }        if (selectedFragment != null) {
+            try {
+                getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.home_fragment_container, selectedFragment)
+                    .commit();
+            } catch (Exception e) {
+                android.util.Log.e("HomeActivity", "Error replacing fragment", e);
+                Toast.makeText(this, "Error navigating. Please try again.", Toast.LENGTH_SHORT).show();
+            }
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
