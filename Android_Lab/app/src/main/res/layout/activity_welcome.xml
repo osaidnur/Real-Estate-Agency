@@ -63,7 +63,44 @@
         android:shadowColor="#40000000"
         android:shadowDx="2"
         android:shadowDy="4"
-        android:shadowRadius="8" />
+        android:shadowRadius="8" />    <!-- Developer Names -->
+    <TextView
+        android:id="@+id/developerNames"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:text="Osaid Nur • Doaa Hatu"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/miracle_history"
+        android:letterSpacing="0.05"
+        android:shadowColor="#40000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:gravity="center" />
 
+    <!-- Credits Label -->
+    <TextView
+        android:id="@+id/creditsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/developerNames"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:text="Developed by"
+        android:textColor="#E0E0E0"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        android:fontFamily="@font/facultyglyphic_regular"
+        android:letterSpacing="0.1"
+        android:alpha="0.8"
+        android:shadowColor="#40000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
 
 </RelativeLayout>
