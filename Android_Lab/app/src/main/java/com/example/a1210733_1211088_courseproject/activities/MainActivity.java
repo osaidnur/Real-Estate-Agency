@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {    private static final St
         companyIcon = findViewById(R.id.companyIcon);
         appName = findViewById(R.id.appName);
         btnConnect = findViewById(R.id.btnConnect);        // Force button background to override any theme issues
-        btnConnect.setBackgroundResource(R.drawable.elegant_luxury_button);
+        btnConnect.setBackgroundResource(R.drawable.transparent_palette1_button);
         
         // Start animations
         startWelcomeAnimations();        // Set up connect button click listener
