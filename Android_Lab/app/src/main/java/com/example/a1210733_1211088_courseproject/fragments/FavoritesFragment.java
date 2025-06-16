@@ -77,52 +77,36 @@ public class FavoritesFragment extends Fragment implements PropertyAdapter.OnPro
         }
     }    @Override
     public void onAddToFavorites(Property property) {
-        // Add to database
-        boolean success = dbHelper.addToFavorites(currentUserId, property.getPropertyId());
-        
+        // Only called when database operation was successful
         if (getContext() != null) {
-            if (success) {
-                android.widget.Toast.makeText(getContext(),
-                    property.getTitle() + " added to favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-                // Refresh the list to show the new favorite
-                loadFavoriteProperties();
-            } else {
-                android.widget.Toast.makeText(getContext(),
-                    "Property already in favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-            }
+            android.widget.Toast.makeText(getContext(),
+                property.getTitle() + " added to favorites",
+                android.widget.Toast.LENGTH_SHORT).show();
+            // Refresh the list to show the new favorite
+            loadFavoriteProperties();
         }
     }    @Override
     public void onRemoveFromFavorites(Property property) {
-        // Remove from database
-        boolean success = dbHelper.removeFromFavorites(currentUserId, property.getPropertyId());
-        
+        // Only called when database operation was successful
         if (getContext() != null) {
-            if (success) {
-                android.widget.Toast.makeText(getContext(),
-                    property.getTitle() + " removed from favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-                
-                // Remove from UI
-                favoritesList.remove(property);
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
-                }
+            android.widget.Toast.makeText(getContext(),
+                property.getTitle() + " removed from favorites",
+                android.widget.Toast.LENGTH_SHORT).show();
+            
+            // Remove from UI
+            favoritesList.remove(property);
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
 
-                // Update empty state
-                if (favoritesList.isEmpty()) {
-                    emptyText.setVisibility(View.VISIBLE);
-                    emptyText.setText("No favorite properties yet.\nAdd some properties to your favorites!");
-                    recyclerView.setVisibility(View.GONE);
-                }
-            } else {
-                android.widget.Toast.makeText(getContext(),
-                    "Failed to remove from favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
+            // Update empty state
+            if (favoritesList.isEmpty()) {
+                emptyText.setVisibility(View.VISIBLE);
+                emptyText.setText("No favorite properties yet.\nAdd some properties to your favorites!");
+                recyclerView.setVisibility(View.GONE);
             }
         }
-    }    @Override
+    }@Override
     public void onReserveProperty(Property property) {
         // Open reservation fragment with smooth transition animation
         ReservationFragment reservationFragment = new ReservationFragment();

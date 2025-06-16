@@ -83,41 +83,25 @@ public class FeaturedFragment extends Fragment implements PropertyAdapter.OnProp
             adapter = new PropertyAdapter(getContext(), featuredList, this);
             recyclerView.setAdapter(adapter);
         }
-    }@Override
+    }    @Override
     public void onAddToFavorites(Property property) {
-        // Add to database
-        boolean success = dbHelper.addToFavorites(currentUserId, property.getPropertyId());
-        
+        // Only called when database operation was successful
         if (getContext() != null) {
-            if (success) {
-                android.widget.Toast.makeText(getContext(),
-                    property.getTitle() + " added to favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-            } else {
-                android.widget.Toast.makeText(getContext(),
-                    "Failed to add to favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-            }
+            android.widget.Toast.makeText(getContext(),
+                property.getTitle() + " added to favorites",
+                android.widget.Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onRemoveFromFavorites(Property property) {
-        // Remove from database
-        boolean success = dbHelper.removeFromFavorites(currentUserId, property.getPropertyId());
-        
+        // Only called when database operation was successful
         if (getContext() != null) {
-            if (success) {
-                android.widget.Toast.makeText(getContext(),
-                    property.getTitle() + " removed from favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-            } else {
-                android.widget.Toast.makeText(getContext(),
-                    "Failed to remove from favorites",
-                    android.widget.Toast.LENGTH_SHORT).show();
-            }
+            android.widget.Toast.makeText(getContext(),
+                property.getTitle() + " removed from favorites",
+                android.widget.Toast.LENGTH_SHORT).show();
         }
-    }    @Override
+    }@Override
     public void onReserveProperty(Property property) {
         // Open reservation fragment with smooth transition animation
         ReservationFragment reservationFragment = new ReservationFragment();
