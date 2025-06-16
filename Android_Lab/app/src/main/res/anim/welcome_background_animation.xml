@@ -5,28 +5,28 @@
     <!-- Subtle zoom in and out animation -->
     <scale
         android:fromXScale="1.0"
-        android:toXScale="1.15"
+        android:toXScale="1.12"
         android:fromYScale="1.0"
-        android:toYScale="1.15"
+        android:toYScale="1.12"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:duration="20000"
+        android:duration="12000"
         android:repeatCount="infinite"
         android:repeatMode="reverse" />
         
     <!-- Subtle horizontal pan -->
     <translate
         android:fromXDelta="0"
-        android:toXDelta="30"
-        android:duration="15000"
+        android:toXDelta="25"
+        android:duration="8000"
         android:repeatCount="infinite"
         android:repeatMode="reverse" />
         
     <!-- Very subtle vertical movement -->
     <translate
         android:fromYDelta="0"
-        android:toYDelta="-20"
-        android:duration="18000"
+        android:toYDelta="-15"
+        android:duration="10000"
         android:repeatCount="infinite"
         android:repeatMode="reverse" />
         

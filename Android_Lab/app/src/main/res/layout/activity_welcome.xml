@@ -40,23 +40,29 @@
         android:shadowDy="2"
         android:shadowRadius="4"
         android:letterSpacing="0.05"
-        /><!-- Connect Button -->
-    <Button
+        />    <!-- Connect Button -->
+    <TextView
         android:id="@+id/btnConnect"
-        android:layout_width="280dp"
-        android:layout_height="60dp"
+        android:layout_width="300dp"
+        android:layout_height="65dp"
         android:text="Connect"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/elegant_welcome_button"
-        android:elevation="12dp"
-        android:textSize="18sp"
+        android:textColor="#283E51"
+        android:background="@drawable/elegant_luxury_button"
+        android:elevation="16dp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:fontFamily="@font/facultyglyphic_regular"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/appName"
-        android:layout_marginTop="60dp"
-        android:letterSpacing="0.1"
-        android:stateListAnimator="@null" />
+        android:layout_marginTop="50dp"
+        android:letterSpacing="0.15"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:shadowColor="#40000000"
+        android:shadowDx="2"
+        android:shadowDy="4"
+        android:shadowRadius="8" />
 
 
 </RelativeLayout>

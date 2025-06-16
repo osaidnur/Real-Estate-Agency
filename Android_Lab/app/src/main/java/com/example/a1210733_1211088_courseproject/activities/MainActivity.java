@@ -11,7 +11,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +29,7 @@ import com.example.a1210733_1211088_courseproject.database.sql.PropertyQueries;
 import com.example.a1210733_1211088_courseproject.database.sql.UserQueries;
 
 public class MainActivity extends AppCompatActivity {    private static final String TAG = "MainActivity";
-    private Button btnConnect;
+    private TextView btnConnect;
     private ImageView bgImage;
     private ImageView companyIcon;
     private TextView appName;
@@ -53,15 +52,18 @@ public class MainActivity extends AppCompatActivity {    private static final St
         bgImage = findViewById(R.id.bgImage);
         companyIcon = findViewById(R.id.companyIcon);
         appName = findViewById(R.id.appName);
-        btnConnect = findViewById(R.id.btnConnect);
+        btnConnect = findViewById(R.id.btnConnect);        // Force button background to override any theme issues
+        btnConnect.setBackgroundResource(R.drawable.elegant_luxury_button);
         
         // Start animations
-        startWelcomeAnimations();
-
-        // Set up connect button click listener
+        startWelcomeAnimations();        // Set up connect button click listener
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show pressed state immediately
+                btnConnect.setPressed(true);
+                // Change text to show loading
+                btnConnect.setText("Connecting...");
                 // Perform API fetch directly without confirmation dialog
                 performApiFetch();
             }
@@ -190,22 +192,26 @@ public class MainActivity extends AppCompatActivity {    private static final St
     
     /**
      * Performs the API fetch operation
-     */
-    private void performApiFetch() {
+     */    private void performApiFetch() {
         // Show loading message
         Toast.makeText(MainActivity.this, "Connecting to API...", Toast.LENGTH_SHORT).show();
 
-        // Disable button to prevent multiple clicks
+        // Disable button to prevent multiple clicks (keep pressed state)
         btnConnect.setEnabled(false);
+        btnConnect.setPressed(true);
 
         // Fetch properties from API
         propertyApiClient.fetchAndStoreProperties();
 
-        // Re-enable button after a delay (to prevent rapid clicking)
+        // Re-enable button and restore normal state after API fetch completes
         btnConnect.postDelayed(new Runnable() {
             @Override
             public void run() {
+                // Restore button to normal state
+                btnConnect.setPressed(false);
                 btnConnect.setEnabled(true);
+                btnConnect.setText("Connect");
+                
                 // Get and print all properties
                 getAllPropertiesAndPrint();
                 // Optionally, get and print all users
@@ -253,13 +259,13 @@ public class MainActivity extends AppCompatActivity {    private static final St
         Animation titleAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_title_animation);
         Animation buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.welcome_button_animation);
         
-        // Start background animation
+        // Start background animation immediately
         bgImage.startAnimation(backgroundAnimation);
         
-        // Start icon animation
+        // Start icon animation immediately
         companyIcon.startAnimation(iconAnimation);
         
-        // Initially hide title and start its animation
+        // Start title animation with minimal delay (300ms)
         appName.setVisibility(View.INVISIBLE);
         appName.postDelayed(new Runnable() {
             @Override
@@ -267,9 +273,9 @@ public class MainActivity extends AppCompatActivity {    private static final St
                 appName.setVisibility(View.VISIBLE);
                 appName.startAnimation(titleAnimation);
             }
-        }, 1000);
+        }, 0); // Start immediately, animation has its own delay
         
-        // Initially hide button and start its animation
+        // Start button animation with minimal delay (400ms)
         btnConnect.setVisibility(View.INVISIBLE);
         btnConnect.postDelayed(new Runnable() {
             @Override
@@ -277,7 +283,7 @@ public class MainActivity extends AppCompatActivity {    private static final St
                 btnConnect.setVisibility(View.VISIBLE);
                 btnConnect.startAnimation(buttonAnimation);
             }
-        }, 1500); // Delay to sync with other animations
+        }, 0); // Start immediately, animation has its own delay
     }
 
 }
