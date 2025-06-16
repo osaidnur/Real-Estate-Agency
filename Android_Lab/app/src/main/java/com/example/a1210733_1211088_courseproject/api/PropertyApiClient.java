@@ -82,10 +82,9 @@ public class PropertyApiClient {
      */
     public boolean isImportSuccessful() {
         return importSuccess;
-    }
-
-    /**
+    }    /**
      * Store a list of properties in the database
+     * Updates all fields from API except isSpecial and discount for existing properties
      * @param properties the list of properties to store
      * @return true if successful, false otherwise
      */
@@ -97,29 +96,61 @@ public class PropertyApiClient {
             db.beginTransaction();
 
             for (Property property : properties) {
-                ContentValues values = new ContentValues();
-                // Don't set ID as it's auto-increment in the database
-                // If you want to preserve IDs from API, uncomment the line below
-                values.put(PropertyQueries.COLUMN_PROPERTY_ID, property.getPropertyId());
-                values.put(PropertyQueries.COLUMN_TYPE, property.getType());
-                values.put(PropertyQueries.COLUMN_TITLE, property.getTitle());
-                values.put(PropertyQueries.COLUMN_DESCRIPTION, property.getDescription());
-                values.put(PropertyQueries.COLUMN_BEDROOMS, property.getBedrooms());
-                values.put(PropertyQueries.COLUMN_BATHROOMS, property.getBathrooms());
-                values.put(PropertyQueries.COLUMN_AREA, property.getArea());
-                values.put(PropertyQueries.COLUMN_PRICE, property.getPrice());
-                values.put(PropertyQueries.COLUMN_COUNTRY, property.getCountry());
-                values.put(PropertyQueries.COLUMN_CITY, property.getCity());
-                values.put(PropertyQueries.COLUMN_IMAGE_URL, property.getImageUrl());
-                values.put(PropertyQueries.COLUMN_IS_SPECIAL, property.isSpecial() ? 1 : 0);
-                values.put(PropertyQueries.COLUMN_DISCOUNT, property.getDiscount());
-
-                // Log the property being inserted
-                //Log.d(TAG, "Inserting property: " + property.getTitle() + " with ID: " + property.getPropertyId());                // Insert or replace the property in the database
-                long result = db.insertWithOnConflict(PropertyQueries.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                if (result == -1) {
-                    Log.e(TAG, "Failed to insert property: " + property.getTitle());
-                    return false;
+                // Check if property already exists
+                Property existingProperty = dbHelper.getPropertyById(property.getPropertyId());
+                
+                if (existingProperty != null) {
+                    // Property exists - update all fields EXCEPT isSpecial and discount
+                    ContentValues values = new ContentValues();
+                    values.put(PropertyQueries.COLUMN_TYPE, property.getType());
+                    values.put(PropertyQueries.COLUMN_TITLE, property.getTitle());
+                    values.put(PropertyQueries.COLUMN_DESCRIPTION, property.getDescription());
+                    values.put(PropertyQueries.COLUMN_BEDROOMS, property.getBedrooms());
+                    values.put(PropertyQueries.COLUMN_BATHROOMS, property.getBathrooms());
+                    values.put(PropertyQueries.COLUMN_AREA, property.getArea());
+                    values.put(PropertyQueries.COLUMN_PRICE, property.getPrice());
+                    values.put(PropertyQueries.COLUMN_COUNTRY, property.getCountry());
+                    values.put(PropertyQueries.COLUMN_CITY, property.getCity());
+                    values.put(PropertyQueries.COLUMN_IMAGE_URL, property.getImageUrl());
+                    // Note: NOT updating COLUMN_IS_SPECIAL and COLUMN_DISCOUNT to preserve admin settings
+                    
+                    // Update existing property
+                    String whereClause = PropertyQueries.COLUMN_PROPERTY_ID + " = ?";
+                    String[] whereArgs = {String.valueOf(property.getPropertyId())};
+                    
+                    int rowsAffected = db.update(PropertyQueries.TABLE_NAME, values, whereClause, whereArgs);
+                    if (rowsAffected > 0) {
+                        Log.d(TAG, "Updated existing property: " + property.getTitle() + 
+                              " (preserved special: " + existingProperty.isSpecial() + 
+                              ", discount: " + existingProperty.getDiscount() + "%)");
+                    } else {
+                        Log.e(TAG, "Failed to update property: " + property.getTitle());
+                        return false;
+                    }
+                } else {
+                    // New property - insert with all values including API special/discount settings
+                    ContentValues values = new ContentValues();
+                    values.put(PropertyQueries.COLUMN_PROPERTY_ID, property.getPropertyId());
+                    values.put(PropertyQueries.COLUMN_TYPE, property.getType());
+                    values.put(PropertyQueries.COLUMN_TITLE, property.getTitle());
+                    values.put(PropertyQueries.COLUMN_DESCRIPTION, property.getDescription());
+                    values.put(PropertyQueries.COLUMN_BEDROOMS, property.getBedrooms());
+                    values.put(PropertyQueries.COLUMN_BATHROOMS, property.getBathrooms());
+                    values.put(PropertyQueries.COLUMN_AREA, property.getArea());
+                    values.put(PropertyQueries.COLUMN_PRICE, property.getPrice());
+                    values.put(PropertyQueries.COLUMN_COUNTRY, property.getCountry());
+                    values.put(PropertyQueries.COLUMN_CITY, property.getCity());
+                    values.put(PropertyQueries.COLUMN_IMAGE_URL, property.getImageUrl());
+                    values.put(PropertyQueries.COLUMN_IS_SPECIAL, property.isSpecial() ? 1 : 0);
+                    values.put(PropertyQueries.COLUMN_DISCOUNT, property.getDiscount());
+                    
+                    long result = db.insert(PropertyQueries.TABLE_NAME, null, values);
+                    if (result != -1) {
+                        Log.d(TAG, "Inserted new property: " + property.getTitle());
+                    } else {
+                        Log.e(TAG, "Failed to insert new property: " + property.getTitle());
+                        return false;
+                    }
                 }
             }
 
@@ -132,6 +163,24 @@ public class PropertyApiClient {
         } finally {
             // End the transaction
             db.endTransaction();
+        }
+    }
+
+    /**
+     * Check if properties already exist in the database
+     * @return true if properties exist, false otherwise
+     */
+    public boolean propertiesExist() {
+        try {
+            android.database.Cursor cursor = dbHelper.getAllProperties();
+            boolean exists = cursor != null && cursor.getCount() > 0;
+            if (cursor != null) {
+                cursor.close();
+            }
+            return exists;
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking if properties exist: " + e.getMessage());
+            return false;
         }
     }
 }
