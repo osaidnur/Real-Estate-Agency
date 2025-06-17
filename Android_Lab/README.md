@@ -2,7 +2,7 @@
 
 A comprehensive real estate management Android application built with Java, featuring both customer and admin functionalities for property browsing, reservations, and administration.
 
-![App Banner](https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80)
+![App Banner](app/src/main/res/drawable/app_banner.png)
 
 ## 📋 Table of Contents
 
@@ -173,8 +173,6 @@ The application fetches property data from an external API. The API configuratio
 // Current API URL
 private static final String API_URL = "https://mocki.io/v1/c78b9a1b-dfaa-4a45-808d-3ffd83ef5622";
 
-// Old API URL (commented out)
-// private static final String API_URL = "https://mocki.io/v1/fde9b206-44f5-4a49-830a-6b0f3ad499b6";
 ```
 
 ### Changing the API URL
@@ -425,14 +423,6 @@ We welcome contributions to improve Luxora! Here's how you can help:
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-For support, questions, or feedback:
-
-- 📧 Email: [Insert your email]
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/luxora-real-estate/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/luxora-real-estate/discussions)
 
 ## 🙏 Acknowledgments
 
