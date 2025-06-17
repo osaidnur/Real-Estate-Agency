@@ -6,21 +6,21 @@ A comprehensive real estate management Android application built with Java, feat
 
 ## 📋 Table of Contents
 
-- [🎯 Overview](#overview)
-- [✨ Features](#features)
-- [📷 Screenshots](#screenshots)
+- [🎯 Overview](#-overview)
+- [✨ Features](#-features)
+- [📷 Screenshots](#-screenshots)
 - [🛠 Technical Stack](#-technical-stack)
 - [📱 Quick Download APK](#-quick-download-apk)
-- [🚀 Installation & Setup](#installation--setup)
-- [🔗 API Configuration](#api-configuration)
-- [📦 APK Release](#apk-release)
-- [📁 Project Structure](#project-structure)
-- [💾 Database Schema](#database-schema)
-- [👥 User Roles](#user-roles)
-- [🎬 Demo Video](#demo-video)
-- [🛠 Development Setup](#development-setup)
-- [🤝 Contributing](#contributing)
-- [📄 License](#license)
+- [🚀 Installation & Setup](#-installation--setup)
+- [🔗 API Configuration](#-api-configuration)
+- [📦 APK Release](#-apk-release)
+- [📁 Project Structure](#-project-structure)
+- [💾 Database Schema](#-database-schema)
+- [👥 User Roles](#-user-roles)
+- [🎬 Demo Video](#-demo-video)
+- [🛠 Development Setup](#-development-setup)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ## 🎯 Overview
 
