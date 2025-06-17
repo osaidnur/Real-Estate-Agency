@@ -122,8 +122,8 @@ The easiest way to get Luxora is through GitHub Releases:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/osaidnur/luxora-real-estate.git
-   cd luxora-real-estate/Android_Lab
+   git clone https://github.com/osaidnur/Real-Estate-Agency.git
+   cd Real-Estate-Agency/Android_Lab
    ```
 
 2. **Open in Android Studio**
