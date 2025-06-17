@@ -58,7 +58,11 @@ The application supports two main user types:
 
 ## 🎬 Demo Video
 
+<div align="center">
+
 https://github.com/user-attachments/assets/819960d6-0a30-44e1-97ad-ed197828bfe0
+
+</div>
 
 ## 🛠 Technical Stack
 
