@@ -19,7 +19,7 @@ A comprehensive real estate management Android application built with Java, feat
 - [👥 User Roles](#-user-roles)
 - [🤝 Contributing](#-contributing)
 - [👨‍💻 Contributors](#-contributors)
-- [⚖️ License](#-license)
+- [📄 License](#-license)
 
 ## 🎯 Overview
 
@@ -418,7 +418,7 @@ We welcome contributions to improve Luxora! Here's how you can help:
 </div>
 
 
-## ⚖️ License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
