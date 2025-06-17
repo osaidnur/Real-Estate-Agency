@@ -173,12 +173,12 @@ public class ReservationFragment extends Fragment {
                 Toast.makeText(getContext(), "This property is already reserved by another user.", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Failed to create reservation. Please try again.", Toast.LENGTH_SHORT).show();
-                Log.e("ReservationFragment", "Failed to insert reservation - insertReservation returned: " + reservationId);
+                //Log.e("ReservationFragment", "Failed to insert reservation - insertReservation returned: " + reservationId);
             }
 
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error creating reservation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("ReservationFragment", "Exception in confirmReservation: " + e.getMessage(), e);
+            //Log.e("ReservationFragment", "Exception in confirmReservation: " + e.getMessage(), e);
         }
     }
 }
