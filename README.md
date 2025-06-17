@@ -380,7 +380,7 @@ We welcome contributions to improve Luxora! Here's how you can help:
 - Add tests for new features
 - Ensure the app builds successfully
 
-## �‍�💻 Contributors
+## 💻 Contributors
 
 <div align="center">
 
@@ -423,7 +423,5 @@ We welcome contributions to improve Luxora! Here's how you can help:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-
-**Made with ❤️ for the Real Estate Community**
 
 *This project was developed as part of a course project demonstrating Android development skills, database management, API integration, and modern UI/UX design principles.*
