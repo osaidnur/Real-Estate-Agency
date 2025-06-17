@@ -424,4 +424,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*This project was developed as part of a course project demonstrating Android development skills, database management, API integration, and modern UI/UX design principles.*
+*This project was developed as part of a course project demonstrating Android development skills, database management and API integration.
