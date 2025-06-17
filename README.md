@@ -8,7 +8,7 @@ A comprehensive real estate management Android application built with Java, feat
 
 - [🎯 Overview](#-overview)
 - [✨ Features](#-features)
-- [📷 Screenshots](#-screenshots)
+- [🎬 Demo Video](#-demo-video)
 - [🛠 Technical Stack](#-technical-stack)
 - [📱 Quick Download APK](#-quick-download-apk)
 - [🚀 Installation & Setup](#-installation--setup)
@@ -17,7 +17,6 @@ A comprehensive real estate management Android application built with Java, feat
 - [📁 Project Structure](#-project-structure)
 - [💾 Database Schema](#-database-schema)
 - [👥 User Roles](#-user-roles)
-- [🎬 Demo Video](#-demo-video)
 - [🛠 Development Setup](#-development-setup)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -57,9 +56,9 @@ The application supports two main user types:
 - **Dark/Light Theme Support**: Adaptive color schemes
 - **Navigation Drawer**: Easy access to all app sections
 
-## 📱 Screenshots
+## 🎬 Demo Video
 
-> **Note**: Screenshots will be added here to showcase the app's interface and features.
+https://github.com/user-attachments/assets/819960d6-0a30-44e1-97ad-ed197828bfe0
 
 ## 🛠 Technical Stack
 
@@ -102,7 +101,7 @@ The easiest way to get Luxora is through GitHub Releases:
 
 **Admin Account**:
 - Email: `admin@admin.com`
-- Password: `admin123`
+- Password: `Admin123!`
 
 **Test Customer Account**:
 - Register a new account through the app's registration flow
@@ -348,20 +347,6 @@ Android_Lab/
 - Create special offers
 - Manage other admin accounts
 - Import data from APIs
-
-## 🎬 Demo Video
-
-> **[Insert Video Here]**
-> 
-> A comprehensive demo video showcasing the app's features will be attached here. The video will demonstrate:
-> - User registration and login
-> - Property browsing and filtering
-> - Reservation process
-> - Admin dashboard functionality
-> - Property management features
-> - API data import process
-
-*Video file should be uploaded to the repository or linked from a video hosting platform.*
 
 ## 🛠 Development Setup
 
