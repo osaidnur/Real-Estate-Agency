@@ -2,7 +2,7 @@
 
 A comprehensive real estate management Android application built with Java, featuring both customer and admin functionalities for property browsing, reservations, and administration.
 
-![App Banner](app/src/main/res/drawable/app_banner.png)
+![App Banner](Android_lab/app/src/main/res/drawable/app_banner.png)
 
 ## 📋 Table of Contents
 
