@@ -12,11 +12,12 @@ import com.example.a1210733_1211088_courseproject.models.Property;
 
 import java.util.List;
 
-public class PropertyApiClient {
-    private static final String TAG = "PropertyAPI";
-//    private static final String API_URL = "https://mocki.io/v1/4d533823-8133-4631-8112-00e69a143881";
+public class PropertyApiClient {    private static final String TAG = "PropertyAPI";
+    
+    // Old API URL (using local photos)
+    //private static final String API_URL = "https://mocki.io/v1/fde9b206-44f5-4a49-830a-6b0f3ad499b6"; // TODO: Replace with new API URL
 
-    private static final String API_URL = "https://mocki.io/v1/fde9b206-44f5-4a49-830a-6b0f3ad499b6";
+    private static final String API_URL = "https://mocki.io/v1/c78b9a1b-dfaa-4a45-808d-3ffd83ef5622";
     private Context context;
     private DataBaseHelper dbHelper;
     private boolean importSuccess = false;
