@@ -122,7 +122,7 @@ The easiest way to get Luxora is through GitHub Releases:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/luxora-real-estate.git
+   git clone https://github.com/osaidnur/luxora-real-estate.git
    cd luxora-real-estate/Android_Lab
    ```
 
