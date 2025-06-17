@@ -19,7 +19,7 @@ A comprehensive real estate management Android application built with Java, feat
 - [👥 User Roles](#-user-roles)
 - [🤝 Contributing](#-contributing)
 - [👨‍💻 Contributors](#-contributors)
-- [📄 License](#-license)
+- [⚖️ License](#-license)
 
 ## 🎯 Overview
 
@@ -380,24 +380,45 @@ We welcome contributions to improve Luxora! Here's how you can help:
 - Add tests for new features
 - Ensure the app builds successfully
 
-## �‍💻 Contributors
-
-This project was developed by:
+## �‍�💻 Contributors
 
 <div align="center">
 
-| Contributor | GitHub Profile |
-|-------------|----------------|
-| **Osaid Nur** | [![GitHub](https://img.shields.io/badge/GitHub-osaidnur-black?style=flat-square&logo=github)](https://github.com/osaidnur) |
-| **Contributor 2** | [![GitHub](https://img.shields.io/badge/GitHub-username-black?style=flat-square&logo=github)](https://github.com/username) |
+### 🚀 Meet the Team Behind Luxora
+
+<br>
+
+<table>
+<tr>
+<td align="center" width="50%">
+<img src="https://github.com/osaidnur.png" width="100px" style="border-radius: 50%;" alt="Osaid Nur"/>
+<br><br>
+<strong>🌟 Osaid Nur</strong>
+<br><br>
+<a href="https://github.com/osaidnur">
+<img src="https://img.shields.io/badge/GitHub-osaidnur-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+</td>
+<td align="center" width="50%">
+<img src="https://github.com/doaahatu.png" width="100px" style="border-radius: 50%;" alt="Doaa Hatu"/>
+<br><br>
+<strong>🌟 Doaa Hatu</strong>
+<br><br>
+<a href="https://github.com/doaahatu">
+<img src="https://img.shields.io/badge/GitHub-doaahatu-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+*Built with ❤️ and countless hours of coding*
 
 </div>
 
 
-
-
-
-## �📄 License
+## ⚖️ License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
