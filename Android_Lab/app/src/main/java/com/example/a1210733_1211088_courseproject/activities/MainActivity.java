@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {    private static final St
      * Performs the API fetch operation
      */    private void performApiFetch() {
         // Show loading message
-        Toast.makeText(MainActivity.this, "Connecting to API...", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "Connecting to API...", Toast.LENGTH_SHORT).show();
 
         // Disable button to prevent multiple clicks (keep pressed state)
         btnConnect.setEnabled(false);
