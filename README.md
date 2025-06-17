@@ -10,15 +10,15 @@ A comprehensive real estate management Android application built with Java, feat
 - [✨ Features](#-features)
 - [🎬 Demo Video](#-demo-video)
 - [🛠 Technical Stack](#-technical-stack)
-- [📱 Quick Download APK](#-quick-download-apk)
+- [⚡ Quick Download APK](#-quick-download-apk)
 - [🚀 Installation & Setup](#-installation--setup)
 - [🔗 API Configuration](#-api-configuration)
 - [📦 APK Release](#-apk-release)
 - [📁 Project Structure](#-project-structure)
 - [💾 Database Schema](#-database-schema)
 - [👥 User Roles](#-user-roles)
-- [🛠 Development Setup](#-development-setup)
 - [🤝 Contributing](#-contributing)
+- [👨‍💻 Contributors](#-contributors)
 - [📄 License](#-license)
 
 ## 🎯 Overview
@@ -53,7 +53,6 @@ The application supports two main user types:
 - **Modern Material Design**: Clean, intuitive interface following Material Design principles
 - **Responsive Layouts**: Optimized for various screen sizes and orientations
 - **Smooth Animations**: Engaging transitions and interactive elements
-- **Dark/Light Theme Support**: Adaptive color schemes
 - **Navigation Drawer**: Easy access to all app sections
 
 ## 🎬 Demo Video
@@ -75,7 +74,7 @@ https://github.com/user-attachments/assets/819960d6-0a30-44e1-97ad-ed197828bfe0
 - **UI Components**: Material Design Components
 - **Build System**: Gradle with Kotlin DSL
 
-##   Quick Download APK
+## ⚡ Quick Download APK
 
 ### 🚀 Get the App Instantly (Recommended)
 
@@ -83,11 +82,10 @@ The easiest way to get Luxora is through GitHub Releases:
 
 1. **Go to Releases**:
    - Click the **"Releases"** button on the right side of this GitHub repository page
-   - Or visit: `https://github.com/yourusername/luxora-real-estate/releases`
 
 2. **Download Latest APK**:
    - Find the latest release
-   - Click on **"app-release.apk"** to download
+   - Click on **"Luxora-v1.0.0.apk"** to download
    - The file will be saved to your device's Downloads folder
 
 3. **Install the App**:
@@ -177,6 +175,8 @@ The application fetches property data from an external API. The API configuratio
 private static final String API_URL = "https://mocki.io/v1/c78b9a1b-dfaa-4a45-808d-3ffd83ef5622";
 
 ```
+
+> **📋 API Content Reference**: You can view the complete API response structure and sample data in the `api_content` file in this repository.
 
 ### Changing the API URL
 
@@ -315,24 +315,26 @@ Android_Lab/
 
 ## 💾 Database Schema
 
+![Database Schema](Android_Lab/app/src/main/res/drawable/database_schema.jpeg)
+
 ### Tables Overview
 
 1. **Users Table**
    - User authentication and profile information
    - Supports both customers and admins
-   - Fields: userId, email, password, firstName, lastName, gender, country, city, phone, role, profileImage
+   - Fields: *userId*, *email*, *password*, *firstName*, *lastName*, *gender*, *country*, *city*, *phone*, *role*, *profileImage*
 
 2. **Properties Table**
    - Property listings and details
-   - Fields: propertyId, type, title, description, bedrooms, bathrooms, area, price, country, city, imageUrl, isSpecial, discount
+   - Fields: *propertyId*, *type*, *title*, *description*, *bedrooms*, *bathrooms*, *area*, *price*, *country*, *city*, *imageUrl*, *isSpecial*, *discount*
 
 3. **Reservations Table**
    - Property reservation tracking
-   - Fields: reservationId, userId, propertyId, reservationDate, status, notes
+   - Fields: *reservationId*, *userId*, *propertyId*, *reservationDate*, *status*, *notes*
 
 4. **Favorites Table**
    - User's favorite properties
-   - Fields: favoriteId, userId, propertyId, dateAdded
+   - Fields: *favoriteId*, *userId*, *propertyId*, *dateAdded*
 
 ## 👥 User Roles
 
@@ -351,37 +353,6 @@ Android_Lab/
 - Create special offers
 - Manage other admin accounts
 - Import data from APIs
-
-## 🛠 Development Setup
-
-### Code Style
-- Follow standard Java naming conventions
-- Use meaningful variable and method names
-- Comment complex logic and public methods
-- Maintain consistent indentation (4 spaces)
-
-### Testing
-```bash
-# Run unit tests
-./gradlew test
-
-# Run instrumented tests
-./gradlew connectedAndroidTest
-```
-
-### Building for Production
-```bash
-# Build release APK
-./gradlew assembleRelease
-
-# Build signed APK (requires keystore configuration)
-./gradlew bundleRelease
-```
-
-### Debugging
-- Use Android Studio's built-in debugger
-- Check Logcat for runtime information
-- Enable developer options on test devices
 
 ## 🤝 Contributing
 
@@ -409,17 +380,26 @@ We welcome contributions to improve Luxora! Here's how you can help:
 - Add tests for new features
 - Ensure the app builds successfully
 
-## 📄 License
+## �‍💻 Contributors
+
+This project was developed by:
+
+<div align="center">
+
+| Contributor | GitHub Profile |
+|-------------|----------------|
+| **Osaid Nur** | [![GitHub](https://img.shields.io/badge/GitHub-osaidnur-black?style=flat-square&logo=github)](https://github.com/osaidnur) |
+| **Contributor 2** | [![GitHub](https://img.shields.io/badge/GitHub-username-black?style=flat-square&logo=github)](https://github.com/username) |
+
+</div>
+
+
+
+
+
+## �📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Material Design**: For providing excellent UI/UX guidelines
-- **Picasso**: For efficient image loading and caching
-- **Unsplash**: For providing high-quality property images
-- **MockAPI**: For API testing and development
-- **Android Development Community**: For continuous support and resources
 
 ---
 
