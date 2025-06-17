@@ -9,7 +9,7 @@ A comprehensive real estate management Android application built with Java, feat
 - [🎯 Overview](#overview)
 - [✨ Features](#features)
 - [📷 Screenshots](#screenshots)
-- [🛠 Technical Stack](#technical-stack)
+- [🛠 Technical Stack](#-technical-stack)
 - [📱 Quick Download APK](#-quick-download-apk)
 - [🚀 Installation & Setup](#installation--setup)
 - [🔗 API Configuration](#api-configuration)
